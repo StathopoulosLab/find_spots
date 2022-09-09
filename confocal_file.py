@@ -14,7 +14,7 @@ from czifile import CziFile, imread
 
 class ConfocalFile(object):
     """
-    Object representing a .czi file from the Stathopoulos lab's Zeill confocal microcscope
+    Object representing a .czi file from the Stathopoulos lab's Zeiss confocal microcscope
     """
 
     CHANNEL_3CRM = 0
@@ -27,6 +27,11 @@ class ConfocalFile(object):
         czi = CziFile(filepath)
         meta = czi.metadata(raw=False)
         imageInfo = meta['ImageDocument']['Metadata']['Information']['Image']
+        distances = meta['ImageDocument']['Metadata']['Scaling']['Items']['Distance']
+        assert len(distances) == 3
+        self._scale = {}
+        for dist in distances:
+            self._scale[dist['Id']] = dist['Value'] * 1.0e06    # convert from meters to uM
         assert imageInfo['PixelType'] == 'Gray8'
         assert imageInfo['ComponentBitCount'] == 8
         assert imageInfo['SizeT'] == 1
@@ -53,3 +58,6 @@ class ConfocalFile(object):
 
     def channel_antibody(self):
         return self._antibody
+
+    def get_scale(self):
+        return self._scale
