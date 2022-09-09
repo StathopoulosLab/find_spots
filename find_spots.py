@@ -24,10 +24,8 @@ default_params = {
     "sigma": 15,
     "alpha_sharp": 1.3,
     "spot_detect_threshold": -0.02,
-    'x_scale': 0.065,
-    'y_scale': 0.065,
-    'z_scale': 0.1,
-    'touching_threshold': 0.2
+    'touching_threshold': 0.2,
+    'use_denoise3d': True
 }
 
 def get_param(key, params):
@@ -59,26 +57,41 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     sigma = get_param('sigma', params)
     alpha_sharp = get_param('alpha_sharp', params)
     spot_detect_thresh = get_param('spot_detect_threshold', params)
-    x_scale = get_param('x_scale', params)
-    y_scale = get_param('y_scale', params)
-    z_scale = get_param('z_scale', params)
+    scale = cf.get_scale()
     touching_threshold = get_param('touching_threshold', params)
+    use_denoise3d = get_param('use_denoise3d', params)
 
     denoiser = Denoise()
 
     #TODO: make these steps concurrent
-    denoised_3CRM = denoiser.denoise(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Denoising 3'CRM")
+    if use_denoise3d:
+        denoised_3CRM = denoiser.denoise3d(cf.channel_3CRM()[first_slice:last_slice], sigma)
+    else:
+        denoised_3CRM = denoiser.denoise(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Detecting spots in 3'CRM")
     spots_3CRM = ds.detect_spots(denoised_3CRM, spot_detect_thresh)
 
-    denoised_5CRM = denoiser.denoise(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Denoising 5'CRM")
+    if use_denoise3d:
+        denoised_5CRM = denoiser.denoise3d(cf.channel_5CRM()[first_slice:last_slice], sigma)
+    else:
+        denoised_5CRM = denoiser.denoise(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Detecting spots in 5'CRM")
     spots_5CRM = ds.detect_spots(denoised_5CRM, spot_detect_thresh)
 
-    denoised_PPE = denoiser.denoise(cf.channel_PPE()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Denoising PPE")
+    if use_denoise3d:
+        denoised_PPE = denoiser.denoise3d(cf.channel_PPE()[first_slice:last_slice], sigma)
+    else:
+        denoised_PPE = denoiser.denoise(cf.channel_PPE()[first_slice:last_slice], sigma, alpha_sharp)
+    print("Detecting spots in PPE")
     spots_PPE = ds.detect_spots(denoised_PPE, spot_detect_thresh)
+
     #TODO: end of potentially concurrent block
     print(f"Found {len(spots_3CRM)} 3CRM, {len(spots_5CRM)} 5CRM and {len(spots_PPE)} PPE spots")
 
-    triplets, max_lim = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, x_scale, y_scale, z_scale)
+    triplets, max_lim = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, scale['X'], scale['Y'], scale['Z'])
     print(f"Identified {len(triplets)} with max_lim {max_lim}")
     points, conformations = ta.analyze_inner(triplets, touching_threshold)
     print(f"analyze_inner identified {len(points)} points")

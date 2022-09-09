@@ -24,3 +24,6 @@ class Denoise():
             slice = matlab.uint8(image[z,:,:])
             denoised_slices.append(self._eng.BM3DSHARP(slice, stddev, alpha_sharp))
         return np.array(denoised_slices)
+
+    def denoise3d(self, volume: np.ndarray, stddev: float = 0., profile: str = 'np', do_weiner: bool = True, verbose: bool = False):
+        return np.array(self._eng.bm4d(matlab.uint8(volume), "Gauss", stddev, profile, do_weiner, verbose))
