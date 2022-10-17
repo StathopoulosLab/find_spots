@@ -105,9 +105,9 @@ def write_results(triplets, outputFileName):
 
 def find_best_triplets(blueSpots, redSpots, greenSpots, xScale: float, yScale: float, zScale: float):
     points = []
-    points.append([xScale*x, yScale*y, zScale*z] for [x,y,z] in blueSpots)
-    points.append([xScale*x, yScale*y, zScale*z] for [x,y,z] in redSpots)
-    points.append([xScale*x, yScale*y, zScale*z] for [x,y,z] in greenSpots)
+    points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in blueSpots])
+    points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in redSpots])
+    points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in greenSpots])
     max_lim = -1.
     limits = [x/5+0.1 for x in range(1,16)]
     max_triplets = []

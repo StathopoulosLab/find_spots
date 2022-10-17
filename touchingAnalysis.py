@@ -1,3 +1,4 @@
+from os import read
 import sys
 
 def distance(point1, point2):
@@ -29,7 +30,7 @@ def read_file(inputFName):
         triplets[2].append(fl[6:9])
     return triplets
 
-def analyze_inner(points, thresh):
+def analyze_inner(points, thresh, read_file_order: bool = False):
     '''Given input file of triplet (b_x, b_y, b_z, r_x, r_y, r_z, g_x, g_y, g_z)
     coordinates with units in physical lengths (not pixel widths) and a 
     threshold to determine touching, classifies each triplet into one of 8
@@ -37,11 +38,23 @@ def analyze_inner(points, thresh):
     # Classify the different points
     conformations = {'000':0, '100':0, '010':0, '001':0, '110':0, '101':0, \
                     '011':0, '111':0}
-    points.append([])
-    for i in range(len(points[0])):
-        label = classify(points[0][i], points[1][i], points[2][i], thresh**2)
-        conformations[label] += 1
-        points[3].append(label)
+    if read_file_order:
+        points.append([])
+        for i in range(len(points[0])):
+            label = classify(points[0][i], points[1][i], points[2][i], thresh**2)
+            conformations[label] += 1
+            points[3].append(label)
+    
+    else:
+        triplets = [[],[],[],[]]
+        for i in range(len(points)):
+            label = classify(points[i][0], points[i][1], points[i][2], thresh**2)
+            conformations[label] += 1
+            triplets[0].append(points[i][0])
+            triplets[1].append(points[i][1])
+            triplets[2].append(points[i][2])
+            triplets[3].append(label)
+        points = triplets
     
     # # Hmmm.  The following don't appear to be used anywhere.
     # dist_35, dist_3P, dist_5P = [], [], []
@@ -58,26 +71,33 @@ def analyze(inputFile, thresh, outputFile):
     threshold to determine touching, classifies each triplet into one of 8
     conformations based on which spots are close/touching.''' 
     points = read_file(inputFile)
-    points, conformations = analyze_inner(points, thresh)
+    points, conformations = analyze_inner(points, thresh, True)
     
     # Display output
-    write_output(points, outputFile)
+    output = generate_output(points)
+    write_output(output, outputFile)
     
     # Print output options
     print(conformations) #number of triplets in each conformation
     print(points[3])  #list each triplet's conformation
     
-def write_output(points, outputFileName):
-    '''Given lines of triplets and their conformations, writes the triplet
-    centroid and then the conformation number to a text file outputFileName.'''
-    outFile = open(outputFileName, 'w')
-    
+def generate_output(points):
+    output = []
     for i in range(len(points[0])):
         xCentr = (points[0][i][0] + points[1][i][0] + points[2][i][0])/3
         yCentr = (points[0][i][1] + points[1][i][1] + points[2][i][1])/3
         zCentr = (points[0][i][2] + points[1][i][2] + points[2][i][2])/3
         label = points[3][i]
-        outFile.write('%-15s %-15s %-15s %s\n'%(xCentr, yCentr, zCentr, label))
+        output.append([xCentr, yCentr, zCentr, label])
+    return output
+
+def write_output(output, outputFileName):
+    '''Given lines of triplets and their conformations, writes the triplet
+    centroid and then the conformation number to a text file outputFileName.'''
+    outFile = open(outputFileName, 'w')
+    
+    for i in range(len(output)):
+        outFile.write('%-15s %-15s %-15s %s\n'%(output[i][0], output[i][1], output[i][2], output[i][3]))
     outFile.close()
 
 if __name__ == "__main__":

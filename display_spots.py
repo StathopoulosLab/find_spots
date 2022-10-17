@@ -36,10 +36,14 @@ colors = {'000':'r', '100':'b', '010':'g', '001':'c', '110':'y', '101':'k',
 
 triplets, conformations = read_file(confFile)
 
+xScale = 0.0990358382936508
+yScale = xScale
+zScale = 0.36
+
 # Plot triplet centers
 for i in range(len(triplets)):
     style = colors[conformations[i]]+'o'
-    plt.plot(triplets[i][0]/0.065, triplets[i][1]/0.065, style, markersize=6)
+    plt.plot(triplets[i][0]/xScale, triplets[i][1]/yScale, style, markersize=6)
 plt.show()
 
 fig = plt.gcf()

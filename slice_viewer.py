@@ -45,6 +45,7 @@ def multi_slice_viewer(volume):
     fig, ax = plt.subplots()
     ax.volume = volume
     ax.index = volume.shape[0] // 2
-    ax.imshow(volume[ax.index], cmap=cm.Greys)
+    # ax.imshow(volume[ax.index], cmap=cm.Greys)
+    ax.imshow(volume[ax.index])
     fig.canvas.mpl_connect('key_press_event', process_key)
     fig.canvas.mpl_connect('scroll_event', process_scroll)
