@@ -145,10 +145,10 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     print(f"analyze_inner identified {len(triplets)} triplets")
 
     output = ta.generate_output(triplets)
-    ta.write_output(triplets, out_name)
+    ta.write_output(output, out_name)
 
     # construct a new rgb version of the antibody image volume
-    gray_colormap = cm.get_cmap('grey', 256)
+    gray_colormap = cm.get_cmap('gray', 256)
     antibody_rgb = gray_colormap(cf.channel_antibody(), bytes=True)[:,:,:,0:3]
 
     # Now plot each of the triplets into the image stack, colored by conformation
@@ -167,7 +167,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
         x = round(triplet[0] / scale['X'])
         y = round(triplet[1] / scale['Y'])
         z = round(triplet[2] / scale['Z'])
-        color = colors[triplets[3]]
+        color = colors[triplet[3]]
         for dx in range(-6,7):
             if x + dx < 0 or x + dx >= antibody_rgb.shape[1]:
                 continue
