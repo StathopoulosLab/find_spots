@@ -70,6 +70,24 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="progressBarHorizontalLayout">
+        <item>
+         <widget class="QLabel" name="progressBarLabel">
+          <property name="text">
+           <string>Progress: </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QProgressBar" name="progressBar">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="completedFilesHorizontalLayout">
         <item>
          <widget class="QLabel" name="completedFilesLabel">
@@ -207,10 +225,13 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="0">
+        <item row="4" column="0">
          <widget class="QLabel" name="sharpenLabel">
           <property name="text">
            <string>Sharpening:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -221,65 +242,87 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="0">
+        <item row="1" column="2">
+         <widget class="QLabel" name="denoisePPELabel">
+          <property name="text">
+           <string>PPE</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="sigmaPPELineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
          <widget class="QLabel" name="sigmaLabel">
           <property name="text">
            <string>Sigma:</string>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="sharpenLineEdit">
           <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item row="1" column="1">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="denoise3CRMLabel">
+          <property name="text">
+           <string>3'CRM</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="lineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <spacer name="sigmaHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="sharpen3CRMLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
-        <item row="3" column="2">
-         <spacer name="sharpenHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="sigma3CRMLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="sharpenPPELineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-         </spacer>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QLineEdit" name="sharpen5CRMLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="sigma5CRMLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="denoise5CRMLabel">
+          <property name="text">
+           <string>5'CRM</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -298,15 +341,21 @@
       </item>
       <item>
        <layout class="QGridLayout" name="spotDetectionGridLayout">
-        <item row="1" column="0">
-         <widget class="QLabel" name="spotDetectionThresholdLabel">
+        <item row="2" column="3">
+         <widget class="QLabel" name="spotDetection5CRMLabel">
           <property name="text">
-           <string>Threshold:</string>
+           <string>5'CRM</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="spotDetectionThresholdLineEdit">
+        <item row="2" column="2">
+         <widget class="QLabel" name="spotDetectionPPELabel">
+          <property name="text">
+           <string>PPE</string>
+          </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -319,18 +368,43 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <spacer name="spotDetectionThresholdHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="spotDetectionPPEThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="spotDetection3CRMLabel">
+          <property name="text">
+           <string>3'CRM</string>
           </property>
-         </spacer>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="spotDetection3CRMThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="spotDetection5CRMThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="spotDetectionThresholdLabel">
+          <property name="text">
+           <string>Threshold:</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -459,13 +533,21 @@
   <tabstop>firstSliceLineEdit</tabstop>
   <tabstop>lastSliceLineEdit</tabstop>
   <tabstop>use3DCheckBox</tabstop>
-  <tabstop>lineEdit</tabstop>
-  <tabstop>sharpenLineEdit</tabstop>
-  <tabstop>spotDetectionThresholdLineEdit</tabstop>
+  <tabstop>sigma3CRMLineEdit</tabstop>
+  <tabstop>sharpen3CRMLineEdit</tabstop>
+  <tabstop>sigmaPPELineEdit</tabstop>
+  <tabstop>sharpenPPELineEdit</tabstop>
+  <tabstop>sigma5CRMLineEdit</tabstop>
+  <tabstop>sharpen5CRMLineEdit</tabstop>
+  <tabstop>spotDetection3CRMThresholdLineEdit</tabstop>
+  <tabstop>spotDetectionPPEThresholdLineEdit</tabstop>
+  <tabstop>spotDetection5CRMThresholdLineEdit</tabstop>
   <tabstop>touchingThresholdLineEdit</tabstop>
   <tabstop>testSettingsPushButton</tabstop>
   <tabstop>runBatchPushButton</tabstop>
   <tabstop>quitPushButton</tabstop>
+  <tabstop>clearCompletedFilesPushButton</tabstop>
+  <tabstop>activeFileLineEdit</tabstop>
  </tabstops>
  <resources/>
  <connections/>

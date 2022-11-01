@@ -10,11 +10,12 @@ command line:  python find_spots.py input_image_file output_image_file
 """
 
 from matplotlib.pyplot import xscale
-from confocal_file import ConfocalFile
-from denoise import Denoise, DenoiseBM4D
-import detect_spots as ds
-import tripletDetection as td
-import touchingAnalysis as ta
+from algorithms.confocal_file import ConfocalFile
+# from algorithms.denoise import Denoise, DenoiseBM4D
+from algorithms.denoise import DenoiseBM4D
+import algorithms.detect_spots as ds
+import algorithms.tripletDetection as td
+import algorithms.touchingAnalysis as ta
 import yaml
 import numpy as np
 from os.path import splitext
@@ -31,7 +32,7 @@ default_params = {
     "spot_detect_threshold": -0.02,
     'touching_threshold': 0.2,
     'use_denoise3d': False,
-    'use_bm4d': True,
+    # 'use_bm4d': True,
     'save_after_denoise': False,
     'save_spots': True
 }
@@ -66,7 +67,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     except Exception as e:
         print(f"Image file {image_file} could not be opened.  Error was: {e}")
         exit(-1)
-    
+
     first_slice = get_param('first_slice', params)
     last_slice = get_param('last_slice', params)
     sigma = get_param('sigma', params)
@@ -75,7 +76,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     scale = cf.get_scale()
     touching_threshold = get_param('touching_threshold', params)
     use_denoise3d = get_param('use_denoise3d', params)
-    use_bm4d = get_param('use_bm4d', params)
+    # use_bm4d = get_param('use_bm4d', params)
     save_after_denoise = get_param('save_after_denoise', params)
     save_spots = get_param('save_spots', params)
 
@@ -84,12 +85,13 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
         save_name = stem + "_antibody"
         save_components(cf.channel_antibody()[first_slice:last_slice], save_name)
 
-    if use_bm4d:
-        print("Using native Python BM4D")
-        denoiser = DenoiseBM4D()
-    else:
-        print("Using MatLab BM3D")
-        denoiser = Denoise()
+    denoiser = DenoiseBM4D()
+    # if use_bm4d:
+    #     print("Using native Python BM4D")
+    #     denoiser = DenoiseBM4D()
+    # else:
+    #     print("Using MatLab BM3D")
+    #     denoiser = Denoise()
 
     #TODO: make these steps concurrent
     print("Denoising 3'CRM")

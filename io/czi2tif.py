@@ -1,6 +1,6 @@
 # czi2tif.py
 
-from confocal_file import ConfocalFile
+from algorithms.confocal_file import ConfocalFile
 import tifffile as tf
 import numpy as np
 import os.path
@@ -20,7 +20,7 @@ def czi2tif(infile: str):
         shape=outimage.shape,
         metadata={'axes': "ZXY"}
         )
-    
+
 if __name__ == "__main__":
     if len(sys.argv) < 2:
         print(f"Usage: czi2tif <input_file.czi>")
