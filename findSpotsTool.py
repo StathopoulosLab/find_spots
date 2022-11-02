@@ -6,11 +6,25 @@ from imageCompareDialog import ImageCompareDialog
 from runnables.runnableDenoise import RunnableDenoise
 from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
+from algorithms.detect_spots import detect_spots
 from os.path import expanduser
 from enum import Enum
 import sys
 import time
+from typing import Dict
 
+class ProcessingStep():
+    """
+    Class that encodes one processing step, which may be a composition
+    of other steps.
+    """
+
+    def __init__(self, stepName: str):
+        pass
+
+    def pickleToDict(self) -> Dict:
+        pickled = {}
+        return pickled
 class Worker(QRunnable):
     """
     Class to execute image processing currently with UI
@@ -133,6 +147,7 @@ class FindSpotsTool(QMainWindow):
         sigmaWidgets = [self.ui.sigma3CRMLineEdit, self.ui.sigmaPPELineEdit, self.ui.sigma5CRMLineEdit]
         sharpenWidgets = [self.ui.sharpen3CRMLineEdit, self.ui.sharpenPPELineEdit, self.ui.sharpen5CRMLineEdit]
         outputImages = [None, None, None]
+        detectedSpots = [None, None, None]
         i = 0
         self.pool = QThreadPool.globalInstance()
         self.pool.setMaxThreadCount(1)
