@@ -9,28 +9,9 @@
 
 import numpy as np
 from bm4d import BM4DProfile, BM4DProfileBM3D, bm4d, BM4DStages
-# import multiprocessing as mp
-# from concurrent.futures import ProcessPoolExecutor
-
-# import matlab.engine
-# class Denoise():
-#     """
-#     Class to encapsulate MatLab engine and apply denoise/sharpen to 3D numpy array
-#     """
-
-#     def __init__(self):
-#         self._eng = matlab.engine.start_matlab('-nodisplay -nosplash -nojvm -nodesktop')
-
-#     def denoise(self, image: np.ndarray, stddev: float, alpha_sharp: float =1.3):
-#         denoised_slices = []
-#         for z in range(image.shape[0]):
-#             slice = matlab.uint8(image[z,:,:])
-#             denoised_slices.append(self._eng.BM3DSHARP(slice, stddev, alpha_sharp))
-#         return np.array(denoised_slices)
-
-#     def denoise3d(self, volume: np.ndarray, stddev: float = 0., alpha_sharp: float = 1.3):
-#         # in this version, alpha_sharp is ignored
-#         return np.array(self._eng.bm4d(matlab.uint8(volume), "Gauss", stddev, 'np', True, False))
+from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
+from typing import List, Dict, Tuple
+from os import getpid
 
 class DenoiseBM4D():
     """
@@ -64,14 +45,45 @@ class DenoiseBM4D():
         denoised_volume = bm4d(volume, stddev, profile, stage_arg=BM4DStages.HARD_THRESHOLDING)
         return denoised_volume
 
-"""
-def denoise_concurrent_inner(slice: np.ndarray, stddev: float, alpha_sharp: float = 1.3):
-    profile = BM4DProfileBM3D()
-    profile.set_sharpen(alpha_sharp)
-    return bm4d(slice, stddev, profile, stage_arg=BM4DStages.HARD_THRESHOLDING)[:,:,0]
+class ProcessStepDenoiseImage(ProcessStep):
+    """
+    Processing step to denoise one image, or slice of a volume.
+    """
 
-def denoise_concurrent(image: np.ndarray, stddev: float, alpha_sharp: float = 1.3):
-    max_workers = min(image.shape[0], mp.cpu_count - 2)
-    with ProcessPoolExecutor(max_workers: max_workers) as executor:
-        executor.map(denoise_concurrent_inner, [image[z, :, :] for z in range(image.shape[0])], stddev, alpha_sharp)
-"""
+    def __init__(self, params: Dict = {}):
+        super().__init__(params)
+        self._stepName = "Denoise"
+
+    def run(self):
+        assert len(self._inputs) > 0 and isinstance(self._inputs[0], np.ndarray)
+        assert 'sharpen' in self._params.keys()
+        assert 'sigma' in self._params.keys()
+        self._stepOutputs = []
+        self._endOutputs = []
+        profile = BM4DProfileBM3D()
+        profile.set_sharpen(self._params['sharpen'])
+        self._stepOutputs.append(bm4d(
+            self._inputs,
+            self._params['sigma'],
+            profile,
+            stage_arg=BM4DStages.HARD_THRESHOLDING
+            ))
+        self._endOutputs.append(None)
+        self._status = ProcessStatus.COMPLETED
+
+    def progressCallback(self) -> Tuple[int, str]:
+        if self._status != ProcessStatus.COMPLETED:
+            return (0, self._stepName)
+        else:
+            return (100, self._stepName)
+
+def MakeProcessStepDenoiseConcurrent(volume: np.ndarray, params: Dict = {}) -> ProcessStepConcurrent:
+    """
+    Create a ProcessStepConcurrent composed of ProcessTespDenoiseImage steps
+    to denoise all the slices of a volume as concurrently as possible.
+    """
+    # create a processing step for each slice of the volume
+    # note that [ProcessStepDenoiseImage(params)] * volume.shape[0] creates references to
+    # the same ProcessStep instance, rather than separate ones, like we need
+    processSteps = [ProcessStepDenoiseImage(params) for slice in range(volume.shape[0])]
+    return ProcessStepConcurrent(processSteps)

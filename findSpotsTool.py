@@ -41,13 +41,6 @@ class Worker(QRunnable):
 
 class FindSpotsTool(QMainWindow):
 
-    # class ProcessingState(Enum):
-    #     STOPPED = 0
-    #     RUNNING = 1
-    #     CANCEL = 2
-    #     ACCEPT = 3
-    #     RETRY = 4
-
     def __init__(self):
         super().__init__()
 
