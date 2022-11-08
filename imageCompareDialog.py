@@ -7,8 +7,9 @@ from qtpy.QtWidgets import QDialog, QDialogButtonBox
 from numpy import ndarray
 from imageCompareDialog_ui import Ui_ImageCompareDialog
 
+from algorithms.denoise import ProcessStepDenoiseConcurrent
 from processing import ProcessStep, ProcessStatus
-from typing import Dict
+from typing import Callable, Dict
 
 class ImageCompareDialog(QDialog):
     """
@@ -59,14 +60,18 @@ class ProcessStepVisualizeDenoise(ProcessStep):
 
     def __init__(self, params: Dict = {}):
         super().__init__(params)
-        self._stepName = "VisualizeDenoise"
+        self._step = ProcessStepDenoiseConcurrent(params)
+        self._stepName = "Visualize"
 
-    def run(self):
-        assert isinstance(self._inputs, list) and len(self._inputs) == 2
+    def run(self, progressCallback: Callable[[int, str], None] = None):
         self._status = ProcessStatus.RUNNING
+        self._step.setInputs(self._inputs)
+        self._step.run(progressCallback)
+        stepOutputs = self._step.stepOutputs()
+        endOutputs = self._step.endOutputs()
         viewer = ImageCompareDialog()
         viewer.setLeftImageVolume(self._inputs[0])
-        viewer.setRightImageVolume(self._inputs[1])
+        viewer.setRightImageVolume(stepOutputs[0])
         result = viewer.exec()
         if result == QDialog.Accepted:
             # The user accepted the current parameters, so we press forward
@@ -79,6 +84,6 @@ class ProcessStepVisualizeDenoise(ProcessStep):
             self._status = ProcessStatus.REJECTED
         else:
             raise ValueError(f"Unexpected return value: {result}")
-        self._stepOutputs = [self._inputs[0]]
-        self._endOutputs = []
+        self._stepOutputs = stepOutputs
+        self._endOutputs = endOutputs
 

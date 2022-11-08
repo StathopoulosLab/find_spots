@@ -12,6 +12,7 @@ from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
 from algorithms.detect_spots import detect_spots
 from processing import ProcessStatus, ProcessStep, ProcessStepIterate
+from imageCompareDialog import ProcessStepVisualizeDenoise
 from os.path import expanduser, splitext
 import tifffile as tiff
 from PIL import Image
@@ -118,9 +119,9 @@ class FindSpotsTool(QMainWindow):
     @Slot(bool)
     def runBatch(self, checked: bool = False):
         while len(self.pendingFilesModel.stringList()) > 0:
-            self.processNextFile()
+            self.processNextFile(False)
 
-    def processNextFile(self):
+    def processNextFile(self, validateParams: bool) -> None:
         # There may be a file currently being processed, where the user
         # rejected the params for one of the process steps.  We need to
         # restart processing that file with the process step that was
@@ -185,6 +186,11 @@ class FindSpotsTool(QMainWindow):
         }
 
         processSequence: List[ProcessStep] = [
+                ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
+                ProcessStepDetectSpotsConcurrent(perChannelParamsList),
+                ProcessStepFindTriplets(scale, tripletsParams),
+                ProcessStepAnalyzeTouching(touchingParams)
+            ] if validateParams else [
                 ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
