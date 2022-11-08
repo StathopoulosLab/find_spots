@@ -87,6 +87,21 @@ class Ui_MainWindow(object):
 
         self.leftVerticalLayout.addLayout(self.progressBarHorizontalLayout)
 
+        self.stepNameHorizontalLayout = QHBoxLayout()
+        self.stepNameHorizontalLayout.setObjectName(u"stepNameHorizontalLayout")
+        self.stepNameLabel = QLabel(self.centralwidget)
+        self.stepNameLabel.setObjectName(u"stepNameLabel")
+
+        self.stepNameHorizontalLayout.addWidget(self.stepNameLabel)
+
+        self.stepNameLineEdit = QLineEdit(self.centralwidget)
+        self.stepNameLineEdit.setObjectName(u"stepNameLineEdit")
+
+        self.stepNameHorizontalLayout.addWidget(self.stepNameLineEdit)
+
+
+        self.leftVerticalLayout.addLayout(self.stepNameHorizontalLayout)
+
         self.completedFilesHorizontalLayout = QHBoxLayout()
         self.completedFilesHorizontalLayout.setObjectName(u"completedFilesHorizontalLayout")
         self.completedFilesLabel = QLabel(self.centralwidget)
@@ -402,6 +417,7 @@ class Ui_MainWindow(object):
         self.addFilesButton.setText(QCoreApplication.translate("MainWindow", u"Add File(s)", None))
         self.activeFileLabel.setText(QCoreApplication.translate("MainWindow", u"Being Processed:", None))
         self.progressBarLabel.setText(QCoreApplication.translate("MainWindow", u"Progress: ", None))
+        self.stepNameLabel.setText(QCoreApplication.translate("MainWindow", u"On step:", None))
         self.completedFilesLabel.setText(QCoreApplication.translate("MainWindow", u"Completed Files:", None))
         self.clearCompletedFilesPushButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.sliceSelectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Slice Selection Settings", None))

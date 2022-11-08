@@ -88,6 +88,20 @@
        </layout>
       </item>
       <item>
+       <layout class="QHBoxLayout" name="stepNameHorizontalLayout">
+        <item>
+         <widget class="QLabel" name="stepNameLabel">
+          <property name="text">
+           <string>On step:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLineEdit" name="stepNameLineEdit"/>
+        </item>
+       </layout>
+      </item>
+      <item>
        <layout class="QHBoxLayout" name="completedFilesHorizontalLayout">
         <item>
          <widget class="QLabel" name="completedFilesLabel">
