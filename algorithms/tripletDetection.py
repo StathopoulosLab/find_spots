@@ -1,13 +1,15 @@
 from __future__ import division, print_function
 
 import sys
+from processing import ProcessStep, ProcessStatus
+from typing import Callable, Dict
 
 def distance(point1, point2):
     '''Returns sq of distance between point 1 and point 2 in form [x,y,z]'''
     x1, y1, z1 = point1[0], point1[1], point1[2]
     x2, y2, z2 = point2[0], point2[1], point2[2]
     return (x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2
-    
+
 def search_space(spot, channel, lim):
     '''Searches space around a spot for a single other spot of a given color
     channel. If zero or more than one such spots are found, then [-1, -1] is
@@ -43,7 +45,7 @@ def check_triplet(b, r, g, spots, l):
 
 def triplet_selection(spots, l):
     '''Finds triplets in a given list of rgb spots far where the spots aren't
-    part of another triplet. Triplet boundary is defined as radius of parameter 
+    part of another triplet. Triplet boundary is defined as radius of parameter
     lim around each of the three spots composing the triplet.
     Outputs the list of triplets.'''
     triplets = []
@@ -80,11 +82,11 @@ def read_input(blueFile, redFile, greenFile):
     blueSpots = read_file(blueFile)
     redSpots = read_file(redFile)
     greenSpots = read_file(greenFile)
-    ch = [blueSpots, redSpots, greenSpots]    
+    ch = [blueSpots, redSpots, greenSpots]
     # convert to physical dimensions and return as [[blue],[red],[green]]
     points = [[],[],[]]
     for i in [0, 1, 2]:
-        points[i] = [[0.065*x,0.065*y,0.1*z] for [x,y,z] in ch[i]]        
+        points[i] = [[0.065*x,0.065*y,0.1*z] for [x,y,z] in ch[i]]
     return points
 
 def select(blueFile, redFile, greenFile, lim):
@@ -93,7 +95,7 @@ def select(blueFile, redFile, greenFile, lim):
     triplets = triplet_selection(spots, lim**2)
     print(str(len(triplets))+" Triplets Detected")
     return triplets
-    
+
 def write_results(triplets, outputFileName):
     '''Writes triplet spot coordinates to a text file.'''
     f = open(outputFileName, 'w')
@@ -103,7 +105,9 @@ def write_results(triplets, outputFileName):
                 %(bx,by,bz,gx,gy,gz,rx,ry,rz))
     f.close()
 
-def find_best_triplets(blueSpots, redSpots, greenSpots, xScale: float, yScale: float, zScale: float):
+def find_best_triplets(blueSpots, redSpots, greenSpots,
+                       xScale: float, yScale: float, zScale: float,
+                       progressCallback: Callable[[int, str], None] = None):
     points = []
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in blueSpots])
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in redSpots])
@@ -111,12 +115,45 @@ def find_best_triplets(blueSpots, redSpots, greenSpots, xScale: float, yScale: f
     max_lim = -1.
     limits = [x/5+0.1 for x in range(1,16)]
     max_triplets = []
-    for lim in limits:
+    if progressCallback:
+        progressCallback(0, "FindTriplets")
+    for i, lim in enumerate(limits):
         triplets = triplet_selection(points, lim**2)
         if len(triplets) > len(max_triplets):
             max_triplets = triplets
             max_lim = lim
+        if progressCallback:
+            progressCallback(int(i+1 / len(limits)), "FindTriplets")
     return (max_triplets, max_lim)
+
+class ProcessStepFindTriplets(ProcessStep):
+    """
+    A ProcessStep to find the best triplets, given three sets of spots.
+    """
+    def __init__(self, scale: Dict, params: Dict = {}):
+        super().__init__(params)
+        self._scale = scale
+        self._stepName = "FindTriplets"
+
+    def run(self, progressCallback: Callable[[int, str], None] = None):
+        assert 'X' in self._scale
+        assert 'Y' in self._scale
+        assert 'Z' in self._scale
+        assert isinstance(self._inputs, list) and len(self._inputs) == 3
+        self._status = ProcessStatus.RUNNING
+        self._stepOutputs = []
+        self._endOutputs = []
+        max_triplets, max_lim = find_best_triplets(
+            self._inputs[0],
+            self._inputs[1],
+            self._inputs[2],
+            self._scale['X'],
+            self._scale['Y'],
+            self._scale['Z'],
+            progressCallback)
+        self._stepOutputs.append(max_triplets)
+        self._endOutputs.append(max_lim)
+        self._status = ProcessStatus.COMPLETED
 
 if __name__ == "__main__":
     # Enter command line arguments as: bluefile redfile greenfile lim outputfile
