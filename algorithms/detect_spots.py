@@ -9,6 +9,11 @@ import numpy as np
 import scipy.ndimage
 import imageio
 import sys
+from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
+from typing import Callable, Dict, Tuple
+from os import getpid
+from multiprocessing import log_to_stderr
+from logging import INFO
 
 def distance_2D(point1, point2):
     '''Returns distance between point 1 and point 2 in form [x,y,z]'''
@@ -103,13 +108,14 @@ def searchSlice(sliceSpots, searchSpot):
                 break
     return nextSpot
 
-def group_slice_spots(imageStack,thresh):
+def group_slice_spots(imageStack, thresh, printProgress: bool = True):
     '''Given a list of image slices, finds spots in each slice corresponding to
     the same blobs and groups them together. Returns a list of the groupings.'''
     spots3D = []
     growingSpots = []
     for i in range(len(imageStack)):
-        print('Analyzing image '+str(i))
+        if printProgress:
+            print('Analyzing image '+str(i))
         sliceSpots = detect_slice_spots(imageStack[i], i, thresh)
         for growing3D in growingSpots[:]:
             searchSpot = growing3D[-1]
@@ -181,14 +187,78 @@ def master_function(inputFileName, outputFileName, thresh):
     write_output(outputSpots, outputFileName)
     print("Done with spot detect")
 
-def detect_spots(image: np.ndarray, thresh: float):
-    print("Calculating moving window max")
+def detect_spots(image: np.ndarray, thresh: float, printProgress: bool = True):
+    logger = log_to_stderr()
+    logger.setLevel(INFO)
+    if printProgress:
+        print("Calculating moving window max")
+    logger.info(f"Worker {getpid()}: Calculating moving window max")
     stack = max_depth_np(image, 5)
-    print("Grouping slice spots...")
-    spots3d = group_slice_spots(stack, thresh)
-    print("Finding centroids...")
+    if printProgress:
+        print("Grouping slice spots...")
+    logger.info(f"Worker {getpid()}: Grouping slice spots")
+    spots3d = group_slice_spots(stack, thresh, printProgress)
+    if printProgress:
+        print("Finding centroids...")
+    logger.info(f"Worker {getpid()}: Finding centroids")
     outputSpots = find_centroids(spots3d)
+    logger.info(f"Worker {getpid()}: Done")
     return(outputSpots)
+
+class ProcessStepDetectSpots(ProcessStep):
+    """
+    A ProcessStep to detect a list of spots within the input.
+    """
+    def __init__(self, params: Dict = {}):
+        super().__init__(params)
+        self._stepName = "DetectSpots"
+
+    def run(self, progressCallback: Callable[..., Tuple[int, str]] = None) -> None:
+        assert isinstance(self._inputs, list) and len(self._inputs) == 1
+        assert 'spot_detect_threshold' in self._params
+        logger = log_to_stderr()
+        logger.setLevel(INFO)
+        logger.info(f"Worker {getpid()} inside ProcessStepDetectSpots.run()")
+        self._stepOutputs = []
+        self._endOutputs = []
+        spot_detect_threshold = self._params['spot_detect_threshold']
+        input = self._inputs
+        while isinstance(input, list):
+            logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
+            input = input[0]
+        assert(isinstance(input, np.ndarray))
+        self._status = ProcessStatus.RUNNING
+        self._stepOutputs.append(detect_spots(input, spot_detect_threshold, False))
+        logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
+        self._endOutputs.append([])
+        if progressCallback:
+            progressCallback(100, self._stepName)
+        self._status = ProcessStatus.COMPLETED
+
+class ProcessStepDetectSpotsConcurrent(ProcessStep):
+    """
+    A ProcessStep that concurrently detects spots on multiple
+    independent channels.
+    """
+
+    def __init__(self, params: Dict = {}):
+        super().__init__(params)
+        self._stepName = "DetectSpotsConcurrent"
+
+    def run(self, progressCallback: Callable[[int, str], None] = None):
+        assert isinstance(self._inputs, list) and len(self._inputs) > 0
+        self._status = ProcessStatus.RUNNING
+        concurrent = ProcessStepConcurrent(ProcessStepDetectSpots, self._params)
+        concurrent.setInputs(self._inputs)
+        concurrent.run(progressCallback)
+        status = concurrent.status()
+        if status == ProcessStatus.COMPLETED:
+            self._stepOutputs = concurrent.stepOutputs()[0]
+            self._endOutputs = concurrent.endOutputs()[0]
+        else:
+            self._stepOutputs = []
+            self._endOutputs = []
+        self._status = status
 
 if __name__ == "__main__":
     # Enter command line arguments as: inputFile outputFile thresh
