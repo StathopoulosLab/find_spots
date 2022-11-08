@@ -10,7 +10,7 @@
 import numpy as np
 from bm4d import BM4DProfile, BM4DProfileBM3D, bm4d, BM4DStages
 from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
-from typing import List, Dict, Tuple
+from typing import Callable, Dict
 from os import getpid
 
 class DenoiseBM4D():
@@ -54,7 +54,7 @@ class ProcessStepDenoiseImage(ProcessStep):
         super().__init__(params)
         self._stepName = "Denoise"
 
-    def run(self):
+    def run(self, progressCallback: Callable[[int, str], None] = None):
         assert len(self._inputs) > 0 and isinstance(self._inputs[0], np.ndarray)
         assert 'sharpen' in self._params.keys()
         assert 'sigma' in self._params.keys()
@@ -63,27 +63,46 @@ class ProcessStepDenoiseImage(ProcessStep):
         profile = BM4DProfileBM3D()
         profile.set_sharpen(self._params['sharpen'])
         self._stepOutputs.append(bm4d(
-            self._inputs,
+            self._inputs[0],
             self._params['sigma'],
             profile,
             stage_arg=BM4DStages.HARD_THRESHOLDING
             ))
         self._endOutputs.append(None)
+        if progressCallback:
+            progressCallback(100, self._stepName)
         self._status = ProcessStatus.COMPLETED
 
-    def progressCallback(self) -> Tuple[int, str]:
-        if self._status != ProcessStatus.COMPLETED:
-            return (0, self._stepName)
-        else:
-            return (100, self._stepName)
-
-def MakeProcessStepDenoiseConcurrent(volume: np.ndarray, params: Dict = {}) -> ProcessStepConcurrent:
+class ProcessStepDenoiseConcurrent(ProcessStep):
     """
-    Create a ProcessStepConcurrent composed of ProcessTespDenoiseImage steps
+    Create a ProcessStepConcurrent composed of ProcessStepDenoiseImage steps
     to denoise all the slices of a volume as concurrently as possible.
     """
-    # create a processing step for each slice of the volume
-    # note that [ProcessStepDenoiseImage(params)] * volume.shape[0] creates references to
-    # the same ProcessStep instance, rather than separate ones, like we need
-    processSteps = [ProcessStepDenoiseImage(params) for slice in range(volume.shape[0])]
-    return ProcessStepConcurrent(processSteps)
+    def __init__(self, params: Dict = {}):
+        super().__init__(params)
+        self._stepName = "DenoiseConcurrent"
+
+    def run(self, progressCallback: Callable[[int, str], None]):
+        # create a ProcessStepConcurrent of ProcessStepDenoiseImage steps, one per slice
+        assert isinstance(self._inputs, list) and len(self._inputs) == 1
+        inputVolume = self._inputs[0]
+        assert len(inputVolume.shape) == 3
+        firstSlice = self._params['firstSlice'] if 'firstSlice' in self._params else 0
+        lastSlice = self._params['lastSlice'] if 'lastSlice' in self._params else -1
+        totalSlices = inputVolume.shape[0]
+        firstSlice = max(0, min(totalSlices, firstSlice))
+        lastSlice = min(totalSlices, totalSlices + lastSlice if lastSlice < 0 else lastSlice)
+        slices = [inputVolume[i] for i in range(firstSlice, lastSlice)]
+        self._status = ProcessStatus.RUNNING
+        concurrent = ProcessStepConcurrent(ProcessStepDenoiseImage, self._params)
+        concurrent.setInputs(slices)
+        concurrent.run(progressCallback)
+        status = concurrent.status()
+        if status == ProcessStatus.COMPLETED:
+            denoisedVolume = np.array(concurrent.stepOutputs()).squeeze()
+            self._stepOutputs = [denoisedVolume]
+            self._endOutputs = concurrent.endOutputs()
+        else:
+            self._stepOutputs = []
+            self._endOutputs = []
+        self._status = status
