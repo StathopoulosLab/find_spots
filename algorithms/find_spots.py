@@ -29,6 +29,7 @@ default_params = {
     "last_slice": -1,    # -1 indicates last available slice.  -11 would skip the last 10
     "sigma": 15,
     "alpha_sharp": 1.3,
+    "nucleus_mask_threshold": 16,
     "spot_detect_threshold": -0.02,
     'touching_threshold': 0.2,
     'use_denoise3d': False,
