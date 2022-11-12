@@ -181,69 +181,11 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout = QGridLayout()
         self.denoiseSettingsGridLayout.setObjectName(u"denoiseSettingsGridLayout")
-        self.denoiseSettingsLabel = QLabel(self.centralwidget)
-        self.denoiseSettingsLabel.setObjectName(u"denoiseSettingsLabel")
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoiseSettingsLabel, 0, 0, 1, 2)
-
-        self.sharpenLabel = QLabel(self.centralwidget)
-        self.sharpenLabel.setObjectName(u"sharpenLabel")
-        self.sharpenLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpenLabel, 4, 0, 1, 1)
-
-        self.use3DCheckBox = QCheckBox(self.centralwidget)
-        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
-
-        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
-
         self.denoisePPELabel = QLabel(self.centralwidget)
         self.denoisePPELabel.setObjectName(u"denoisePPELabel")
         self.denoisePPELabel.setAlignment(Qt.AlignCenter)
 
         self.denoiseSettingsGridLayout.addWidget(self.denoisePPELabel, 1, 2, 1, 1)
-
-        self.sigmaPPELineEdit = QLineEdit(self.centralwidget)
-        self.sigmaPPELineEdit.setObjectName(u"sigmaPPELineEdit")
-        self.sigmaPPELineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaPPELineEdit, 3, 2, 1, 1)
-
-        self.sigmaLabel = QLabel(self.centralwidget)
-        self.sigmaLabel.setObjectName(u"sigmaLabel")
-        self.sigmaLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaLabel, 3, 0, 1, 1)
-
-        self.denoise3CRMLabel = QLabel(self.centralwidget)
-        self.denoise3CRMLabel.setObjectName(u"denoise3CRMLabel")
-        self.denoise3CRMLabel.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoise3CRMLabel, 1, 1, 1, 1)
-
-        self.sharpen3CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sharpen3CRMLineEdit.setObjectName(u"sharpen3CRMLineEdit")
-        self.sharpen3CRMLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen3CRMLineEdit, 4, 1, 1, 1)
-
-        self.sigma3CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sigma3CRMLineEdit.setObjectName(u"sigma3CRMLineEdit")
-        self.sigma3CRMLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigma3CRMLineEdit, 3, 1, 1, 1)
-
-        self.sharpenPPELineEdit = QLineEdit(self.centralwidget)
-        self.sharpenPPELineEdit.setObjectName(u"sharpenPPELineEdit")
-        self.sharpenPPELineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpenPPELineEdit, 4, 2, 1, 1)
-
-        self.sharpen5CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sharpen5CRMLineEdit.setObjectName(u"sharpen5CRMLineEdit")
-        self.sharpen5CRMLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen5CRMLineEdit, 4, 3, 1, 1)
 
         self.sigma5CRMLineEdit = QLineEdit(self.centralwidget)
         self.sigma5CRMLineEdit.setObjectName(u"sigma5CRMLineEdit")
@@ -251,14 +193,119 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout.addWidget(self.sigma5CRMLineEdit, 3, 3, 1, 1)
 
+        self.use3DCheckBox = QCheckBox(self.centralwidget)
+        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
+
+        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
+
+        self.denoise3CRMLabel = QLabel(self.centralwidget)
+        self.denoise3CRMLabel.setObjectName(u"denoise3CRMLabel")
+        self.denoise3CRMLabel.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoise3CRMLabel, 1, 1, 1, 1)
+
+        self.sharpenLabel = QLabel(self.centralwidget)
+        self.sharpenLabel.setObjectName(u"sharpenLabel")
+        self.sharpenLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpenLabel, 4, 0, 1, 1)
+
+        self.sharpenPPELineEdit = QLineEdit(self.centralwidget)
+        self.sharpenPPELineEdit.setObjectName(u"sharpenPPELineEdit")
+        self.sharpenPPELineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpenPPELineEdit, 4, 2, 1, 1)
+
+        self.sigmaPPELineEdit = QLineEdit(self.centralwidget)
+        self.sigmaPPELineEdit.setObjectName(u"sigmaPPELineEdit")
+        self.sigmaPPELineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaPPELineEdit, 3, 2, 1, 1)
+
+        self.sigma3CRMLineEdit = QLineEdit(self.centralwidget)
+        self.sigma3CRMLineEdit.setObjectName(u"sigma3CRMLineEdit")
+        self.sigma3CRMLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigma3CRMLineEdit, 3, 1, 1, 1)
+
+        self.sigmaLabel = QLabel(self.centralwidget)
+        self.sigmaLabel.setObjectName(u"sigmaLabel")
+        self.sigmaLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaLabel, 3, 0, 1, 1)
+
+        self.sharpen3CRMLineEdit = QLineEdit(self.centralwidget)
+        self.sharpen3CRMLineEdit.setObjectName(u"sharpen3CRMLineEdit")
+        self.sharpen3CRMLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpen3CRMLineEdit, 4, 1, 1, 1)
+
+        self.sharpen5CRMLineEdit = QLineEdit(self.centralwidget)
+        self.sharpen5CRMLineEdit.setObjectName(u"sharpen5CRMLineEdit")
+        self.sharpen5CRMLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpen5CRMLineEdit, 4, 3, 1, 1)
+
+        self.denoiseSettingsLabel = QLabel(self.centralwidget)
+        self.denoiseSettingsLabel.setObjectName(u"denoiseSettingsLabel")
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoiseSettingsLabel, 0, 0, 1, 2)
+
         self.denoise5CRMLabel = QLabel(self.centralwidget)
         self.denoise5CRMLabel.setObjectName(u"denoise5CRMLabel")
         self.denoise5CRMLabel.setAlignment(Qt.AlignCenter)
 
         self.denoiseSettingsGridLayout.addWidget(self.denoise5CRMLabel, 1, 3, 1, 1)
 
+        self.denoiseDAPILabel = QLabel(self.centralwidget)
+        self.denoiseDAPILabel.setObjectName(u"denoiseDAPILabel")
+        self.denoiseDAPILabel.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoiseDAPILabel, 1, 4, 1, 1)
+
+        self.sigmaDAPILineEdit = QLineEdit(self.centralwidget)
+        self.sigmaDAPILineEdit.setObjectName(u"sigmaDAPILineEdit")
+        self.sigmaDAPILineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaDAPILineEdit, 3, 4, 1, 1)
+
+        self.sharpenDAPILineEdit = QLineEdit(self.centralwidget)
+        self.sharpenDAPILineEdit.setObjectName(u"sharpenDAPILineEdit")
+        self.sharpenDAPILineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpenDAPILineEdit, 4, 4, 1, 1)
+
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
+
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.rightVerticalLayout.addItem(self.verticalSpacer_6)
+
+        self.nucleusMaskingGridLayout = QGridLayout()
+        self.nucleusMaskingGridLayout.setObjectName(u"nucleusMaskingGridLayout")
+        self.nucleusMaskingThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.nucleusMaskingThresholdLineEdit.setObjectName(u"nucleusMaskingThresholdLineEdit")
+
+        self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingThresholdLineEdit, 1, 1, 1, 1)
+
+        self.nucleusMaskingThresholdLabel = QLabel(self.centralwidget)
+        self.nucleusMaskingThresholdLabel.setObjectName(u"nucleusMaskingThresholdLabel")
+        self.nucleusMaskingThresholdLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingThresholdLabel, 1, 0, 1, 1)
+
+        self.nucleusMaskingLabel = QLabel(self.centralwidget)
+        self.nucleusMaskingLabel.setObjectName(u"nucleusMaskingLabel")
+
+        self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingLabel, 0, 0, 1, 1)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.nucleusMaskingGridLayout.addItem(self.horizontalSpacer, 1, 2, 1, 1)
+
+
+        self.rightVerticalLayout.addLayout(self.nucleusMaskingGridLayout)
 
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
@@ -423,13 +470,16 @@ class Ui_MainWindow(object):
         self.sliceSelectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Slice Selection Settings", None))
         self.firstSliceLabel.setText(QCoreApplication.translate("MainWindow", u"First Slice:", None))
         self.lastSliceLabel.setText(QCoreApplication.translate("MainWindow", u"Last Slice:", None))
-        self.denoiseSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Denoising Settings", None))
-        self.sharpenLabel.setText(QCoreApplication.translate("MainWindow", u"Sharpening:", None))
-        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
         self.denoisePPELabel.setText(QCoreApplication.translate("MainWindow", u"PPE", None))
-        self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
+        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
         self.denoise3CRMLabel.setText(QCoreApplication.translate("MainWindow", u"3'CRM", None))
+        self.sharpenLabel.setText(QCoreApplication.translate("MainWindow", u"Sharpening:", None))
+        self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
+        self.denoiseSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Denoising Settings", None))
         self.denoise5CRMLabel.setText(QCoreApplication.translate("MainWindow", u"5'CRM", None))
+        self.denoiseDAPILabel.setText(QCoreApplication.translate("MainWindow", u"DAPI", None))
+        self.nucleusMaskingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Masking Threshold: ", None))
+        self.nucleusMaskingLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Masking Settings", None))
         self.spotDetection5CRMLabel.setText(QCoreApplication.translate("MainWindow", u"5'CRM", None))
         self.spotDetectionPPELabel.setText(QCoreApplication.translate("MainWindow", u"PPE", None))
         self.spotDetectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Spot Detection Settings", None))
