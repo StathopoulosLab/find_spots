@@ -7,6 +7,7 @@
     it with a direct python wrapper.
 """
 
+from qtpy.QtWidgets import QApplication
 import numpy as np
 from bm4d import BM4DProfile, BM4DProfileBM3D, bm4d, BM4DStages
 from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
@@ -82,7 +83,7 @@ class ProcessStepDenoiseConcurrent(ProcessStep):
         super().__init__(params)
         self._stepName = "DenoiseConcurrent"
 
-    def run(self, progressCallback: Callable[[int, str], None]):
+    def run(self, progressCallback: Callable[[int, str], None] = None):
         # create a ProcessStepConcurrent of ProcessStepDenoiseImage steps, one per slice
         assert isinstance(self._inputs, list) and len(self._inputs) == 1
         inputVolume = self._inputs[0]
@@ -92,9 +93,10 @@ class ProcessStepDenoiseConcurrent(ProcessStep):
         totalSlices = inputVolume.shape[0]
         firstSlice = max(0, min(totalSlices, firstSlice))
         lastSlice = min(totalSlices, totalSlices + lastSlice if lastSlice < 0 else lastSlice)
-        slices = [inputVolume[i] for i in range(firstSlice, lastSlice)]
+        slices = [inputVolume[i] for i in range(firstSlice, lastSlice+1)]
         self._status = ProcessStatus.RUNNING
         concurrent = ProcessStepConcurrent(ProcessStepDenoiseImage, self._params)
+        concurrent.setApp(self._app)
         concurrent.setInputs(slices)
         concurrent.run(progressCallback)
         status = concurrent.status()
