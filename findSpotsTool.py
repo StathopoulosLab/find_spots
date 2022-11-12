@@ -4,7 +4,8 @@ from qtpy.QtWidgets import QApplication, QDialog, QDialogButtonBox, QFileDialog,
 from findSpotsTool_ui import Ui_MainWindow
 from imageCompareDialog import ImageCompareDialog
 from algorithms.denoise import ProcessStepDenoiseConcurrent
-from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent
+from algorithms.threshold_mask import ProcessStepThresholdMask
+from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent, ProcessStepDetectSpots
 from algorithms.tripletDetection import ProcessStepFindTriplets
 from algorithms.touchingAnalysis import ProcessStepAnalyzeTouching, write_output
 from algorithms.find_spots import get_param
@@ -17,9 +18,10 @@ import tifffile as tiff
 from PIL import Image
 from matplotlib import cm
 from enum import Enum
-import sys
+import sys, platform
 import time
 from typing import Dict, List
+import multiprocessing as mp
 
 class FindSpotsTool(QMainWindow):
 
@@ -29,8 +31,10 @@ class FindSpotsTool(QMainWindow):
     testSettingsPipeline = [
         (ProcessStepDenoiseConcurrent, [])
     ]
-    def __init__(self):
+    def __init__(self, app: QApplication):
         super().__init__()
+
+        self._app = app
 
         # set up the main window UI
         self.ui = Ui_MainWindow()
@@ -53,10 +57,14 @@ class FindSpotsTool(QMainWindow):
         self.ui.sigma3CRMLineEdit.setText(default_sigma)
         self.ui.sigmaPPELineEdit.setText(default_sigma)
         self.ui.sigma5CRMLineEdit.setText(default_sigma)
+        self.ui.sigmaDAPILineEdit.setText(default_sigma)
         default_alpha_sharp = str(get_param("alpha_sharp", params))
         self.ui.sharpen3CRMLineEdit.setText(default_alpha_sharp)
         self.ui.sharpenPPELineEdit.setText(default_alpha_sharp)
         self.ui.sharpen5CRMLineEdit.setText(default_alpha_sharp)
+        self.ui.sharpenDAPILineEdit.setText(default_alpha_sharp)
+        default_nucleus_mask_threshold = str(get_param("nucleus_mask_threshold", params))
+        self.ui.nucleusMaskingThresholdLineEdit.setText(default_nucleus_mask_threshold)
         default_spot_detect_threshold = str(get_param("spot_detect_threshold", params))
         self.ui.spotDetection3CRMThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetectionPPEThresholdLineEdit.setText(default_spot_detect_threshold)
@@ -166,6 +174,15 @@ class FindSpotsTool(QMainWindow):
                 'sigma': int(self.ui.sigma5CRMLineEdit.text()),
                 'sharpen': float(self.ui.sharpen5CRMLineEdit.text()),
                 'spot_detect_threshold': float(self.ui.spotDetection5CRMThresholdLineEdit.text())
+            },
+            # params for DAPI channel
+            {
+                'firstSlice': int(self.ui.firstSliceLineEdit.text()),
+                'lastSlice': int(self.ui.lastSliceLineEdit.text()),
+                'sigma': int(self.ui.sigmaDAPILineEdit.text()),
+                'sharpen': float(self.ui.sharpenDAPILineEdit.text()),
+                'nucleus_mask_threshold': int(self.ui.nucleusMaskingThresholdLineEdit.text())
+
             }
         ]
         tripletsParams: Dict = {}
@@ -175,19 +192,22 @@ class FindSpotsTool(QMainWindow):
 
         processSequence: List[ProcessStep] = [
                 ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
+                ProcessStepThresholdMask(perChannelParamsList[-1]),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
                 ProcessStepAnalyzeTouching(touchingParams)
             ] if validateParams else [
                 ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList),
+                ProcessStepThresholdMask(perChannelParamsList[-1]),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
                 ProcessStepAnalyzeTouching(touchingParams)
             ]
 
-        stepOutputs = [cf.channel_3CRM(), cf.channel_PPE(), cf.channel_5CRM()]
+        stepOutputs = [cf.channel_3CRM(), cf.channel_PPE(), cf.channel_5CRM(), cf.channel_antibody()]
         endOutputs = []
         for step in processSequence:
+            step.setApp(self._app)
             step.setInputs(stepOutputs)
             step.run(progressCallback)
             if step.status() != ProcessStatus.COMPLETED:
@@ -257,10 +277,12 @@ class FindSpotsTool(QMainWindow):
         self.close()
 
 if __name__ == "__main__":
+    if platform.system() == "Darwin":
+        mp.set_start_method('spawn')
     # Create the Qt Application
     app = QApplication(sys.argv)
 
-    tool = FindSpotsTool()
+    tool = FindSpotsTool(app)
     tool.screen_center = app.screens()[len(app.screens())-1].availableGeometry().center()
     # spacing = QPoint((window.width() + video.width()) / 4 + 5, 0)
     qr = tool.frameGeometry()
