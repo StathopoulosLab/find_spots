@@ -1,5 +1,6 @@
 from __future__ import division, print_function
 
+from qtpy.QtWidgets import QApplication
 import sys
 from processing import ProcessStep, ProcessStatus
 from typing import Callable, Dict
@@ -107,6 +108,7 @@ def write_results(triplets, outputFileName):
 
 def find_best_triplets(blueSpots, redSpots, greenSpots,
                        xScale: float, yScale: float, zScale: float,
+                       app: QApplication = None,
                        progressCallback: Callable[[int, str], None] = None):
     points = []
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in blueSpots])
@@ -117,13 +119,19 @@ def find_best_triplets(blueSpots, redSpots, greenSpots,
     max_triplets = []
     if progressCallback:
         progressCallback(0, "FindTriplets")
+    if app:
+        # let the GUI, if there is one, process pending events
+        app.processEvents()
     for i, lim in enumerate(limits):
         triplets = triplet_selection(points, lim**2)
         if len(triplets) > len(max_triplets):
             max_triplets = triplets
             max_lim = lim
         if progressCallback:
-            progressCallback(int(i+1 / len(limits)), "FindTriplets")
+            progressCallback(((i+1) * 100) // len(limits), "FindBestTriplets")
+        if app:
+            # let the GUI, if there is one, process pending events
+            app.processEvents()
     return (max_triplets, max_lim)
 
 class ProcessStepFindTriplets(ProcessStep):
@@ -150,6 +158,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._scale['X'],
             self._scale['Y'],
             self._scale['Z'],
+            self._app,
             progressCallback)
         self._stepOutputs.append(max_triplets)
         self._endOutputs.append(max_lim)
