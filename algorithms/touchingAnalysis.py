@@ -1,3 +1,7 @@
+# touchingAnalysis.py
+
+
+from qtpy.QtWidgets import QApplication
 from processing import ProcessStatus, ProcessStep
 
 from os import read
@@ -127,6 +131,8 @@ class ProcessStepAnalyzeTouching(ProcessStep):
         if progressCallback:
             # this step runs fast, so don't bother reporting intermediate progress
             progressCallback(100, self._stepName)
+        if self._app:
+            self._app.processEvents()
         self._status = ProcessStatus.COMPLETED
 
 
