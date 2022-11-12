@@ -1,7 +1,9 @@
 # processing.py
+from qtpy.QtWidgets import QApplication
 from typing import List, Dict, Tuple, Callable
 from enum import Enum
 import multiprocessing as mp
+from queue import Full
 import logging
 from os import getpid
 
@@ -28,12 +30,16 @@ class ProcessStep():
     """
 
     def __init__(self, params: Dict = {}):
+        self._app = None
         self._stepName: str = ""
         self._status: ProcessStatus = ProcessStatus.NOT_STARTED
         self._inputs: List = []
         self._stepOutputs: List = []
         self._endOutputs: List = []
         self._params: Dict = params
+
+    def setApp(self, app: QApplication):
+        self._app = app
 
     def stepName(self) -> str:
         return self._stepName
@@ -135,8 +141,12 @@ class ProcessStepConcurrent(ProcessStep):
 
     def setInputs(self, inputs: List) -> None:
         super().setInputs(inputs)
-        self._stepOutputs = [None] * len(self._inputs)
-        self._endOutputs = [None] * len(self._inputs)
+        self._stepOutputs = []
+        self._endOutputs = []
+
+    def setApp(self, app: QApplication):
+        # QApplication objects can't be pickled, so don't store it
+        pass
 
     def runInner(self, stepClass: ProcessStep, params: Dict, inQ: mp.Queue, outQ: mp.Queue) -> None:
         """
@@ -145,8 +155,8 @@ class ProcessStepConcurrent(ProcessStep):
         """
         logger = mp.log_to_stderr()
         try:
+            step = stepClass(params)
             while True:
-                step = stepClass(params)
                 idx, inputs = inQ.get()
                 if idx < 0:
                     # pass the "poison pill" on and then exit
@@ -158,7 +168,7 @@ class ProcessStepConcurrent(ProcessStep):
         except Exception as e:
             logger.exception(f"Worker {getpid()} got exception {e}")
 
-    def accumulateOutputs(self, workers: int, outQ: mp.Queue, finalOutQ: mp.Queue) -> None:
+    def accumulateOutputs(self, nWorkers: int, outQ: mp.Queue) -> None:
         """
         Accumulate the results from the various parallel threads and accumulate them.
         This should be the last step of the pipeline
@@ -170,7 +180,7 @@ class ProcessStepConcurrent(ProcessStep):
         unorderedOutputs = []
         workersDone = 0
         try:
-            while workersDone < workers:
+            while workersDone < nWorkers:
                 outputs = outQ.get()
                 idx = outputs[0]
                 if idx < 0:
@@ -182,13 +192,13 @@ class ProcessStepConcurrent(ProcessStep):
             unorderedOutputs.sort(key=lambda item: item[0])
             # remove the indices and unwrap each slice before outputting
             # create a tuple of stepOutputs and endOutputs
-            finalOutQ.put((
-                [item[1][0] for item in unorderedOutputs],
-                [item[2][0] for item in unorderedOutputs]))
+            return \
+                [item[1][0] for item in unorderedOutputs], \
+                [item[2][0] for item in unorderedOutputs]
         except Exception as e:
             logger.exception(f"accumulateOutputs got exception {e}")
 
-    def run(self, progressCallback: Callable[[int, str], None]) -> None:
+    def run(self, progressCallback: Callable[[int, str], None] = None) -> None:
         """
         Run the steps concurrently, accumulating the results in a list
 
@@ -209,39 +219,63 @@ class ProcessStepConcurrent(ProcessStep):
             with mp.Manager() as mgr:
                 inQ = mgr.Queue(nWorkers)   # one per worker
                 outQ = mgr.Queue(nWorkers)  # contains tuple(stepOutputs, endOutputs) to avoid race with two queues
-                finalOutQ = mgr.Queue(1)
                 logger.info("Queues created")
                 if isinstance(self._params, dict):
                     self._params = [self._params] * nWorkers
-                assert len(self._params) == nWorkers    # check in case params was passed in as a list
-                workers = [pool.apply_async(self.runInner, (self._step, self._params[i], inQ, outQ)) for i in range(nWorkers)]
-                logger.info(f"Started {nWorkers} Workers with runConcurrentInner")
-                accumulator = pool.apply_async(self.accumulateOutputs, (nWorkers, outQ, finalOutQ))
+                assert len(self._params) >= nWorkers    # check in case params was passed in as a list
+                accumulatorResults = pool.apply_async(self.accumulateOutputs, (nWorkers, outQ))
                 logger.info("Started accumulateOutputs Worker")
+                try:
+                    workerResults = [pool.apply_async(self.runInner, (self._step, self._params[i], inQ, outQ)) for i in range(nWorkers)]
+                except Exception as e:
+                    logger.exception(f"Exception trying to start workers with runInner: {e}")
+                logger.info(f"Started {nWorkers} Workers with runInner")
 
                 for idx, inputs in enumerate(self._inputs):
                     logger.info(f"Enqueued idx {idx}")
-                    inQ.put((idx, [inputs]))
+                    while True:
+                        # the queue can fill, at which point inQ.put will block
+                        # Set a timeout so that Qt can handle UI events before trying again
+                        try:
+                            inQ.put((idx, [inputs]), timeout=0.1)
+                            break
+                        except Full:
+                            if self._app:
+                                self._app.processEvents()
 
                 for idx in range(nWorkers):
                     logger.info(f"Enqueuing poison pill #{idx}")
-                    inQ.put((-1, None))
+                    while True:
+                        # Let Qt handle UI events, same as above
+                        try:
+                            inQ.put((-1, None), timeout=0.1)
+                            break
+                        except Full:
+                            if self._app:
+                                self._app.processEvents()
 
                 # close the pool's input and wait for everything to finish
                 pool.close()
                 logger.info("Pool closed")
+                while True:
+                    try:
+                        stepOutputs, endOutputs = accumulatorResults.get(0.1)
+                        logger.info("Got output from accumulateOutputs")
+                        break
+                    except mp.TimeoutError:
+                        # let Qt get in to process UI events.
+                        if self._app:
+                            self._app.processEvents()
                 pool.join()
                 logger.info("Pool joined")
-                try:
-                    stepOutputs, endOutputs = finalOutQ.get(True, 1)
-                except mp.queues.Empty:
-                    print("outputs unexpectedly empty")
                 self._stepOutputs.append(stepOutputs)
                 self._endOutputs.append(endOutputs)
             if progressCallback:
                 #TODO: provide a callback mechanism that passes on updates
                 # from accumulateOutputs
                 progressCallback(100, self._stepName)
+            if self._app:
+                self._app.processEvents()
             self._status = ProcessStatus.COMPLETED
 
 class ProcessStepIterate(ProcessStep):
@@ -267,6 +301,8 @@ class ProcessStepIterate(ProcessStep):
             self._progressCallback(
                 int((self._stepsCompleted + progress / 100.) / len(self._inputs)),
                 self._stepName + '.' + stepName)
+        if self._app:
+            self._app.processEvents()
 
     def run(self, progressCallback: Callable[[int, str], None] = None) -> None:
         """
@@ -280,6 +316,7 @@ class ProcessStepIterate(ProcessStep):
         statuses: List(ProcessStatus) = [ProcessStatus.QUEUED] * len(self._inputs)
         for i, input in enumerate(self._inputs):
             step = self._stepClass(self._paramsList[i])
+            step.setApp(self._app)
             step.setInputs([input])
             step.run(self.progressCallbackWrapper if progressCallback else None)
             statuses[i] = step.status()
