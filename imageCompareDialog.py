@@ -8,6 +8,7 @@ from numpy import ndarray
 from imageCompareDialog_ui import Ui_ImageCompareDialog
 
 from algorithms.denoise import ProcessStepDenoiseConcurrent
+from algorithms.threshold_mask import ProcessStepThresholdMask
 from processing import ProcessStep, ProcessStatus
 from typing import Callable, Dict
 
@@ -60,15 +61,16 @@ class ProcessStepVisualizeDenoise(ProcessStep):
 
     def __init__(self, params: Dict = {}):
         super().__init__(params)
-        self._step = ProcessStepDenoiseConcurrent(params)
         self._stepName = "Visualize"
 
     def run(self, progressCallback: Callable[[int, str], None] = None):
         self._status = ProcessStatus.RUNNING
-        self._step.setInputs(self._inputs)
-        self._step.run(progressCallback)
-        stepOutputs = self._step.stepOutputs()
-        endOutputs = self._step.endOutputs()
+        step = ProcessStepDenoiseConcurrent(self._params)
+        step.setApp(self._app)
+        step.setInputs(self._inputs)
+        step.run(progressCallback)
+        stepOutputs = step.stepOutputs()
+        endOutputs = step.endOutputs()
         viewer = ImageCompareDialog()
         viewer.setLeftImageVolume(self._inputs[0])
         viewer.setRightImageVolume(stepOutputs[0])
@@ -86,4 +88,3 @@ class ProcessStepVisualizeDenoise(ProcessStep):
             raise ValueError(f"Unexpected return value: {result}")
         self._stepOutputs = stepOutputs
         self._endOutputs = endOutputs
-
