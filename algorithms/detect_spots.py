@@ -4,6 +4,7 @@
 
 from  __future__ import division, print_function
 
+from qtpy.QtWidgets import QApplication
 import numpy as np
 
 import scipy.ndimage
@@ -15,11 +16,16 @@ from os import getpid
 from multiprocessing import log_to_stderr
 from logging import INFO
 
+root2 = np.sqrt(2)
+
 def distance_2D(point1, point2):
-    '''Returns distance between point 1 and point 2 in form [x,y,z]'''
+    '''
+    Returns distance squared (to avoid sqrt calls)
+    between point 1 and point 2 in form [x,y,z]
+    '''
     x1, y1 = point1[0], point1[1]
     x2, y2 = point2[0], point2[1]
-    return np.sqrt((x1-x2)**2 + (y1-y2)**2)
+    return (x1-x2)**2 + (y1-y2)**2
 
 def max_depth(files, depth):
     '''Gives the maximum intensity of 'depth' number of slices.'''
@@ -72,23 +78,61 @@ def detect_slice_spots(image, sliceIndex, thresh):
             for x in range(1,len(LoG[z][y])-1):
                 #This search auto-eliminates minima at highest & lowest sigmas
                 searchSpace = LoG[z-1:z+2, y-1:y+2, x-1:x+2]
-                if LoG[z][y][x] < thresh:
-                    if LoG[z][y][x] == np.min(searchSpace):
-                        spots.append((x,y,sliceIndex,sigmaSpace[z]))
+                val = LoG[z][y][x]
+                if val < thresh and val == np.min(searchSpace):
+                    spots.append((x,y,sliceIndex,sigmaSpace[z]))
 
     # Kill overlapping spots
-    for spotOne in spots[:]:
-        otherSpots = [x for x in spots if x != spotOne]
-        for spotTwo in otherSpots:
-            minDist = (spotOne[-1]+spotTwo[-1]) * np.sqrt(2)
+    outputSpots = []
+    while len(spots) > 1:
+        spotOne = spots[-1]
+        includeSpotOne = True
+        toRemove = []
+        for idx, spotTwo in enumerate(spots[:-1]):
+            # See if we should include spotOne in the output,
+            # and if we should remove spotTwo from further consideration
+            # We do this by checking the distance between the first spot in spots
+            # against all the other spots.  If it's closer than thresh and is the
+            # larger of the two, remove the other one from spots.  If it's the smaller,
+            # we stop the distance comparisons and don't append this spot to the output.
+            # (The other spot will be added when it becomes the first (zeroth) spot in the list,
+            # assuming it's not removed because of some other nearby spot).
+            minDist = ((spotOne[-1]+spotTwo[-1]) * root2)**2  # squared because distance_2D is in squared units
             if distance_2D(spotOne[0:2], spotTwo[0:2]) < minDist:
                 # Now we're removing just the smaller spot instead of both
-                if spotTwo in spots and spotOne[3] > spotTwo[3]:
-                    spots.remove(spotTwo)
-                if spotOne in spots and spotOne[3] < spotTwo[3]:
-                    spots.remove(spotOne)
+                if spotOne[3] > spotTwo[3]:
+                    # remove spotTwo from further consideration
+                    toRemove.append(idx)
+                else:
+                    # don't include spotOne, since spotTwo subsumes it, and abort checking against other spots
+                    # (spotTwo will be included later if it's not itself subsumed)
+                    includeSpotOne = False
+                    break
+        if includeSpotOne:
+            outputSpots.append(spotOne)
+        for idx in reversed(toRemove):
+            del spots[idx]
+        spots.pop() # remove spotOne
+        # spots.remove(spotOne)
+    if len(spots) > 0:
+        outputSpots.append(spots[0])    # include the final remaining spot
+    return outputSpots
 
-    return spots
+    # # This, the original implementation, is ineffecient, in that it does twice as many compares as it needs to,
+    # # Comparing spotOne against spotTwo, and later comparing them again when the second spot is now spotOne
+    # for spotOne in spots[:]:
+    #     for spotTwo in spots:
+    #         if spotTwo == spotOne:
+    #             continue
+    #         minDist = ((spotOne[-1]+spotTwo[-1]) * root2)**2  # squared because distance_2D is in squared units
+    #         if distance_2D(spotOne[0:2], spotTwo[0:2]) < minDist:
+    #             # Now we're removing just the smaller spot instead of both
+    #             if spotTwo in spots and spotOne[3] > spotTwo[3]:
+    #                 spots.remove(spotTwo)
+    #             if spotOne in spots and spotOne[3] < spotTwo[3]:
+    #                 spots.remove(spotOne)
+
+    # return spots
 
 def searchSlice(sliceSpots, searchSpot):
     '''Given a list sliceSpots of tuples (x,y,z,sigma) and another tuple
@@ -97,8 +141,8 @@ def searchSlice(sliceSpots, searchSpot):
     returned if 0 or >1 sliceSpots are within searchSpot's radius.'''
     nextSpot = (-1,-1,-1,-1)
     hits = 0 # counts up number of neighbors in radius of the starting spot
+    radius = (searchSpot[-1] * root2)**2    # squared because distance_2D returns squared units
     for spot in sliceSpots:
-        radius = searchSpot[-1] * np.sqrt(2)
         if distance_2D(searchSpot[0:2], spot[0:2]) < radius:
             hits += 1
             if hits == 1:
@@ -227,12 +271,16 @@ class ProcessStepDetectSpots(ProcessStep):
             logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
             input = input[0]
         assert(isinstance(input, np.ndarray))
+        if input.dtype != np.float64:
+            input = np.array(input, dtype=np.float64)
         self._status = ProcessStatus.RUNNING
         self._stepOutputs.append(detect_spots(input, spot_detect_threshold, False))
         logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
         self._endOutputs.append([])
         if progressCallback:
             progressCallback(100, self._stepName)
+        if self._app:
+            self._app.processEvents()
         self._status = ProcessStatus.COMPLETED
 
 class ProcessStepDetectSpotsConcurrent(ProcessStep):
@@ -249,6 +297,7 @@ class ProcessStepDetectSpotsConcurrent(ProcessStep):
         assert isinstance(self._inputs, list) and len(self._inputs) > 0
         self._status = ProcessStatus.RUNNING
         concurrent = ProcessStepConcurrent(ProcessStepDetectSpots, self._params)
+        concurrent.setApp(self._app)
         concurrent.setInputs(self._inputs)
         concurrent.run(progressCallback)
         status = concurrent.status()
