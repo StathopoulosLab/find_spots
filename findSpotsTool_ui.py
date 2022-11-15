@@ -286,6 +286,7 @@ class Ui_MainWindow(object):
         self.nucleusMaskingGridLayout.setObjectName(u"nucleusMaskingGridLayout")
         self.nucleusMaskingThresholdLineEdit = QLineEdit(self.centralwidget)
         self.nucleusMaskingThresholdLineEdit.setObjectName(u"nucleusMaskingThresholdLineEdit")
+        self.nucleusMaskingThresholdLineEdit.setAlignment(Qt.AlignCenter)
 
         self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingThresholdLineEdit, 1, 1, 1, 1)
 
