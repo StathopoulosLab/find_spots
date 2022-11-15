@@ -13,15 +13,15 @@ from algorithms.confocal_file import ConfocalFile
 from algorithms.detect_spots import detect_spots
 from processing import ProcessStatus, ProcessStep, ProcessStepIterate
 from imageCompareDialog import ProcessStepVisualizeDenoise
-from os.path import expanduser, splitext
-import tifffile as tiff
-from PIL import Image
+
 from matplotlib import cm
-from enum import Enum
+import multiprocessing as mp
+import numpy as np
+from os.path import expanduser, splitext
 import sys, platform
+import tifffile as tiff
 import time
 from typing import Dict, List
-import multiprocessing as mp
 
 class FindSpotsTool(QMainWindow):
 
@@ -70,7 +70,7 @@ class FindSpotsTool(QMainWindow):
         self.ui.spotDetection555ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetection488ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
-        self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice")))
+        self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice", params)))
 
         # connect various widgets to actions
         self.ui.addFilesButton.clicked.connect(self.addFiles)
@@ -228,7 +228,7 @@ class FindSpotsTool(QMainWindow):
         spot_projection_slice = max(0, min(spot_projection_slice, cf.channel_nucleus().shape[0]))
         gray_colormap = cm.get_cmap('gray', 256)
         nucleus_3D_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
-        nucleus_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice])[:,:,0:3]
+        nucleus_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
 
         # Now plot each of the triplets into the image stack, colored by conformation
         colors = {
