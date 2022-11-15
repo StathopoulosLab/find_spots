@@ -14,7 +14,7 @@ fish_finder MatLab package.
 def czi2tif(infile: str):
     stem, ext = os.path.splitext(infile)
     cf = ConfocalFile(infile)
-    outimage = np.stack([cf.channel_3CRM(), cf.channel_PPE(), cf.channel_5CRM(), cf.channel_antibody()])
+    outimage = np.stack([cf.channel_647(), cf.channel_555(), cf.channel_488(), cf.channel_nucleus()])
     tf.imwrite(stem + '.tif',
         outimage,
         shape=outimage.shape,

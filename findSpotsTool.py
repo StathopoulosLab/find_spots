@@ -54,22 +54,23 @@ class FindSpotsTool(QMainWindow):
         self.ui.lastSliceLineEdit.setText(str(get_param("last_slice", params)))
         self.ui.use3DCheckBox.setChecked(get_param('use_denoise3d', params))
         default_sigma = str(get_param("sigma", params))
-        self.ui.sigma3CRMLineEdit.setText(default_sigma)
-        self.ui.sigmaPPELineEdit.setText(default_sigma)
-        self.ui.sigma5CRMLineEdit.setText(default_sigma)
-        self.ui.sigmaDAPILineEdit.setText(default_sigma)
+        self.ui.sigma647LineEdit.setText(default_sigma)
+        self.ui.sigma555LineEdit.setText(default_sigma)
+        self.ui.sigma488LineEdit.setText(default_sigma)
+        self.ui.sigmaNucleusLineEdit.setText(default_sigma)
         default_alpha_sharp = str(get_param("alpha_sharp", params))
-        self.ui.sharpen3CRMLineEdit.setText(default_alpha_sharp)
-        self.ui.sharpenPPELineEdit.setText(default_alpha_sharp)
-        self.ui.sharpen5CRMLineEdit.setText(default_alpha_sharp)
-        self.ui.sharpenDAPILineEdit.setText(default_alpha_sharp)
+        self.ui.sharpen647LineEdit.setText(default_alpha_sharp)
+        self.ui.sharpen555LineEdit.setText(default_alpha_sharp)
+        self.ui.sharpen488LineEdit.setText(default_alpha_sharp)
+        self.ui.sharpenNucleusLineEdit.setText(default_alpha_sharp)
         default_nucleus_mask_threshold = str(get_param("nucleus_mask_threshold", params))
         self.ui.nucleusMaskingThresholdLineEdit.setText(default_nucleus_mask_threshold)
         default_spot_detect_threshold = str(get_param("spot_detect_threshold", params))
-        self.ui.spotDetection3CRMThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.spotDetectionPPEThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.spotDetection5CRMThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.spotDetection647ThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.spotDetection555ThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.spotDetection488ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
+        self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice")))
 
         # connect various widgets to actions
         self.ui.addFilesButton.clicked.connect(self.addFiles)
@@ -151,36 +152,36 @@ class FindSpotsTool(QMainWindow):
 
         # set up the processing sequence and params
         perChannelParamsList = [
-            # params for 3'CRM channel
+            # params for 647 channel
             {
                 'firstSlice': int(self.ui.firstSliceLineEdit.text()),
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigma3CRMLineEdit.text()),
-                'sharpen': float(self.ui.sharpen3CRMLineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection3CRMThresholdLineEdit.text())
+                'sigma': int(self.ui.sigma647LineEdit.text()),
+                'sharpen': float(self.ui.sharpen647LineEdit.text()),
+                'spot_detect_threshold': float(self.ui.spotDetection647ThresholdLineEdit.text())
             },
-            # params for PPE channel
+            # params for 555 channel
             {
                 'firstSlice': int(self.ui.firstSliceLineEdit.text()),
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigmaPPELineEdit.text()),
-                'sharpen': float(self.ui.sharpenPPELineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetectionPPEThresholdLineEdit.text())
+                'sigma': int(self.ui.sigma555LineEdit.text()),
+                'sharpen': float(self.ui.sharpen555LineEdit.text()),
+                'spot_detect_threshold': float(self.ui.spotDetection555ThresholdLineEdit.text())
             },
-            # params for 5'CRM channel
+            # params for 488 channel
             {
                 'firstSlice': int(self.ui.firstSliceLineEdit.text()),
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigma5CRMLineEdit.text()),
-                'sharpen': float(self.ui.sharpen5CRMLineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection5CRMThresholdLineEdit.text())
+                'sigma': int(self.ui.sigma488LineEdit.text()),
+                'sharpen': float(self.ui.sharpen488LineEdit.text()),
+                'spot_detect_threshold': float(self.ui.spotDetection488ThresholdLineEdit.text())
             },
-            # params for DAPI channel
+            # params for Nucleus channel
             {
                 'firstSlice': int(self.ui.firstSliceLineEdit.text()),
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigmaDAPILineEdit.text()),
-                'sharpen': float(self.ui.sharpenDAPILineEdit.text()),
+                'sigma': int(self.ui.sigmaNucleusLineEdit.text()),
+                'sharpen': float(self.ui.sharpenNucleusLineEdit.text()),
                 'nucleus_mask_threshold': int(self.ui.nucleusMaskingThresholdLineEdit.text())
 
             }
@@ -204,7 +205,7 @@ class FindSpotsTool(QMainWindow):
                 ProcessStepAnalyzeTouching(touchingParams)
             ]
 
-        stepOutputs = [cf.channel_3CRM(), cf.channel_PPE(), cf.channel_5CRM(), cf.channel_antibody()]
+        stepOutputs = [cf.channel_647(), cf.channel_488(), cf.channel_555(), cf.channel_nucleus()]
         endOutputs = []
         for step in processSequence:
             step.setApp(self._app)
@@ -222,20 +223,23 @@ class FindSpotsTool(QMainWindow):
         outStem, _ = splitext(fileToRun)
         write_output(output, outStem + "_results.txt")
 
-        # construct a new rgb version of the antibody image volume
+        # construct a new rgb version of the nucleus image volume and specified slice
+        spot_projection_slice = int(self.ui.spotProjectionSliceLineEdit.text())
+        spot_projection_slice = max(0, min(spot_projection_slice, cf.channel_nucleus().shape[0]))
         gray_colormap = cm.get_cmap('gray', 256)
-        antibody_rgb = gray_colormap(cf.channel_antibody(), bytes=True)[:,:,:,0:3]
+        nucleus_3D_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
+        nucleus_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice])[:,:,0:3]
 
         # Now plot each of the triplets into the image stack, colored by conformation
         colors = {
-            '000': (255,   0,   0),     # red
-            '100': (  0,   0, 255),     # blue
-            '010': (  0, 255,   0),     # green
-            '001': (  0, 255, 255),     # cyan
-            '110': (255, 255,   0),     # yellow
-            '101': (  0,   0,   0),     # black
-            '011': (255, 255, 255),     # white
-            '111': (255,   0, 255)      # magenta
+            '000': ( 32,  32,  32),     # nothing touching: dark gray
+            '100': (255, 255,   0),     # only red touching green: yellow
+            '010': (  0, 255, 255),     # only green touching blue: cyan
+            '001': (255,   0, 255),     # only blue touching red: magenta
+            '110': (  0, 255,   0),     # red touching green, and green touching blue: green
+            '011': (  0,   0, 255),     # green touching blue and blue touching red: blue
+            '101': (255,   0,   0),     # blue touching red and red touching green: red
+            '111': (255, 255, 255)      # all spots touching: white
             }
 
         for triplet in output:
@@ -244,16 +248,18 @@ class FindSpotsTool(QMainWindow):
             z = round(triplet[2] / scale['Z'])
             color = colors[triplet[3]]
             for dx in range(-6,7):
-                if x + dx < 0 or x + dx >= antibody_rgb.shape[1]:
+                if x + dx < 0 or x + dx >= nucleus_3D_rgb.shape[1]:
                     continue
                 for dy in range(-6, 7):
-                    if y + dx < 0 or y + dy >= antibody_rgb.shape[2]:
+                    if y + dx < 0 or y + dy >= nucleus_3D_rgb.shape[2]:
                         continue
-                    for dz in range(-2, 3):
-                        if z + dz < 0 or z + dz >= antibody_rgb.shape[0]:
+                    nucleus_2D_rgb[x+dx][y+dy] = color
+                    for dz in range(-1, 2):
+                        if z + dz < 0 or z + dz >= nucleus_3D_rgb.shape[0]:
                             continue
-                        antibody_rgb[z+dz][x+dx][y+dy] = color
-        tiff.imwrite(outStem + "_rgb.tiff", antibody_rgb)
+                        nucleus_3D_rgb[z+dz][x+dx][y+dy] = color
+        tiff.imwrite(outStem + "_3D_rgb.tiff", nucleus_3D_rgb)
+        tiff.imwrite(outStem + "_2D_rgb.tiff", nucleus_2D_rgb)
 
         completedFilesList = self.completedFilesModel.stringList()
         completedFilesList.append(fileToRun)

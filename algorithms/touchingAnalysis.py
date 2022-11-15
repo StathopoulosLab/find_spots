@@ -18,11 +18,11 @@ def classify(blue, red, green, threshold):
     '''Classifies given triplet based on distances between 3 point inputs and
     a threshold parameter that gives the cutoff between "near" and "far"'''
     output = [0,0,0]
-    if distance(blue, red) < threshold:
+    if distance(red, green) < threshold:
         output[0] = 1
     if distance(green, blue) < threshold:
         output[1] = 1
-    if distance(red, green) < threshold:
+    if distance(blue, red) < threshold:
         output[2] = 1
     return ''.join(str(e) for e in output)
 
@@ -38,7 +38,7 @@ def read_file(inputFName):
     return triplets
 
 def analyze_inner(points, thresh, read_file_order: bool = False) -> Tuple[List, Dict]:
-    '''Given input file of triplet (b_x, b_y, b_z, r_x, r_y, r_z, g_x, g_y, g_z)
+    '''Given input file of triplet (r_x, r_y, r_z, g_x, g_y, g_z, b_x, b_y, b_z)
     coordinates with units in physical lengths (not pixel widths) and a
     threshold to determine touching, classifies each triplet into one of 8
     conformations based on which spots are close/touching.'''

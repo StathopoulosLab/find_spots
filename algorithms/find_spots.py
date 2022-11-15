@@ -31,8 +31,9 @@ default_params = {
     "alpha_sharp": 1.3,
     "nucleus_mask_threshold": 16,
     "spot_detect_threshold": -0.02,
-    'touching_threshold': 0.2,
+    'touching_threshold': 0.5,
     'use_denoise3d': False,
+    'spot_projection_slice': 10,
     # 'use_bm4d': True,
     'save_after_denoise': False,
     'save_spots': True
@@ -84,7 +85,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_antibody"
-        save_components(cf.channel_antibody()[first_slice:last_slice], save_name)
+        save_components(cf.channel_nucleus()[first_slice:last_slice], save_name)
 
     denoiser = DenoiseBM4D()
     # if use_bm4d:
@@ -97,9 +98,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     #TODO: make these steps concurrent
     print("Denoising 3'CRM")
     if use_denoise3d:
-        denoised_3CRM = denoiser.denoise3d(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_3CRM = denoiser.denoise3d(cf.channel_647()[first_slice:last_slice], sigma, alpha_sharp)
     else:
-        denoised_3CRM = denoiser.denoise(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_3CRM = denoiser.denoise(cf.channel_647()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_3CRM_denoised"
@@ -112,9 +113,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     print("Denoising 5'CRM")
     if use_denoise3d:
-        denoised_5CRM = denoiser.denoise3d(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_5CRM = denoiser.denoise3d(cf.channel_555()[first_slice:last_slice], sigma, alpha_sharp)
     else:
-        denoised_5CRM = denoiser.denoise(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_5CRM = denoiser.denoise(cf.channel_555()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_5CRM_denoised"
@@ -127,9 +128,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     print("Denoising PPE")
     if use_denoise3d:
-        denoised_PPE = denoiser.denoise3d(cf.channel_PPE()[first_slice:last_slice], sigma)
+        denoised_PPE = denoiser.denoise3d(cf.channel_488()[first_slice:last_slice], sigma)
     else:
-        denoised_PPE = denoiser.denoise(cf.channel_PPE()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_PPE = denoiser.denoise(cf.channel_488()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_PPE_denoised"
@@ -152,7 +153,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     # construct a new rgb version of the antibody image volume
     gray_colormap = cm.get_cmap('gray', 256)
-    antibody_rgb = gray_colormap(cf.channel_antibody(), bytes=True)[:,:,:,0:3]
+    antibody_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
 
     # Now plot each of the triplets into the image stack, colored by conformation
     colors = {

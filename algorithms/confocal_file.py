@@ -17,10 +17,10 @@ class ConfocalFile(object):
     Object representing a .czi file from the Stathopoulos lab's Zeiss confocal microcscope
     """
 
-    CHANNEL_3CRM = 0
-    CHANNEL_PPE = 1
-    CHANNEL_5CRM = 2
-    CHANNEL_ANTIBODY = 3
+    CHANNEL_647 = 0
+    CHANNEL_555 = 1
+    CHANNEL_488 = 2
+    CHANNEL_NUCLEUS = 3
 
     def __init__(self, filepath: str):
         _path = filepath
@@ -42,22 +42,22 @@ class ConfocalFile(object):
         self._sizeZ = imageInfo['SizeZ']
         self._channels = imageInfo['SizeC']
         image = imread(filepath)
-        self._3CRM = image[0, 0, 0, self.CHANNEL_3CRM, :, :, :, 0]
-        self._5CRM = image[0, 0, 0, self.CHANNEL_5CRM, :, :, :, 0]
-        self._PPE = image[0, 0, 0, self.CHANNEL_PPE, :, :, :, 0]
-        self._antibody = image[0, 0, 0, self.CHANNEL_ANTIBODY, :, :, :, 0]
+        self._647 = image[0, 0, 0, self.CHANNEL_647, :, :, :, 0]
+        self._555 = image[0, 0, 0, self.CHANNEL_555, :, :, :, 0]
+        self._488 = image[0, 0, 0, self.CHANNEL_488, :, :, :, 0]
+        self._nucleus = image[0, 0, 0, self.CHANNEL_NUCLEUS, :, :, :, 0]
 
-    def channel_3CRM(self):
-        return self._3CRM
+    def channel_647(self):
+        return self._647
 
-    def channel_5CRM(self):
-        return self._5CRM
+    def channel_555(self):
+        return self._555
 
-    def channel_PPE(self):
-        return self._PPE
+    def channel_488(self):
+        return self._488
 
-    def channel_antibody(self):
-        return self._antibody
+    def channel_nucleus(self):
+        return self._nucleus
 
     def get_scale(self):
         return self._scale
