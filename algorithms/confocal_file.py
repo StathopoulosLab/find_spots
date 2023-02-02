@@ -32,8 +32,8 @@ class ConfocalFile(object):
         self._scale = {}
         for dist in distances:
             self._scale[dist['Id']] = dist['Value'] * 1.0e06    # convert from meters to uM
-        assert imageInfo['PixelType'] == 'Gray8'
-        assert imageInfo['ComponentBitCount'] == 8
+        assert imageInfo['PixelType'] == 'Gray8' or imageInfo['PixelType'] == 'Gray16'
+        assert imageInfo['ComponentBitCount'] == 8 or imageInfo['ComponentBitCount'] == 16
         assert imageInfo['SizeT'] == 1
         assert imageInfo['SizeB'] == 1
         assert imageInfo['SizeH'] == 1
