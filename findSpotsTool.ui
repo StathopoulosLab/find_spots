@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>1147</width>
-    <height>734</height>
+    <height>749</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -146,8 +146,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -224,8 +224,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -371,8 +371,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -404,7 +404,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <spacer name="horizontalSpacer">
+         <spacer name="nucleusMaskingHorizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -425,8 +425,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -443,6 +443,13 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="spotDetection647ThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="2" column="2">
          <widget class="QLabel" name="spotDetection555Label">
           <property name="text">
@@ -453,10 +460,24 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="spotDetection488ThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="spotDetectionSettingsLabel">
           <property name="text">
            <string>Spot Detection Settings</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="spotDetectionThresholdLabel">
+          <property name="text">
+           <string>Threshold:</string>
           </property>
          </widget>
         </item>
@@ -477,24 +498,53 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="spotDetection647ThresholdLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_8">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>366</width>
+          <height>13</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="tripletSettingsGridLayout" rowstretch="0,0,0,0,0,0" columnstretch="0,0,0">
+        <item row="2" column="2">
+         <spacer name="tripletMaxSizeHorizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="spotDetection488ThresholdLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
           </property>
-         </widget>
+         </spacer>
         </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="spotDetectionThresholdLabel">
+        <item row="2" column="0">
+         <widget class="QLabel" name="tripletMaxSizeLabel">
           <property name="text">
-           <string>Threshold:</string>
+           <string>Max Size: </string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="tripletMaxSizeLineEdit"/>
+        </item>
+        <item row="1" column="0" colspan="2">
+         <widget class="QLabel" name="tripletSettingsLabelabel">
+          <property name="text">
+           <string>Triplet Detection Settings</string>
           </property>
          </widget>
         </item>
@@ -507,8 +557,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -530,7 +580,7 @@
          </widget>
         </item>
         <item row="1" column="0">
-         <widget class="QLabel" name="ltouchingThresholdLabel">
+         <widget class="QLabel" name="touchingThresholdLabel">
           <property name="text">
            <string>Threshold:</string>
           </property>
@@ -558,8 +608,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>
@@ -588,7 +638,7 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <spacer name="horizontalSpacer_2">
+         <spacer name="spotProjectionHorizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -609,8 +659,8 @@
         </property>
         <property name="sizeHint" stdset="0">
          <size>
-          <width>20</width>
-          <height>40</height>
+          <width>366</width>
+          <height>13</height>
          </size>
         </property>
        </spacer>

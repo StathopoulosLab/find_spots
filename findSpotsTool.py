@@ -69,6 +69,7 @@ class FindSpotsTool(QMainWindow):
         self.ui.spotDetection647ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetection555ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetection488ThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.tripletMaxSizeLineEdit.setText(str(get_param("max_triplet_size", params)))
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
         self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice", params)))
 
@@ -186,7 +187,9 @@ class FindSpotsTool(QMainWindow):
 
             }
         ]
-        tripletsParams: Dict = {}
+        tripletsParams: Dict = {
+            'max_triplet_size': float(self.ui.tripletMaxSizeLineEdit.text())
+        }
         touchingParams: Dict = {
             'touching_threshold': float(self.ui.touchingThresholdLineEdit.text())
         }

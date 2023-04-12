@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1147, 734)
+        MainWindow.resize(1147, 749)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -131,7 +131,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout = QVBoxLayout()
         self.rightVerticalLayout.setObjectName(u"rightVerticalLayout")
-        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_5 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_5)
 
@@ -175,7 +175,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.sliceSelectionGridLayout)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_2)
 
@@ -278,7 +278,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
 
-        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_6 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_6)
 
@@ -301,14 +301,14 @@ class Ui_MainWindow(object):
 
         self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingLabel, 0, 0, 1, 1)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.nucleusMaskingHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.nucleusMaskingGridLayout.addItem(self.horizontalSpacer, 1, 2, 1, 1)
+        self.nucleusMaskingGridLayout.addItem(self.nucleusMaskingHorizontalSpacer, 1, 2, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.nucleusMaskingGridLayout)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_3)
 
@@ -320,16 +320,33 @@ class Ui_MainWindow(object):
 
         self.spotDetectionGridLayout.addWidget(self.spotDetection488Label, 2, 3, 1, 1)
 
+        self.spotDetection647ThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.spotDetection647ThresholdLineEdit.setObjectName(u"spotDetection647ThresholdLineEdit")
+        self.spotDetection647ThresholdLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.spotDetection647ThresholdLineEdit, 3, 1, 1, 1)
+
         self.spotDetection555Label = QLabel(self.centralwidget)
         self.spotDetection555Label.setObjectName(u"spotDetection555Label")
         self.spotDetection555Label.setAlignment(Qt.AlignCenter)
 
         self.spotDetectionGridLayout.addWidget(self.spotDetection555Label, 2, 2, 1, 1)
 
+        self.spotDetection488ThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.spotDetection488ThresholdLineEdit.setObjectName(u"spotDetection488ThresholdLineEdit")
+        self.spotDetection488ThresholdLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.spotDetection488ThresholdLineEdit, 3, 3, 1, 1)
+
         self.spotDetectionSettingsLabel = QLabel(self.centralwidget)
         self.spotDetectionSettingsLabel.setObjectName(u"spotDetectionSettingsLabel")
 
         self.spotDetectionGridLayout.addWidget(self.spotDetectionSettingsLabel, 0, 0, 1, 2)
+
+        self.spotDetectionThresholdLabel = QLabel(self.centralwidget)
+        self.spotDetectionThresholdLabel.setObjectName(u"spotDetectionThresholdLabel")
+
+        self.spotDetectionGridLayout.addWidget(self.spotDetectionThresholdLabel, 3, 0, 1, 1)
 
         self.spotDetection555ThresholdLineEdit = QLineEdit(self.centralwidget)
         self.spotDetection555ThresholdLineEdit.setObjectName(u"spotDetection555ThresholdLineEdit")
@@ -343,27 +360,39 @@ class Ui_MainWindow(object):
 
         self.spotDetectionGridLayout.addWidget(self.spotDetection647Label, 2, 1, 1, 1)
 
-        self.spotDetection647ThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.spotDetection647ThresholdLineEdit.setObjectName(u"spotDetection647ThresholdLineEdit")
-        self.spotDetection647ThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetection647ThresholdLineEdit, 3, 1, 1, 1)
-
-        self.spotDetection488ThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.spotDetection488ThresholdLineEdit.setObjectName(u"spotDetection488ThresholdLineEdit")
-        self.spotDetection488ThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetection488ThresholdLineEdit, 3, 3, 1, 1)
-
-        self.spotDetectionThresholdLabel = QLabel(self.centralwidget)
-        self.spotDetectionThresholdLabel.setObjectName(u"spotDetectionThresholdLabel")
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetectionThresholdLabel, 3, 0, 1, 1)
-
 
         self.rightVerticalLayout.addLayout(self.spotDetectionGridLayout)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_8 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.rightVerticalLayout.addItem(self.verticalSpacer_8)
+
+        self.tripletSettingsGridLayout = QGridLayout()
+        self.tripletSettingsGridLayout.setObjectName(u"tripletSettingsGridLayout")
+        self.tripletMaxSizeHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.tripletSettingsGridLayout.addItem(self.tripletMaxSizeHorizontalSpacer, 2, 2, 1, 1)
+
+        self.tripletMaxSizeLabel = QLabel(self.centralwidget)
+        self.tripletMaxSizeLabel.setObjectName(u"tripletMaxSizeLabel")
+        self.tripletMaxSizeLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLabel, 2, 0, 1, 1)
+
+        self.tripletMaxSizeLineEdit = QLineEdit(self.centralwidget)
+        self.tripletMaxSizeLineEdit.setObjectName(u"tripletMaxSizeLineEdit")
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLineEdit, 2, 1, 1, 1)
+
+        self.tripletSettingsLabelabel = QLabel(self.centralwidget)
+        self.tripletSettingsLabelabel.setObjectName(u"tripletSettingsLabelabel")
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletSettingsLabelabel, 1, 0, 1, 2)
+
+
+        self.rightVerticalLayout.addLayout(self.tripletSettingsGridLayout)
+
+        self.verticalSpacer = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer)
 
@@ -380,10 +409,10 @@ class Ui_MainWindow(object):
 
         self.touchingSettingsGridLayout.addWidget(self.touchingSettingsLabel, 0, 0, 1, 2)
 
-        self.ltouchingThresholdLabel = QLabel(self.centralwidget)
-        self.ltouchingThresholdLabel.setObjectName(u"ltouchingThresholdLabel")
+        self.touchingThresholdLabel = QLabel(self.centralwidget)
+        self.touchingThresholdLabel.setObjectName(u"touchingThresholdLabel")
 
-        self.touchingSettingsGridLayout.addWidget(self.ltouchingThresholdLabel, 1, 0, 1, 1)
+        self.touchingSettingsGridLayout.addWidget(self.touchingThresholdLabel, 1, 0, 1, 1)
 
         self.touchingThresholdHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -392,7 +421,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.touchingSettingsGridLayout)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_4 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_4)
 
@@ -414,14 +443,14 @@ class Ui_MainWindow(object):
 
         self.spotProjectionGridLayout.addWidget(self.spotProjectionSliceLineEdit, 1, 1, 1, 1)
 
-        self.horizontalSpacer_2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.spotProjectionHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
-        self.spotProjectionGridLayout.addItem(self.horizontalSpacer_2, 1, 2, 1, 1)
+        self.spotProjectionGridLayout.addItem(self.spotProjectionHorizontalSpacer, 1, 2, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.spotProjectionGridLayout)
 
-        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_7 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_7)
 
@@ -513,10 +542,12 @@ class Ui_MainWindow(object):
         self.spotDetection488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
         self.spotDetection555Label.setText(QCoreApplication.translate("MainWindow", u"555", None))
         self.spotDetectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Spot Detection Settings", None))
-        self.spotDetection647Label.setText(QCoreApplication.translate("MainWindow", u"647", None))
         self.spotDetectionThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
+        self.spotDetection647Label.setText(QCoreApplication.translate("MainWindow", u"647", None))
+        self.tripletMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Max Size: ", None))
+        self.tripletSettingsLabelabel.setText(QCoreApplication.translate("MainWindow", u"Triplet Detection Settings", None))
         self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Touching Settings", None))
-        self.ltouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
+        self.touchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
         self.spotProjectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Spot Projection Settings", None))
         self.spotProjectionsSliceLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Slice for Spot Display:", None))
         self.testSettingsPushButton.setText(QCoreApplication.translate("MainWindow", u"Test Settings", None))
