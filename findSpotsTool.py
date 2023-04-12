@@ -283,7 +283,7 @@ class FindSpotsTool(QMainWindow):
         self.close()
 
 if __name__ == "__main__":
-    if platform.system() == "Darwin":
+    if True or platform.system() == "Darwin":
         mp.set_start_method('spawn')
     # Create the Qt Application
     app = QApplication(sys.argv)

@@ -32,40 +32,42 @@ def check_triplet(r, g, b, spots, l):
     spots passed to the function. If no other triplets can be formed, then this
     function returns [True, True, True].  Otherwise, the faulty color returns
     False in that list.'''
-    redChecksOut, greenChecksOut, blueChecksOut = True, True, True
-    for red in spots[0]: #check for stray red spots near blue & green
-        if red!=r and (distance(red,g)<l or distance(red,b)<l):
-            redChecksOut = False
-    for green in spots[1]: #check for stray green spots near blue & red
-        if green!=g and (distance(green,r)<l or distance(green,b)<l):
-            greenChecksOut = False
-    for blue in spots[2]: #check for stray blue spots near red & green
-        if blue!=b and (distance(blue,r)<l or distance(blue,g)<l):
-            blueChecksOut = False
-    return [redChecksOut, greenChecksOut, blueChecksOut]
+    chan0ChecksOut, chan1ChecksOut, chan2ChecksOut = True, True, True
+    for chan0spot in spots[0]: #check for stray chan0 spots near chan1 & chan2
+        if chan0spot!=r and (distance(chan0spot,g)<l or distance(chan0spot,b)<l):
+            chan0ChecksOut = False
+    for chan1spot in spots[1]: #check for stray chna1 spots near chan2 & chan0
+        if chan1spot!=g and (distance(chan1spot,r)<l or distance(chan1spot,b)<l):
+            chan1ChecksOut = False
+    for chan2spot in spots[2]: #check for stray chan2 spots near chan0 & chan1
+        if chan2spot!=b and (distance(chan2spot,r)<l or distance(chan2spot,g)<l):
+            chan2ChecksOut = False
+    return [chan0ChecksOut, chan1ChecksOut, chan2ChecksOut]
 
 def triplet_selection(spots, l):
-    '''Finds triplets in a given list of rgb spots for where the spots aren't
+    '''
+    Finds triplets in a given list of spots for where the spots aren't
     part of another triplet. Triplet boundary is defined as radius of parameter
     lim around each of the three spots composing the triplet.
-    Outputs the list of triplets.'''
+    Outputs the list of triplets.
+    '''
     triplets = []
-    for red in spots[0]:
-        r_green = search_space(red,spots[1],l) #look for lone red around blue
-        r_blue = search_space(red,spots[2],l) #look for lone green around blue
-        if r_green!=[-1,-1] and r_blue==[-1,-1]: #if R found but not G around B
-            g_blue = search_space(r_green,spots[2],l) #look for lone G around R
-            if g_blue!=[-1,-1]: #if G found around R around B
-                if check_triplet(red,r_green,g_blue,spots,l)==[True,True,True]:
-                    triplets.append([red, r_green, g_blue])
-        if r_blue!=[-1,-1] and r_green==[-1,-1]: #if G found but not R around B
-            b_green = search_space(r_blue,spots[1],l) #look for lone R around G
-            if b_green!=[-1,-1]: #if R found around G aroud B
-                if check_triplet(red,b_green,r_blue,spots,l)==[True,True,True]:
-                    triplets.append([red, b_green, r_blue])
-        if r_green!=[-1,-1] and r_blue!=[-1,-1]: #if R and G found around B
-            if check_triplet(red,r_green,r_blue,spots,l)==[True,True,True]:
-                triplets.append([red, r_green, r_blue])
+    for chan0spot in spots[0]:
+        pair_0_1 = search_space(chan0spot, spots[1], l) #look for lone chan1 spot around chan0 spot
+        pair_0_2 = search_space(chan0spot, spots[2], l) #look for lone chan2 spot around chan0 spot
+        if pair_0_1!=[-1,-1] and pair_0_2==[-1,-1]: #if chan1 found but not chan2 around chan0 spot
+            pair_1_2 = search_space(pair_0_1, spots[2], l) #look for lone chan3 spot around chan1 spot
+            if pair_1_2!=[-1,-1]: #if G found around R around B
+                if check_triplet(chan0spot,pair_0_1,pair_1_2,spots,l)==[True,True,True]:
+                    triplets.append([chan0spot, pair_0_1, pair_1_2])
+        if pair_0_2!=[-1,-1] and pair_0_1==[-1,-1]: #if G found but not R around B
+            pair_2_0 = search_space(pair_0_2,spots[1],l) #look for lone R around G
+            if pair_2_0!=[-1,-1]: #if R found around G aroud B
+                if check_triplet(chan0spot,pair_2_0,pair_0_2,spots,l)==[True,True,True]:
+                    triplets.append([chan0spot, pair_2_0, pair_0_2])
+        if pair_0_1!=[-1,-1] and pair_0_2!=[-1,-1]: #if R and G found around B
+            if check_triplet(chan0spot,pair_0_1,pair_0_2,spots,l)==[True,True,True]:
+                triplets.append([chan0spot, pair_0_1, pair_0_2])
     return triplets
 
 def read_file(filename):
@@ -76,22 +78,22 @@ def read_file(filename):
         spots.append([float(x) for x in line.split()])
     return spots
 
-def read_input(redFile, greenFile, blueFile):
+def read_input(chan0File, chan1File, chan2File):
     '''Reads in three text files, one for each color channel. Outputs 3 lists
     of points corresponding to each channel.'''
     # Read in text files
-    redSpots = read_file(redFile)
-    greenSpots = read_file(greenFile)
-    blueSpots = read_file(blueFile)
-    ch = [redSpots, greenSpots, blueSpots]
-    # convert to physical dimensions and return as [[blue],[red],[green]]
+    chan0Spots = read_file(chan0File)
+    chan1Spots = read_file(chan1File)
+    chan2Spots = read_file(chan2File)
+    ch = [chan0Spots, chan1Spots, chan2Spots]
+    # convert to physical dimensions and return as [[chan0],[chan1],[chan2]]
     points = [[],[],[]]
     for i in [0, 1, 2]:
         points[i] = [[0.065*x,0.065*y,0.1*z] for [x,y,z] in ch[i]]
     return points
 
-def select(redFile, greenFile, blueFile, lim):
-    spots = read_input(redFile, greenFile, blueFile)
+def select(chan0File, chan1File, chan2File, lim):
+    spots = read_input(chan0File, chan1File, chan2File)
     print(len(spots[0]), len(spots[1]), len(spots[2]))
     triplets = triplet_selection(spots, lim**2)
     print(str(len(triplets))+" Triplets Detected")
@@ -101,9 +103,9 @@ def write_results(triplets, outputFileName):
     '''Writes triplet spot coordinates to a text file.'''
     f = open(outputFileName, 'w')
     for triplet in triplets:
-        [[rx,ry,rz],[gx,gy,gz],[bx,by,bz]] = triplet
+        [[x0,y0,z0],[x1,y1,z1],[x2,y2,z2]] = triplet
         f.write('%-5s %-5s %-5s %-5s %-5s %-5s %-5s %-5s %s\n' \
-                %(rx,ry,rz,gx,gy,gz,bx,by,bz))
+                %(x0,y0,z0,x1,y1,z1,x2,y2,z2))
     f.close()
 
 def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
@@ -115,7 +117,8 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in chan1Spots])
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in chan2Spots])
     max_lim = -1.
-    limits = [x/5+0.1 for x in range(1,16)]
+    # limits = [x/5+0.1 for x in range(1,16)]
+    limits = [2.0]
     max_triplets = []
     if progressCallback:
         progressCallback(0, "FindTriplets")
@@ -166,7 +169,7 @@ class ProcessStepFindTriplets(ProcessStep):
 
 if __name__ == "__main__":
     # Enter command line arguments as: bluefile redfile greenfile lim outputfile
-    redFileName, greenFileName, blueFileName = str(sys.argv[1]), \
+    chan0FileName, chan1FileName, chan2FileName = str(sys.argv[1]), \
                             str(sys.argv[2]), str(sys.argv[3])
     max_lim = -1
     parameter = [x/5+0.1 for x in list(range(1,16))]
@@ -174,7 +177,7 @@ if __name__ == "__main__":
     max_triplets = []
     for lim in parameter:
         print('Running script with detection threshold of %.1f um' %lim)
-        triplets = select(redFileName,greenFileName,blueFileName,lim)
+        triplets = select(chan0FileName,chan1FileName,chan2FileName,lim)
         if len(triplets) > len(max_triplets):
             max_triplets = triplets
             max_lim = lim

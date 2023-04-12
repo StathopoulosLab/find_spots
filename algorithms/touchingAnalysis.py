@@ -14,15 +14,15 @@ def distance(point1, point2):
     x2, y2, z2 = point2[0], point2[1], point2[2]
     return (x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2
 
-def classify(blue, red, green, threshold):
+def classify(chan0, chan1, chan2, threshold):
     '''Classifies given triplet based on distances between 3 point inputs and
     a threshold parameter that gives the cutoff between "near" and "far"'''
     output = [0,0,0]
-    if distance(red, green) < threshold:
+    if distance(chan0, chan1) < threshold:
         output[0] = 1
-    if distance(green, blue) < threshold:
+    if distance(chan1, chan2) < threshold:
         output[1] = 1
-    if distance(blue, red) < threshold:
+    if distance(chan2, chan0) < threshold:
         output[2] = 1
     return ''.join(str(e) for e in output)
 
