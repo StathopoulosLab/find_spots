@@ -381,6 +381,7 @@ class Ui_MainWindow(object):
 
         self.tripletMaxSizeLineEdit = QLineEdit(self.centralwidget)
         self.tripletMaxSizeLineEdit.setObjectName(u"tripletMaxSizeLineEdit")
+        self.tripletMaxSizeLineEdit.setAlignment(Qt.AlignCenter)
 
         self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLineEdit, 2, 1, 1, 1)
 
