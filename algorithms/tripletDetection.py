@@ -95,13 +95,13 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
 
     for i0, spot0 in enumerate(points[0]):
         # get the closest chan1 spot, if any
-        i1 = find_triplet_spot(spot0, points[1], pointUsed[1])
+        i1 = find_triplet_spot(spot0, points[1], pointUsed[1], maxTripletSize)
         if i1 < 0:
             # nothing close enough, so no triplet is possible for spot0
             continue
 
         # get the closest chan2 spot, if any
-        i2 = find_triplet_spot(spot0, points[2], pointUsed[2])
+        i2 = find_triplet_spot(spot0, points[2], pointUsed[2], maxTripletSize)
         if i2 < 0:
             # nothing close enough, so no triplet is possible
             continue
