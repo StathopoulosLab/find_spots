@@ -2,6 +2,7 @@ from __future__ import division, print_function
 
 from qtpy.QtWidgets import QApplication
 import sys
+from logging import Logger
 from processing import ProcessStep, ProcessStatus
 from typing import Callable, Dict, List, Tuple
 
@@ -74,6 +75,7 @@ def find_triplet_spot(spot0, otherChanSpots, otherChanPointUsed, maxTripletSize)
 def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
                        xScale: float, yScale: float, zScale: float,
                        maxTripletSize: float,
+                       logger: Logger = None,
                        app: QApplication = None,
                        progressCallback: Callable[[int, str], None] = None) -> List:
     points = []
@@ -90,7 +92,6 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
     if app:
         # let the GUI, if there is one, process pending events
         app.processEvents()
-
     triplets = []
 
     for i0, spot0 in enumerate(points[0]):
@@ -98,22 +99,25 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
         i1 = find_triplet_spot(spot0, points[1], pointUsed[1], maxTripletSize)
         if i1 < 0:
             # nothing close enough, so no triplet is possible for spot0
+            logger.info(f"No chan1 spot for chan0[{i0}]")
             continue
 
         # get the closest chan2 spot, if any
         i2 = find_triplet_spot(spot0, points[2], pointUsed[2], maxTripletSize)
         if i2 < 0:
             # nothing close enough, so no triplet is possible
+            logger.info(f"No chan2 spot for chan0[{i0}], chan1[{i1}]")
             continue
 
         # found a triplet!
+        logger.info(f"Adding triplet [{i0}, {i1}, {i2}]")
         triplets.append((spot0, points[1][i1], points[2][i1]))
         pointUsed[0][i0] = True
         pointUsed[1][i1] = True
         pointUsed[2][i2] = True
 
         if progressCallback:
-            progressCallback(((i+1) * 100) // len(points[0]), "FindBestTriplets")
+            progressCallback(((i0+1) * 100) // len(points[0]), "FindBestTriplets")
         if app:
             # let the GUI, if there is one, process pending events
             app.processEvents()
@@ -134,6 +138,7 @@ class ProcessStepFindTriplets(ProcessStep):
         assert 'Z' in self._scale
         assert isinstance(self._inputs, list) and len(self._inputs) == 3
         assert 'max_triplet_size' in self._params
+        logger.info(f"Worker {getpid()}: Finding triplets")
         self._status = ProcessStatus.RUNNING
         self._stepOutputs = []
         self._endOutputs = []
@@ -146,6 +151,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._scale['Y'],
             self._scale['Z'],
             max_triplet_size,
+            self._logger,
             self._app,
             progressCallback)
         self._stepOutputs.append(triplets)

@@ -97,6 +97,7 @@ class ProcessStepDenoiseConcurrent(ProcessStep):
         self._status = ProcessStatus.RUNNING
         concurrent = ProcessStepConcurrent(ProcessStepDenoiseImage, self._params)
         concurrent.setApp(self._app)
+        concurrent.setLogger(self._logger)
         concurrent.setInputs(slices)
         concurrent.run(progressCallback)
         status = concurrent.status()
