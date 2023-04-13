@@ -138,7 +138,6 @@ class ProcessStepFindTriplets(ProcessStep):
         assert 'Z' in self._scale
         assert isinstance(self._inputs, list) and len(self._inputs) == 3
         assert 'max_triplet_size' in self._params
-        logger.info(f"Worker {getpid()}: Finding triplets")
         self._status = ProcessStatus.RUNNING
         self._stepOutputs = []
         self._endOutputs = []
