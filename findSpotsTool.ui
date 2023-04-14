@@ -232,27 +232,37 @@
       </item>
       <item>
        <layout class="QGridLayout" name="denoiseSettingsGridLayout">
-        <item row="1" column="2">
-         <widget class="QLabel" name="denoise555Label">
+        <item row="4" column="0">
+         <widget class="QLabel" name="sharpenLabel">
           <property name="text">
-           <string>555</string>
+           <string>Sharpening:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLabel" name="denoiseNucleusLabel">
+          <property name="text">
+           <string>Nucleus</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="3" column="3">
-         <widget class="QLineEdit" name="sigma488LineEdit">
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="sigma647LineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="use3DCheckBox">
+        <item row="0" column="0" colspan="2">
+         <widget class="QLabel" name="denoiseSettingsLabel">
           <property name="text">
-           <string>Use 3D Denoising</string>
+           <string>Denoising Settings</string>
           </property>
          </widget>
         </item>
@@ -266,18 +276,8 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="sharpenLabel">
-          <property name="text">
-           <string>Sharpening:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="2">
-         <widget class="QLineEdit" name="sharpen555LineEdit">
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="sigma488LineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -290,8 +290,46 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="sigma647LineEdit">
+        <item row="4" column="3">
+         <widget class="QLineEdit" name="sharpen488LineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="use3DCheckBox">
+          <property name="text">
+           <string>Use 3D Denoising</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="denoise555Label">
+          <property name="text">
+           <string>555</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="sharpen647LineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="4">
+         <widget class="QLineEdit" name="sharpenNucleusLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="sharpen555LineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -307,24 +345,10 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="sharpen647LineEdit">
+        <item row="3" column="4">
+         <widget class="QLineEdit" name="sigmaNucleusLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QLineEdit" name="sharpen488LineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="denoiseSettingsLabel">
-          <property name="text">
-           <string>Denoising Settings</string>
           </property>
          </widget>
         </item>
@@ -338,27 +362,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="4">
-         <widget class="QLabel" name="denoiseNucleusLabel">
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="checkBox">
           <property name="text">
-           <string>Nucleus</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="4">
-         <widget class="QLineEdit" name="sigmaNucleusLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="4">
-         <widget class="QLineEdit" name="sharpenNucleusLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
+           <string>Save spot image</string>
           </property>
          </widget>
         </item>

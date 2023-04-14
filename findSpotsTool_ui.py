@@ -181,81 +181,11 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout = QGridLayout()
         self.denoiseSettingsGridLayout.setObjectName(u"denoiseSettingsGridLayout")
-        self.denoise555Label = QLabel(self.centralwidget)
-        self.denoise555Label.setObjectName(u"denoise555Label")
-        self.denoise555Label.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoise555Label, 1, 2, 1, 1)
-
-        self.sigma488LineEdit = QLineEdit(self.centralwidget)
-        self.sigma488LineEdit.setObjectName(u"sigma488LineEdit")
-        self.sigma488LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigma488LineEdit, 3, 3, 1, 1)
-
-        self.use3DCheckBox = QCheckBox(self.centralwidget)
-        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
-
-        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
-
-        self.denoise647Label = QLabel(self.centralwidget)
-        self.denoise647Label.setObjectName(u"denoise647Label")
-        self.denoise647Label.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoise647Label, 1, 1, 1, 1)
-
         self.sharpenLabel = QLabel(self.centralwidget)
         self.sharpenLabel.setObjectName(u"sharpenLabel")
         self.sharpenLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
         self.denoiseSettingsGridLayout.addWidget(self.sharpenLabel, 4, 0, 1, 1)
-
-        self.sharpen555LineEdit = QLineEdit(self.centralwidget)
-        self.sharpen555LineEdit.setObjectName(u"sharpen555LineEdit")
-        self.sharpen555LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen555LineEdit, 4, 2, 1, 1)
-
-        self.sigma555LineEdit = QLineEdit(self.centralwidget)
-        self.sigma555LineEdit.setObjectName(u"sigma555LineEdit")
-        self.sigma555LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigma555LineEdit, 3, 2, 1, 1)
-
-        self.sigma647LineEdit = QLineEdit(self.centralwidget)
-        self.sigma647LineEdit.setObjectName(u"sigma647LineEdit")
-        self.sigma647LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigma647LineEdit, 3, 1, 1, 1)
-
-        self.sigmaLabel = QLabel(self.centralwidget)
-        self.sigmaLabel.setObjectName(u"sigmaLabel")
-        self.sigmaLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaLabel, 3, 0, 1, 1)
-
-        self.sharpen647LineEdit = QLineEdit(self.centralwidget)
-        self.sharpen647LineEdit.setObjectName(u"sharpen647LineEdit")
-        self.sharpen647LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen647LineEdit, 4, 1, 1, 1)
-
-        self.sharpen488LineEdit = QLineEdit(self.centralwidget)
-        self.sharpen488LineEdit.setObjectName(u"sharpen488LineEdit")
-        self.sharpen488LineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen488LineEdit, 4, 3, 1, 1)
-
-        self.denoiseSettingsLabel = QLabel(self.centralwidget)
-        self.denoiseSettingsLabel.setObjectName(u"denoiseSettingsLabel")
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoiseSettingsLabel, 0, 0, 1, 2)
-
-        self.denoise488Label = QLabel(self.centralwidget)
-        self.denoise488Label.setObjectName(u"denoise488Label")
-        self.denoise488Label.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.denoise488Label, 1, 3, 1, 1)
 
         self.denoiseNucleusLabel = QLabel(self.centralwidget)
         self.denoiseNucleusLabel.setObjectName(u"denoiseNucleusLabel")
@@ -263,17 +193,92 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout.addWidget(self.denoiseNucleusLabel, 1, 4, 1, 1)
 
-        self.sigmaNucleusLineEdit = QLineEdit(self.centralwidget)
-        self.sigmaNucleusLineEdit.setObjectName(u"sigmaNucleusLineEdit")
-        self.sigmaNucleusLineEdit.setAlignment(Qt.AlignCenter)
+        self.sigma647LineEdit = QLineEdit(self.centralwidget)
+        self.sigma647LineEdit.setObjectName(u"sigma647LineEdit")
+        self.sigma647LineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaNucleusLineEdit, 3, 4, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.sigma647LineEdit, 3, 1, 1, 1)
+
+        self.denoiseSettingsLabel = QLabel(self.centralwidget)
+        self.denoiseSettingsLabel.setObjectName(u"denoiseSettingsLabel")
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoiseSettingsLabel, 0, 0, 1, 2)
+
+        self.denoise647Label = QLabel(self.centralwidget)
+        self.denoise647Label.setObjectName(u"denoise647Label")
+        self.denoise647Label.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoise647Label, 1, 1, 1, 1)
+
+        self.sigma488LineEdit = QLineEdit(self.centralwidget)
+        self.sigma488LineEdit.setObjectName(u"sigma488LineEdit")
+        self.sigma488LineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigma488LineEdit, 3, 3, 1, 1)
+
+        self.sigma555LineEdit = QLineEdit(self.centralwidget)
+        self.sigma555LineEdit.setObjectName(u"sigma555LineEdit")
+        self.sigma555LineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigma555LineEdit, 3, 2, 1, 1)
+
+        self.sharpen488LineEdit = QLineEdit(self.centralwidget)
+        self.sharpen488LineEdit.setObjectName(u"sharpen488LineEdit")
+        self.sharpen488LineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpen488LineEdit, 4, 3, 1, 1)
+
+        self.use3DCheckBox = QCheckBox(self.centralwidget)
+        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
+
+        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
+
+        self.denoise555Label = QLabel(self.centralwidget)
+        self.denoise555Label.setObjectName(u"denoise555Label")
+        self.denoise555Label.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoise555Label, 1, 2, 1, 1)
+
+        self.sharpen647LineEdit = QLineEdit(self.centralwidget)
+        self.sharpen647LineEdit.setObjectName(u"sharpen647LineEdit")
+        self.sharpen647LineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpen647LineEdit, 4, 1, 1, 1)
 
         self.sharpenNucleusLineEdit = QLineEdit(self.centralwidget)
         self.sharpenNucleusLineEdit.setObjectName(u"sharpenNucleusLineEdit")
         self.sharpenNucleusLineEdit.setAlignment(Qt.AlignCenter)
 
         self.denoiseSettingsGridLayout.addWidget(self.sharpenNucleusLineEdit, 4, 4, 1, 1)
+
+        self.sharpen555LineEdit = QLineEdit(self.centralwidget)
+        self.sharpen555LineEdit.setObjectName(u"sharpen555LineEdit")
+        self.sharpen555LineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sharpen555LineEdit, 4, 2, 1, 1)
+
+        self.sigmaLabel = QLabel(self.centralwidget)
+        self.sigmaLabel.setObjectName(u"sigmaLabel")
+        self.sigmaLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaLabel, 3, 0, 1, 1)
+
+        self.sigmaNucleusLineEdit = QLineEdit(self.centralwidget)
+        self.sigmaNucleusLineEdit.setObjectName(u"sigmaNucleusLineEdit")
+        self.sigmaNucleusLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaNucleusLineEdit, 3, 4, 1, 1)
+
+        self.denoise488Label = QLabel(self.centralwidget)
+        self.denoise488Label.setObjectName(u"denoise488Label")
+        self.denoise488Label.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.denoise488Label, 1, 3, 1, 1)
+
+        self.checkBox = QCheckBox(self.centralwidget)
+        self.checkBox.setObjectName(u"checkBox")
+
+        self.denoiseSettingsGridLayout.addWidget(self.checkBox, 5, 0, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
@@ -530,14 +535,15 @@ class Ui_MainWindow(object):
         self.sliceSelectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Slice Selection Settings", None))
         self.firstSliceLabel.setText(QCoreApplication.translate("MainWindow", u"First Slice:", None))
         self.lastSliceLabel.setText(QCoreApplication.translate("MainWindow", u"Last Slice:", None))
-        self.denoise555Label.setText(QCoreApplication.translate("MainWindow", u"555", None))
-        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
-        self.denoise647Label.setText(QCoreApplication.translate("MainWindow", u"647", None))
         self.sharpenLabel.setText(QCoreApplication.translate("MainWindow", u"Sharpening:", None))
-        self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
-        self.denoiseSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Denoising Settings", None))
-        self.denoise488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
         self.denoiseNucleusLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus", None))
+        self.denoiseSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Denoising Settings", None))
+        self.denoise647Label.setText(QCoreApplication.translate("MainWindow", u"647", None))
+        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
+        self.denoise555Label.setText(QCoreApplication.translate("MainWindow", u"555", None))
+        self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
+        self.denoise488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
+        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Save spot image", None))
         self.nucleusMaskingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Masking Threshold: ", None))
         self.nucleusMaskingLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Masking Settings", None))
         self.spotDetection488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
