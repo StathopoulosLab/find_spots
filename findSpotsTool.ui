@@ -363,7 +363,7 @@
          </widget>
         </item>
         <item row="5" column="0">
-         <widget class="QCheckBox" name="checkBox">
+         <widget class="QCheckBox" name="saveDetectedSpotsCheckBox">
           <property name="text">
            <string>Save spot image</string>
           </property>

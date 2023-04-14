@@ -275,10 +275,10 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout.addWidget(self.denoise488Label, 1, 3, 1, 1)
 
-        self.checkBox = QCheckBox(self.centralwidget)
-        self.checkBox.setObjectName(u"checkBox")
+        self.saveDetectedSpotsCheckBox = QCheckBox(self.centralwidget)
+        self.saveDetectedSpotsCheckBox.setObjectName(u"saveDetectedSpotsCheckBox")
 
-        self.denoiseSettingsGridLayout.addWidget(self.checkBox, 5, 0, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.saveDetectedSpotsCheckBox, 5, 0, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
@@ -543,7 +543,7 @@ class Ui_MainWindow(object):
         self.denoise555Label.setText(QCoreApplication.translate("MainWindow", u"555", None))
         self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
         self.denoise488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
-        self.checkBox.setText(QCoreApplication.translate("MainWindow", u"Save spot image", None))
+        self.saveDetectedSpotsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Save spot image", None))
         self.nucleusMaskingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Masking Threshold: ", None))
         self.nucleusMaskingLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Masking Settings", None))
         self.spotDetection488Label.setText(QCoreApplication.translate("MainWindow", u"488", None))
