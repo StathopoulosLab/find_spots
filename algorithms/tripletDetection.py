@@ -3,8 +3,9 @@ from __future__ import division, print_function
 from qtpy.QtWidgets import QApplication
 import sys
 from logging import Logger
+from math import sqrt
 from processing import ProcessStep, ProcessStatus
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple, Union
 
 def distanceSquared(point1, point2):
     '''Returns sq of distance between point 1 and point 2 in form [x,y,z]'''
@@ -50,17 +51,21 @@ def write_results(triplets, outputFileName):
                 %(x0,y0,z0,x1,y1,z1,x2,y2,z2))
     f.close()
 
-def find_triplet_spot(spot0, otherChanSpots, otherChanPointUsed, maxTripletSize) -> int:
+def find_triplet_spot(spot0, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Union[int, float]:
     # find any spots in otherChanSpots that are close enough to spot0
+    minDistanceSquared = 1000000000.
     candidateSpotIx = []
     for ix, spot in enumerate(otherChanSpots):
         if otherChanPointUsed[ix]:
-            return -1
-        if distanceSquared(spot0, spot) < maxTripletSize**2:
+            continue
+        thisDistanceSquared = distanceSquared(spot0, spot)
+        if thisDistanceSquared < maxTripletSize**2:
             candidateSpotIx.append(ix)
+        if thisDistanceSquared < minDistanceSquared:
+            minDistanceSquared = thisDistanceSquared
     if not candidateSpotIx:
         # no spot close enough
-        return -1
+        return -minDistanceSquared
     # find the candidate spot1 that's closest to spot0
     bestIdx = candidateSpotIx[0]
     if len(candidateSpotIx) > 1:
@@ -99,14 +104,14 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
         i1 = find_triplet_spot(spot0, points[1], pointUsed[1], maxTripletSize)
         if i1 < 0:
             # nothing close enough, so no triplet is possible for spot0
-            logger.info(f"No chan1 spot for chan0[{i0}]")
+            logger.info(f"No chan1 spot for chan0[{i0}], closest was {sqrt(-i1)}")
             continue
 
         # get the closest chan2 spot, if any
         i2 = find_triplet_spot(spot0, points[2], pointUsed[2], maxTripletSize)
         if i2 < 0:
             # nothing close enough, so no triplet is possible
-            logger.info(f"No chan2 spot for chan0[{i0}], chan1[{i1}]")
+            logger.info(f"No chan2 spot for chan0[{i0}], chan1[{i1}], closest was {sqrt(-i2)}")
             continue
 
         # found a triplet!
