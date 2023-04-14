@@ -31,7 +31,7 @@ default_params = {
     "alpha_sharp": 1.3,
     "nucleus_mask_threshold": 16,
     "spot_detect_threshold": -0.02,
-    'max_triplet_size': 1.5,
+    'max_triplet_size': 0.75,
     'touching_threshold': 0.5,
     'use_denoise3d': False,
     'spot_projection_slice': 10,

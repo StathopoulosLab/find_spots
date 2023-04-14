@@ -51,14 +51,14 @@ def write_results(triplets, outputFileName):
                 %(x0,y0,z0,x1,y1,z1,x2,y2,z2))
     f.close()
 
-def find_triplet_spot(spot0, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Union[int, float]:
-    # find any spots in otherChanSpots that are close enough to spot0
+def find_triplet_spot(spot, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Union[int, float]:
+    # find any spots in otherChanSpots that are close enough to spot
     minDistanceSquared = 1000000000.
     candidateSpotIx = []
-    for ix, spot in enumerate(otherChanSpots):
+    for ix, thisSpot in enumerate(otherChanSpots):
         if otherChanPointUsed[ix]:
             continue
-        thisDistanceSquared = distanceSquared(spot0, spot)
+        thisDistanceSquared = distanceSquared(spot, thisSpot)
         if thisDistanceSquared < maxTripletSize**2:
             candidateSpotIx.append(ix)
         if thisDistanceSquared < minDistanceSquared:
@@ -69,9 +69,9 @@ def find_triplet_spot(spot0, otherChanSpots, otherChanPointUsed, maxTripletSize)
     # find the candidate spot1 that's closest to spot0
     bestIdx = candidateSpotIx[0]
     if len(candidateSpotIx) > 1:
-        bestDist = distanceSquared(spot0, otherChanSpots[bestIdx])
+        bestDist = distanceSquared(spot, otherChanSpots[bestIdx])
         for idx in range(1,len(candidateSpotIx)):
-            thisDist = distanceSquared(spot0, otherChanSpots[idx])
+            thisDist = distanceSquared(spot, otherChanSpots[idx])
             if thisDist < bestDist:
                 bestDist = thisDist
                 bestIdx = idx
@@ -99,30 +99,30 @@ def find_best_triplets(chan0Spots, chan1Spots, chan2Spots,
         app.processEvents()
     triplets = []
 
-    for i0, spot0 in enumerate(points[0]):
-        # get the closest chan1 spot, if any
-        i1 = find_triplet_spot(spot0, points[1], pointUsed[1], maxTripletSize)
-        if i1 < 0:
+    for i2, spot2 in enumerate(points[2]):
+        # get the closest chan0 spot, if any
+        i0 = find_triplet_spot(spot2, points[0], pointUsed[0], maxTripletSize)
+        if i0 < 0:
             # nothing close enough, so no triplet is possible for spot0
-            logger.info(f"No chan1 spot for chan0[{i0}], closest was {sqrt(-i1)}")
+            logger.info(f"No chan0 spot for chan2[{i2}], closest was {sqrt(-i0)}")
             continue
 
-        # get the closest chan2 spot, if any
-        i2 = find_triplet_spot(spot0, points[2], pointUsed[2], maxTripletSize)
-        if i2 < 0:
+        # get the closest chan1 spot, if any
+        i1 = find_triplet_spot(spot2, points[1], pointUsed[1], maxTripletSize)
+        if i1 < 0:
             # nothing close enough, so no triplet is possible
-            logger.info(f"No chan2 spot for chan0[{i0}], chan1[{i1}], closest was {sqrt(-i2)}")
+            logger.info(f"No chan1 spot for chan0[{i0}], chan2[{i2}], closest was {sqrt(-i1)}")
             continue
 
         # found a triplet!
         logger.info(f"Adding triplet [{i0}, {i1}, {i2}]")
-        triplets.append((spot0, points[1][i1], points[2][i1]))
+        triplets.append((points[0][i0], points[1][i1], spot2))
         pointUsed[0][i0] = True
         pointUsed[1][i1] = True
         pointUsed[2][i2] = True
 
         if progressCallback:
-            progressCallback(((i0+1) * 100) // len(points[0]), "FindBestTriplets")
+            progressCallback(((i0+1) * 100) // len(points[2]), "FindBestTriplets")
         if app:
             # let the GUI, if there is one, process pending events
             app.processEvents()

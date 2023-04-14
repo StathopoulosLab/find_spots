@@ -38,7 +38,7 @@ class ProcessStepThresholdMask(ProcessStep):
                 lastSlice = self._params['lastSlice'] if 'lastSlice' in self._params else -1
                 totalSlices = input.shape[0]
                 firstSlice = max(0, min(totalSlices, firstSlice))
-                lastSlice = min(totalSlices, totalSlices + lastSlice if lastSlice < 0 else lastSlice)
+                lastSlice = min(totalSlices, totalSlices + lastSlice + 1 if lastSlice < 0 else lastSlice)-1
                 slices = [input[i] for i in range(firstSlice, lastSlice+1)]
                 maskImageSlices = [maskImage[i] for i in range(firstSlice, lastSlice+1)]
             else:
