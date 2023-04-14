@@ -13,8 +13,7 @@ import sys
 from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
 from typing import Callable, Dict, Tuple
 from os import getpid
-from multiprocessing import log_to_stderr
-from logging import INFO
+from logging import INFO, Logger
 
 root2 = np.sqrt(2)
 
@@ -231,9 +230,7 @@ def master_function(inputFileName, outputFileName, thresh):
     write_output(outputSpots, outputFileName)
     print("Done with spot detect")
 
-def detect_spots(image: np.ndarray, thresh: float, printProgress: bool = True):
-    logger = log_to_stderr()
-    logger.setLevel(INFO)
+def detect_spots(image: np.ndarray, thresh: float, printProgress: bool = True, logger: Logger = None):
     if printProgress:
         print("Calculating moving window max")
     logger.info(f"Worker {getpid()}: Calculating moving window max")
@@ -260,22 +257,20 @@ class ProcessStepDetectSpots(ProcessStep):
     def run(self, progressCallback: Callable[..., Tuple[int, str]] = None) -> None:
         assert isinstance(self._inputs, list) and len(self._inputs) == 1
         assert 'spot_detect_threshold' in self._params
-        logger = log_to_stderr()
-        logger.setLevel(INFO)
-        logger.info(f"Worker {getpid()} inside ProcessStepDetectSpots.run()")
+        self._logger.info(f"Worker {getpid()} inside ProcessStepDetectSpots.run()")
         self._stepOutputs = []
         self._endOutputs = []
         spot_detect_threshold = self._params['spot_detect_threshold']
         input = self._inputs
         while isinstance(input, list):
-            logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
+            self._logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
             input = input[0]
         assert(isinstance(input, np.ndarray))
         if input.dtype != np.float64:
             input = np.array(input, dtype=np.float64)
         self._status = ProcessStatus.RUNNING
-        self._stepOutputs.append(detect_spots(input, spot_detect_threshold, False))
-        logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
+        self._stepOutputs.append(detect_spots(input, spot_detect_threshold, False, self._logger))
+        self._logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
         self._endOutputs.append([])
         if progressCallback:
             progressCallback(100, self._stepName)
@@ -298,6 +293,7 @@ class ProcessStepDetectSpotsConcurrent(ProcessStep):
         self._status = ProcessStatus.RUNNING
         concurrent = ProcessStepConcurrent(ProcessStepDetectSpots, self._params)
         concurrent.setApp(self._app)
+        concurrent.setLogger(self._logger)
         concurrent.setInputs(self._inputs)
         concurrent.run(progressCallback)
         status = concurrent.status()

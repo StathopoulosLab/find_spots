@@ -10,10 +10,10 @@ from algorithms.tripletDetection import ProcessStepFindTriplets
 from algorithms.touchingAnalysis import ProcessStepAnalyzeTouching, write_output
 from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
-from algorithms.detect_spots import detect_spots
 from processing import ProcessStatus, ProcessStep, ProcessStepIterate
 from imageCompareDialog import ProcessStepVisualizeDenoise
 
+from logging import INFO
 from matplotlib import cm
 import multiprocessing as mp
 import numpy as np
@@ -35,6 +35,7 @@ class FindSpotsTool(QMainWindow):
         super().__init__()
 
         self._app = app
+        self._logger = None
 
         # set up the main window UI
         self.ui = Ui_MainWindow()
@@ -85,6 +86,9 @@ class FindSpotsTool(QMainWindow):
 
         # setup some state
         self.running: bool = False
+
+    def setLogger(self, logger):
+        self._logger = logger
 
     @Slot()
     def addFiles(self):
@@ -212,6 +216,7 @@ class FindSpotsTool(QMainWindow):
         endOutputs = []
         for step in processSequence:
             step.setApp(self._app)
+            step.setLogger(self._logger)
             step.setInputs(stepOutputs)
             step.run(progressCallback)
             if step.status() != ProcessStatus.COMPLETED:
@@ -292,6 +297,9 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
 
     tool = FindSpotsTool(app)
+    logger = mp.log_to_stderr()
+    logger.setLevel(INFO)
+    tool.setLogger(logger)
     tool.screen_center = app.screens()[len(app.screens())-1].availableGeometry().center()
     # spacing = QPoint((window.width() + video.width()) / 4 + 5, 0)
     qr = tool.frameGeometry()
