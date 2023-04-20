@@ -10,10 +10,12 @@ import numpy as np
 import scipy.ndimage
 import imageio
 import sys
-from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent
+from matplotlib import cm
+from processing import ProcessStatus, ProcessStep, ProcessStepConcurrent, ProcessStepIterate
 from typing import Callable, Dict, Tuple
 from os import getpid
 from logging import INFO, Logger
+from skimage.feature import blob_log
 
 root2 = np.sqrt(2)
 
@@ -66,7 +68,7 @@ def detect_slice_spots(image, sliceIndex, thresh):
     sigmaSpace = np.arange(0.75,3.5,0.25)
     for i in range(len(sigmaSpace)):
         sigma = sigmaSpace[i]
-        im_LoG = sigma**2*scipy.ndimage.filters.gaussian_laplace(image,sigma)
+        im_LoG = sigma**2*scipy.ndimage.gaussian_laplace(image,sigma)
         LoG.append(im_LoG)
     LoG = np.array(LoG)
 
@@ -231,19 +233,22 @@ def master_function(inputFileName, outputFileName, thresh):
     print("Done with spot detect")
 
 def detect_spots(image: np.ndarray, thresh: float, printProgress: bool = True, logger: Logger = None):
-    if printProgress:
-        print("Calculating moving window max")
-    logger.info(f"Worker {getpid()}: Calculating moving window max")
-    stack = max_depth_np(image, 5)
-    if printProgress:
-        print("Grouping slice spots...")
-    logger.info(f"Worker {getpid()}: Grouping slice spots")
-    spots3d = group_slice_spots(stack, thresh, printProgress)
-    if printProgress:
-        print("Finding centroids...")
-    logger.info(f"Worker {getpid()}: Finding centroids")
-    outputSpots = find_centroids(spots3d)
-    logger.info(f"Worker {getpid()}: Done")
+    # if printProgress:
+    #     print("Calculating moving window max")
+    # logger.info(f"Worker {getpid()}: Calculating moving window max")
+    # stack = max_depth_np(image, 5)
+    # if printProgress:
+    #     print("Grouping slice spots...")
+    # logger.info(f"Worker {getpid()}: Grouping slice spots")
+    # spots3d = group_slice_spots(stack, thresh, printProgress)
+    # if printProgress:
+    #     print("Finding centroids...")
+    # logger.info(f"Worker {getpid()}: Finding centroids")
+    # outputSpots = find_centroids(spots3d)
+    # logger.info(f"Worker {getpid()}: Done")
+    logger.info(f"Worker {getpid()}: Detecting spots")
+    coords = blob_log(image, threshold=thresh)
+    outputSpots = [(spot[1], spot[2], spot[0]) for spot in coords]
     return(outputSpots)
 
 class ProcessStepDetectSpots(ProcessStep):
@@ -266,12 +271,16 @@ class ProcessStepDetectSpots(ProcessStep):
             self._logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
             input = input[0]
         assert(isinstance(input, np.ndarray))
-        if input.dtype != np.float64:
-            input = np.array(input, dtype=np.float64)
+        if input.dtype != np.uint8:
+            input = np.array(input, dtype=np.uint8)
         self._status = ProcessStatus.RUNNING
-        self._stepOutputs.append(detect_spots(input, spot_detect_threshold, False, self._logger))
+        stepOutputs = detect_spots(input, spot_detect_threshold, False, self._logger)
+        self._stepOutputs.append(stepOutputs)
         self._logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
-        self._endOutputs.append([])
+        if self._params['save_spot_image']:
+            self._endOutputs.append(stepOutputs)
+        else:
+            self._endOutputs.append([])
         if progressCallback:
             progressCallback(100, self._stepName)
         if self._app:

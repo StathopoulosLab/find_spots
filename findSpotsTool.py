@@ -70,6 +70,7 @@ class FindSpotsTool(QMainWindow):
         self.ui.spotDetection647ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetection555ThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.spotDetection488ThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.saveDetectedSpotsCheckBox.setChecked(False)
         self.ui.tripletMaxSizeLineEdit.setText(str(get_param("max_triplet_size", params)))
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
         self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice", params)))
@@ -163,7 +164,8 @@ class FindSpotsTool(QMainWindow):
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
                 'sigma': int(self.ui.sigma647LineEdit.text()),
                 'sharpen': float(self.ui.sharpen647LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection647ThresholdLineEdit.text())
+                'spot_detect_threshold': float(self.ui.spotDetection647ThresholdLineEdit.text()),
+                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
             },
             # params for 555 channel
             {
@@ -171,7 +173,8 @@ class FindSpotsTool(QMainWindow):
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
                 'sigma': int(self.ui.sigma555LineEdit.text()),
                 'sharpen': float(self.ui.sharpen555LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection555ThresholdLineEdit.text())
+                'spot_detect_threshold': float(self.ui.spotDetection555ThresholdLineEdit.text()),
+                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
             },
             # params for 488 channel
             {
@@ -179,7 +182,8 @@ class FindSpotsTool(QMainWindow):
                 'lastSlice': int(self.ui.lastSliceLineEdit.text()),
                 'sigma': int(self.ui.sigma488LineEdit.text()),
                 'sharpen': float(self.ui.sharpen488LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection488ThresholdLineEdit.text())
+                'spot_detect_threshold': float(self.ui.spotDetection488ThresholdLineEdit.text()),
+                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
             },
             # params for Nucleus channel
             {
@@ -199,20 +203,23 @@ class FindSpotsTool(QMainWindow):
         }
 
         processSequence: List[ProcessStep] = [
-                ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
-                ProcessStepThresholdMask(perChannelParamsList[-1]),
+                # ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
+                # ProcessStepThresholdMask(perChannelParamsList[-1]),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
                 ProcessStepAnalyzeTouching(touchingParams)
             ] if validateParams else [
-                ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList),
-                ProcessStepThresholdMask(perChannelParamsList[-1]),
+                # ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList),
+                # ProcessStepThresholdMask(perChannelParamsList[-1]),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
                 ProcessStepAnalyzeTouching(touchingParams)
             ]
+        # save the index of the step in processSequence that detects spots, so that we can find the results in endOutputs later
+        detectSpotsStep = 0
 
-        stepOutputs = [cf.channel_647(), cf.channel_488(), cf.channel_555(), cf.channel_nucleus()]
+        # stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488(), cf.channel_nucleus()]
+        stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488()]
         endOutputs = []
         for step in processSequence:
             step.setApp(self._app)
@@ -259,7 +266,7 @@ class FindSpotsTool(QMainWindow):
                 if x + dx < 0 or x + dx >= nucleus_3D_rgb.shape[1]:
                     continue
                 for dy in range(-6, 7):
-                    if y + dx < 0 or y + dy >= nucleus_3D_rgb.shape[2]:
+                    if y + dy < 0 or y + dy >= nucleus_3D_rgb.shape[2]:
                         continue
                     nucleus_2D_rgb[x+dx][y+dy] = color
                     for dz in range(-1, 2):
@@ -268,6 +275,36 @@ class FindSpotsTool(QMainWindow):
                         nucleus_3D_rgb[z+dz][x+dx][y+dy] = color
         tiff.imwrite(outStem + "_3D_rgb.tiff", nucleus_3D_rgb)
         tiff.imwrite(outStem + "_2D_rgb.tiff", nucleus_2D_rgb)
+
+        if self.ui.saveDetectedSpotsCheckBox.isChecked() and len(endOutputs) > detectSpotsStep and endOutputs[detectSpotsStep]:
+            spots = endOutputs[detectSpotsStep]
+            spotColors = [
+                (255,   0,   0),     # red
+                (  0, 255,   0),     # green
+                (  0,   0, 255)      # blue
+            ]
+            spots_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
+            for ix, ch in enumerate([cf.channel_647(), cf.channel_555(), cf.channel_488()]):
+                spots_image = gray_colormap(ch, bytes=True)[:,:,:,0:3]
+                color = spotColors[ix]
+                for chanSpot in spots[ix]:
+                    x = round(chanSpot[0])
+                    y = round(chanSpot[1])
+                    z = round(chanSpot[2])
+                    for dx in range(-6,7):
+                        if (
+                            x + dx < 0 or x + dx >= spots_image.shape[1] or
+                            z < 0 or z >= spots_image.shape[0]
+                        ):
+                            continue
+                        for dy in range(-6, 7):
+                            if y + dy < 0 or y + dy >= spots_image.shape[2]:
+                                continue
+                            if dx in (-6, 6) or dy in (-6, 6):   # draw an open rectangle
+                                spots_image[z][x+dx][y+dy] = color
+                                spots_2D_rgb[x+dx][y+dy] = color
+                tiff.imwrite(outStem + f"_ch{ix}_spots.tiff", spots_image)
+            tiff.imwrite(outStem + "_spots_rgb.tiff", spots_2D_rgb)
 
         completedFilesList = self.completedFilesModel.stringList()
         completedFilesList.append(fileToRun)

@@ -30,14 +30,15 @@ default_params = {
     "sigma": 15,
     "alpha_sharp": 1.3,
     "nucleus_mask_threshold": 16,
-    "spot_detect_threshold": -0.02,
+    "spot_detect_threshold": 0.2,
     'max_triplet_size': 0.75,
     'touching_threshold': 0.5,
     'use_denoise3d': False,
     'spot_projection_slice': 10,
     # 'use_bm4d': True,
     'save_after_denoise': False,
-    'save_spots': True
+    'save_spots': True,
+    'save_spot_image': False
 }
 
 def get_param(key, params):
@@ -83,6 +84,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     # use_bm4d = get_param('use_bm4d', params)
     save_after_denoise = get_param('save_after_denoise', params)
     save_spots = get_param('save_spots', params)
+    save_spot_image = get_param('save_spot_image', params)
 
     if save_after_denoise:
         stem, _ = splitext(inputFile)

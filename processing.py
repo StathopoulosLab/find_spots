@@ -89,7 +89,7 @@ class ProcessStep():
 
 class ProcessStepSequence(ProcessStep):
     """
-    This is a composite processing step that encapuslates
+    This is a composite processing step that encapsulates
     a sequence of processing steps.
     """
 
