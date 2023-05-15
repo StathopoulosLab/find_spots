@@ -247,7 +247,7 @@ class FindSpotsTool(QMainWindow):
 
         # Now plot each of the triplets into the image stack, colored by conformation
         colors = {
-            '000': ( 32,  32,  32),     # nothing touching: dark gray
+            '000': ( 64,  64,  64),     # nothing touching: dark gray
             '100': (255, 255,   0),     # only red touching green: yellow
             '010': (  0, 255, 255),     # only green touching blue: cyan
             '001': (255,   0, 255),     # only blue touching red: magenta
