@@ -204,7 +204,7 @@ class FindSpotsTool(QMainWindow):
 
         processSequence: List[ProcessStep] = [
                 # ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
-                # ProcessStepThresholdMask(perChannelParamsList[-1]),
+                ProcessStepThresholdMask(perChannelParamsList[-1]),
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
                 ProcessStepAnalyzeTouching(touchingParams)
@@ -216,7 +216,7 @@ class FindSpotsTool(QMainWindow):
                 ProcessStepAnalyzeTouching(touchingParams)
             ]
         # save the index of the step in processSequence that detects spots, so that we can find the results in endOutputs later
-        detectSpotsStep = 0
+        detectSpotsStep = 1
 
         # stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488(), cf.channel_nucleus()]
         stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488()]
