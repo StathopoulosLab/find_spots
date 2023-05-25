@@ -83,6 +83,8 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
                        logger: Logger = None,
                        app: QApplication = None,
                        progressCallback: Callable[[int, str], None] = None) -> List:
+    if len(leftSpots) == 0 or len(middleSpots) == 0 or len(rightSpots) == 0:
+        return []
     points = []
     pointUsed = []
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in leftSpots])
