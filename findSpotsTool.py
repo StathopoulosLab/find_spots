@@ -324,7 +324,7 @@ class FindSpotsTool(QMainWindow):
         write_output(output, outStem + "_results.txt", nucleusCount)
 
         # construct a new rgb version of the nucleus image volume and specified slice
-        spot_projection_slice = int(self.ui.spotProjectionSliceLineEdit.text())
+        spot_projection_slice = int(self.ui.nucleusSliceLineEdit.text())
         spot_projection_slice = max(0, min(spot_projection_slice, cf.channel_nucleus().shape[0]))
         gray_colormap = cm.get_cmap('gray', 256)
         nucleus_3D_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
