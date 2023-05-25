@@ -27,15 +27,21 @@ from matplotlib import cm
 default_params = {
     "first_slice": 0,
     "last_slice": -1,    # -1 indicates last available slice.  -11 would skip the last 10
+    "left_channel": "647",
+    "middle_channel": "488",
+    "right_channel": "555",
+    "do_denoising": False,
     "sigma": 15,
     "alpha_sharp": 1.3,
+    "do_masking": True,
     "nucleus_mask_threshold": 16,
     "spot_detect_threshold": 0.2,
+    "find_doublets": True,
     'max_triplet_size': 0.75,
     'touching_threshold': 0.5,
     'use_denoise3d': False,
-    'spot_projection_slice': 10,
-    # 'use_bm4d': True,
+    'nucleus_slice': 10,
+    'count_nuclei': True,
     'save_after_denoise': False,
     'save_spots': True,
     'save_spot_image': False

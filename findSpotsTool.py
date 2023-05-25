@@ -3,6 +3,7 @@ from qtpy.QtCore import Qt, QObject, QRunnable, QThreadPool, QStringListModel, S
 from qtpy.QtWidgets import QApplication, QDialog, QDialogButtonBox, QFileDialog, QMainWindow, QMessageBox
 from findSpotsTool_ui import Ui_MainWindow
 from imageCompareDialog import ImageCompareDialog
+from algorithms.countNuclei import ProcessStepCountNuclei
 from algorithms.denoise import ProcessStepDenoiseConcurrent
 from algorithms.threshold_mask import ProcessStepThresholdMask
 from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent, ProcessStepDetectSpots
@@ -49,31 +50,69 @@ class FindSpotsTool(QMainWindow):
         self.completedFilesModel = QStringListModel()
         self.ui.completedFilesListView.setModel(self.completedFilesModel)
 
-        # initialize default parameters
-        params = {} # for now
+        # initialize parameters
+        # For now, we don't support saving of params.
+        # defaults come from the default_params dict initialized in find_spots.py
+        params = {}
+
+        # Initialize dynamic UI contents and connect UI widget Signals to Slots
+        # Slice Selection Settings:
         self.ui.firstSliceLineEdit.setText(str(get_param("first_slice", params)))
         self.ui.lastSliceLineEdit.setText(str(get_param("last_slice", params)))
-        self.ui.use3DCheckBox.setChecked(get_param('use_denoise3d', params))
+        self.ui.nucleusSliceLineEdit.setText(str(get_param("nucleus_slice", params)))
+
+        # Channel Settings
+        for comboBox in [self.ui.leftChannelComboBox,
+                         self.ui.middleChannelComboBox,
+                         self.ui.rightChannelComboBox]:
+            comboBox.addItems(['647','555','488'])
+        try:
+            self.ui.leftChannelComboBox.setCurrentText(str(get_param('left_channel', params)))
+        except ...:
+            self.ui.leftChannelComboBox.setCurrentText("647")
+        try:
+            self.ui.middleChannelComboBox.setCurrentText(str(get_param('middle_channel', params)))
+        except ...:
+            self.ui.middleChannelComboBox.setCurrentText("488")
+        try:
+            self.ui.rightChannelComboBox.setCurrentText(str(get_param('right_channel', params)))
+        except ...:
+            self.ui.rightChannelComboBox.setCurrentText("555")
+
+        # Denoising settings
+        self.ui.denoiseCheckBox.clicked.connect(self.changeDenoiseEnableState)
+        self.ui.denoiseCheckBox.setChecked(bool(get_param('do_denoising', params)))
+        self.changeDenoiseEnableState() # pick up state just set
+        self.ui.use3DCheckBox.setChecked(bool(get_param('use_denoise3d', params)))
         default_sigma = str(get_param("sigma", params))
-        self.ui.sigma647LineEdit.setText(default_sigma)
-        self.ui.sigma555LineEdit.setText(default_sigma)
-        self.ui.sigma488LineEdit.setText(default_sigma)
+        self.ui.leftSigmaLineEdit.setText(default_sigma)
+        self.ui.middleSigmaLineEdit.setText(default_sigma)
+        self.ui.rightSigmaLineEdit.setText(default_sigma)
         self.ui.sigmaNucleusLineEdit.setText(default_sigma)
         default_alpha_sharp = str(get_param("alpha_sharp", params))
-        self.ui.sharpen647LineEdit.setText(default_alpha_sharp)
-        self.ui.sharpen555LineEdit.setText(default_alpha_sharp)
-        self.ui.sharpen488LineEdit.setText(default_alpha_sharp)
+        self.ui.leftSharpenLineEdit.setText(default_alpha_sharp)
+        self.ui.middleSharpenLineEdit.setText(default_alpha_sharp)
+        self.ui.rightSharpenLineEdit.setText(default_alpha_sharp)
+
+        # Masking settings
         self.ui.sharpenNucleusLineEdit.setText(default_alpha_sharp)
+        self.ui.maskingCheckBox.clicked.connect(self.changeMaskingEnableState)
+        self.ui.maskingCheckBox.setChecked(bool(get_param('do_masking', params)))
+        self.changeMaskingEnableState() # pick up state just set
         default_nucleus_mask_threshold = str(get_param("nucleus_mask_threshold", params))
         self.ui.nucleusMaskingThresholdLineEdit.setText(default_nucleus_mask_threshold)
+        self.ui.countNucleiCheckBox.setChecked(bool(get_param('count_nuclei', params)))
+
+        # Spot detection settings
         default_spot_detect_threshold = str(get_param("spot_detect_threshold", params))
-        self.ui.spotDetection647ThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.spotDetection555ThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.spotDetection488ThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.leftSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.middleSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.rightSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
         self.ui.saveDetectedSpotsCheckBox.setChecked(False)
+
+        # Triplet detection settings
         self.ui.tripletMaxSizeLineEdit.setText(str(get_param("max_triplet_size", params)))
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
-        self.ui.spotProjectionSliceLineEdit.setText(str(get_param("spot_projection_slice", params)))
 
         # connect various widgets to actions
         self.ui.addFilesButton.clicked.connect(self.addFiles)
@@ -92,6 +131,31 @@ class FindSpotsTool(QMainWindow):
         self._logger = logger
 
     @Slot()
+    def changeDenoiseEnableState(self):
+        for widget in [self.ui.use3DCheckBox,
+                       self.ui.leftDenoiseLabel,
+                       self.ui.middleDenoiseLabel,
+                       self.ui.rightDenoiseLabel,
+                       self.ui.denoiseNucleusLabel,
+                       self.ui.sigmaLabel,
+                       self.ui.leftSigmaLineEdit,
+                       self.ui.middleSigmaLineEdit,
+                       self.ui.rightSigmaLineEdit,
+                       self.ui.sharpenLabel,
+                       self.ui.leftSharpenLineEdit,
+                       self.ui.middleSharpenLineEdit,
+                       self.ui.rightSharpenLineEdit,
+                       self.ui.saveDetectedSpotsCheckBox
+                       ]:
+            widget.setEnabled(self.ui.denoiseCheckBox.isChecked())
+
+    @Slot()
+    def changeMaskingEnableState(self):
+        for widget in [self.ui.nucleusMaskingThresholdLabel,
+                       self.ui.nucleusMaskingThresholdLineEdit]:
+            widget.setEnabled(self.ui.maskingCheckBox.isChecked())
+
+    @Slot()
     def addFiles(self):
         baseDir = expanduser("~")
         file_paths, _ = QFileDialog.getOpenFileNames(
@@ -107,13 +171,6 @@ class FindSpotsTool(QMainWindow):
             self.pendingFilesModel.dataChanged.emit(
                 self.pendingFilesModel.index(0),
                 self.pendingFilesModel.index(len(files)))
-
-    def simulateProcessing(self):
-        self.ui.progressBar.setRange(0, 5)
-        for t in range(5):
-            self.ui.progressBar.setValue(t)
-            time.sleep(3)   # 3 seconds per "step"
-        self.ui.progressBar.setValue(5)
 
     @Slot(bool)
     def testSettings(self, checked: bool = False):
@@ -157,69 +214,96 @@ class FindSpotsTool(QMainWindow):
         self.ui.progressBar.setValue(0)
 
         # set up the processing sequence and params
-        perChannelParamsList = [
-            # params for 647 channel
-            {
-                'firstSlice': int(self.ui.firstSliceLineEdit.text()),
-                'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigma647LineEdit.text()),
-                'sharpen': float(self.ui.sharpen647LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection647ThresholdLineEdit.text()),
-                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
-            },
-            # params for 555 channel
-            {
-                'firstSlice': int(self.ui.firstSliceLineEdit.text()),
-                'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigma555LineEdit.text()),
-                'sharpen': float(self.ui.sharpen555LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection555ThresholdLineEdit.text()),
-                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
-            },
-            # params for 488 channel
-            {
-                'firstSlice': int(self.ui.firstSliceLineEdit.text()),
-                'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigma488LineEdit.text()),
-                'sharpen': float(self.ui.sharpen488LineEdit.text()),
-                'spot_detect_threshold': float(self.ui.spotDetection488ThresholdLineEdit.text()),
-                'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
-            },
-            # params for Nucleus channel
-            {
-                'firstSlice': int(self.ui.firstSliceLineEdit.text()),
-                'lastSlice': int(self.ui.lastSliceLineEdit.text()),
-                'sigma': int(self.ui.sigmaNucleusLineEdit.text()),
-                'sharpen': float(self.ui.sharpenNucleusLineEdit.text()),
-                'nucleus_mask_threshold': int(self.ui.nucleusMaskingThresholdLineEdit.text())
 
-            }
-        ]
+        # params for the left channel
+        leftChannelParams = {
+            'firstSlice': int(self.ui.firstSliceLineEdit.text()),
+            'lastSlice': int(self.ui.lastSliceLineEdit.text()),
+            'sigma': int(self.ui.leftSigmaLineEdit.text()),
+            'sharpen': float(self.ui.leftSharpenLineEdit.text()),
+            'spot_detect_threshold': float(self.ui.leftSpotDetectionThresholdLineEdit.text()),
+            'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
+        }
+        # params for the middle channel
+        middleChannelParams = {
+            'firstSlice': int(self.ui.firstSliceLineEdit.text()),
+            'lastSlice': int(self.ui.lastSliceLineEdit.text()),
+            'sigma': int(self.ui.middleSigmaLineEdit.text()),
+            'sharpen': float(self.ui.middleSharpenLineEdit.text()),
+            'spot_detect_threshold': float(self.ui.middleSpotDetectionThresholdLineEdit.text()),
+            'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
+        }
+        # params for the right channel
+        rightChannelParams = {
+            'firstSlice': int(self.ui.firstSliceLineEdit.text()),
+            'lastSlice': int(self.ui.lastSliceLineEdit.text()),
+            'sigma': int(self.ui.rightSigmaLineEdit.text()),
+            'sharpen': float(self.ui.rightSharpenLineEdit.text()),
+            'spot_detect_threshold': float(self.ui.rightSpotDetectionThresholdLineEdit.text()),
+            'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
+        }
+        # params for Nucleus channel
+        nucleusChannelParams = {
+            'firstSlice': int(self.ui.firstSliceLineEdit.text()),
+            'lastSlice': int(self.ui.lastSliceLineEdit.text()),
+            'sigma': int(self.ui.sigmaNucleusLineEdit.text()),
+            'sharpen': float(self.ui.sharpenNucleusLineEdit.text()),
+            'nucleus_mask_threshold': int(self.ui.nucleusMaskingThresholdLineEdit.text()),
+            'count_nuclei': bool(self.ui.countNucleiCheckBox.isChecked()),
+            'nucleus_slice': int(self.ui.nucleusSliceLineEdit.text())
+        }
+
         tripletsParams: Dict = {
             'max_triplet_size': float(self.ui.tripletMaxSizeLineEdit.text())
         }
         touchingParams: Dict = {
             'touching_threshold': float(self.ui.touchingThresholdLineEdit.text())
         }
-
-        processSequence: List[ProcessStep] = [
-                # ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList),
-                ProcessStepThresholdMask(perChannelParamsList[-1]),
-                ProcessStepDetectSpotsConcurrent(perChannelParamsList),
-                ProcessStepFindTriplets(scale, tripletsParams),
-                ProcessStepAnalyzeTouching(touchingParams)
-            ] if validateParams else [
-                # ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList),
-                # ProcessStepThresholdMask(perChannelParamsList[-1]),
-                ProcessStepDetectSpotsConcurrent(perChannelParamsList),
-                ProcessStepFindTriplets(scale, tripletsParams),
-                ProcessStepAnalyzeTouching(touchingParams)
-            ]
-        # save the index of the step in processSequence that detects spots, so that we can find the results in endOutputs later
-        detectSpotsStep = 1
-
         # stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488(), cf.channel_nucleus()]
-        stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488()]
+        channelItemFromString: dict = {
+            # map the string to the CZI file channel
+            '647': cf.channel_647(),
+            '555': cf.channel_555(),
+            '488': cf.channel_488()
+        }
+
+        # Instantiate the step outputs to be the source images, with matching parameters dicts
+        perChannelParamsList = [leftChannelParams, middleChannelParams, rightChannelParams]
+        stepOutputs = [channelItemFromString[self.ui.leftChannelComboBox.currentText()],
+                       channelItemFromString[self.ui.middleChannelComboBox.currentText()],
+                       channelItemFromString[self.ui.rightChannelComboBox.currentText()]]
+
+        if self.ui.maskingCheckBox.isChecked() or self.ui.countNucleiCheckBox.isChecked():
+            stepOutputs.append(cf.channel_nucleus())
+            perChannelParamsList.append(nucleusChannelParams)
+
+        processSequence: List = []
+        # save the index of the step in processSequence that detects spots, so that we can find the results in endOutputs later
+        detectSpotsStep: int = 0
+        # also save the index of the process step where we count nuclei, so we can get the result later
+        countNucleiStep: int = 0
+        # Build the sequence of process steps, based on what is selected in the UI and whether we're validating params or not
+        if self.ui.denoiseCheckBox.isChecked():
+            if validateParams:
+                processSequence.append(ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList))
+            else:
+                processSequence.append(ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList))
+            detectSpotsStep += 1
+            countNucleiStep += 1
+
+        if self.ui.countNucleiCheckBox.isChecked():
+            processSequence.append(ProcessStepCountNuclei(nucleusChannelParams))
+            detectSpotsStep += 1
+
+        if self.ui.maskingCheckBox.isChecked():
+            processSequence.append(ProcessStepThresholdMask(perChannelParamsList[-1]))
+            detectSpotsStep += 1
+        processSequence.extend([
+                ProcessStepDetectSpotsConcurrent(perChannelParamsList),
+                ProcessStepFindTriplets(scale, tripletsParams),
+                ProcessStepAnalyzeTouching(touchingParams)
+            ])
+
         endOutputs = []
         for step in processSequence:
             step.setApp(self._app)
@@ -234,9 +318,10 @@ class FindSpotsTool(QMainWindow):
             endOutputs.append(step.endOutputs())
         output = stepOutputs[0]
         conformance = endOutputs[-1][0]
+        nucleusCount = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else None
 
         outStem, _ = splitext(fileToRun)
-        write_output(output, outStem + "_results.txt")
+        write_output(output, outStem + "_results.txt", nucleusCount)
 
         # construct a new rgb version of the nucleus image volume and specified slice
         spot_projection_slice = int(self.ui.spotProjectionSliceLineEdit.text())

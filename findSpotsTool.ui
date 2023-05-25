@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1147</width>
-    <height>749</height>
+    <width>1158</width>
+    <height>867</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -140,27 +140,7 @@
     <item>
      <layout class="QVBoxLayout" name="rightVerticalLayout">
       <item>
-       <spacer name="verticalSpacer_5">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>366</width>
-          <height>13</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
        <layout class="QGridLayout" name="sliceSelectionGridLayout">
-        <item row="0" column="0" colspan="3">
-         <widget class="QLabel" name="sliceSelectionSettingsLabel">
-          <property name="text">
-           <string>Slice Selection Settings</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="4">
          <widget class="QLineEdit" name="lastSliceLineEdit">
           <property name="alignment">
@@ -168,10 +148,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="firstSliceLabel">
+        <item row="0" column="0" colspan="3">
+         <widget class="QLabel" name="sliceSelectionSettingsLabel">
           <property name="text">
-           <string>First Slice:</string>
+           <string>Slice Selection Settings</string>
           </property>
          </widget>
         </item>
@@ -182,18 +162,12 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <spacer name="betweennSlicesHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="1" column="0">
+         <widget class="QLabel" name="firstSliceLabel">
+          <property name="text">
+           <string>First Slice:</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="firstSliceLineEdit">
@@ -215,6 +189,99 @@
           </property>
          </spacer>
         </item>
+        <item row="1" column="2">
+         <spacer name="betweennSlicesHorizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="nucleusSliceLabel">
+          <property name="text">
+           <string>Nucleus Slice:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="nucleusSliceLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer_1">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>366</width>
+          <height>13</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <layout class="QGridLayout" name="channelsGridLayout">
+        <item row="3" column="0">
+         <widget class="QComboBox" name="leftChannelComboBox"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="channelsLabel">
+          <property name="text">
+           <string>Channel Settings</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="middleChannelLabel">
+          <property name="text">
+           <string>Middle</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="leftChannelLabel">
+          <property name="text">
+           <string>Left</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLabel" name="rightChannelLabel">
+          <property name="text">
+           <string>Right</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QComboBox" name="rightChannelComboBox"/>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="middleChannelComboBox"/>
+        </item>
        </layout>
       </item>
       <item>
@@ -232,90 +299,8 @@
       </item>
       <item>
        <layout class="QGridLayout" name="denoiseSettingsGridLayout">
-        <item row="4" column="0">
-         <widget class="QLabel" name="sharpenLabel">
-          <property name="text">
-           <string>Sharpening:</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="4">
-         <widget class="QLabel" name="denoiseNucleusLabel">
-          <property name="text">
-           <string>Nucleus</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QLineEdit" name="sigma647LineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0" colspan="2">
-         <widget class="QLabel" name="denoiseSettingsLabel">
-          <property name="text">
-           <string>Denoising Settings</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLabel" name="denoise647Label">
-          <property name="text">
-           <string>647</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="3">
-         <widget class="QLineEdit" name="sigma488LineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="2">
-         <widget class="QLineEdit" name="sigma555LineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QLineEdit" name="sharpen488LineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="use3DCheckBox">
-          <property name="text">
-           <string>Use 3D Denoising</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <widget class="QLabel" name="denoise555Label">
-          <property name="text">
-           <string>555</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QLineEdit" name="sharpen647LineEdit">
+         <widget class="QLineEdit" name="rightSigmaLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -328,8 +313,32 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="2">
-         <widget class="QLineEdit" name="sharpen555LineEdit">
+        <item row="5" column="0">
+         <widget class="QCheckBox" name="saveDetectedSpotsCheckBox">
+          <property name="text">
+           <string>Save spot image</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="rightDenoiseLabel">
+          <property name="text">
+           <string>Right</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="leftSigmaLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="3">
+         <widget class="QLineEdit" name="rightSharpenLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -345,6 +354,81 @@
           </property>
          </widget>
         </item>
+        <item row="0" column="0">
+         <widget class="QCheckBox" name="denoiseCheckBox">
+          <property name="text">
+           <string>Do Denoising</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="sharpenLabel">
+          <property name="text">
+           <string>Sharpening:</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="leftDenoiseLabel">
+          <property name="text">
+           <string>Left</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QLineEdit" name="leftSharpenLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QCheckBox" name="use3DCheckBox">
+          <property name="text">
+           <string>Use 3D Denoising</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QLabel" name="denoiseNucleusLabel">
+          <property name="text">
+           <string>Nucleus</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QLineEdit" name="middleSigmaLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QLabel" name="middleDenoiseLabel">
+          <property name="text">
+           <string>Middle</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QLineEdit" name="middleSharpenLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
         <item row="3" column="4">
          <widget class="QLineEdit" name="sigmaNucleusLineEdit">
           <property name="alignment">
@@ -352,27 +436,10 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="denoise488Label">
-          <property name="text">
-           <string>488</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="5" column="0">
-         <widget class="QCheckBox" name="saveDetectedSpotsCheckBox">
-          <property name="text">
-           <string>Save spot image</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer_6">
+       <spacer name="verticalSpacer_3">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -386,6 +453,19 @@
       </item>
       <item>
        <layout class="QGridLayout" name="nucleusMaskingGridLayout">
+        <item row="1" column="2">
+         <spacer name="nucleusMaskingHorizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
         <item row="1" column="1">
          <widget class="QLineEdit" name="nucleusMaskingThresholdLineEdit">
           <property name="alignment">
@@ -404,29 +484,23 @@
          </widget>
         </item>
         <item row="0" column="0">
-         <widget class="QLabel" name="nucleusMaskingLabel">
+         <widget class="QCheckBox" name="maskingCheckBox">
           <property name="text">
-           <string>Nucleus Masking Settings</string>
+           <string>Do Masking</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
-         <spacer name="nucleusMaskingHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+        <item row="0" column="1">
+         <widget class="QCheckBox" name="countNucleiCheckBox">
+          <property name="text">
+           <string>Count Nuclei</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
+         </widget>
         </item>
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer_3">
+       <spacer name="verticalSpacer_4">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -441,9 +515,9 @@
       <item>
        <layout class="QGridLayout" name="spotDetectionGridLayout">
         <item row="2" column="3">
-         <widget class="QLabel" name="spotDetection488Label">
+         <widget class="QLabel" name="rightSpotDetectionLabel">
           <property name="text">
-           <string>488</string>
+           <string>Right</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -451,16 +525,16 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QLineEdit" name="spotDetection647ThresholdLineEdit">
+         <widget class="QLineEdit" name="leftSpotDetectionThresholdLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item row="2" column="2">
-         <widget class="QLabel" name="spotDetection555Label">
+         <widget class="QLabel" name="middleSpotDetection555Label">
           <property name="text">
-           <string>555</string>
+           <string>Middle</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -468,7 +542,7 @@
          </widget>
         </item>
         <item row="3" column="3">
-         <widget class="QLineEdit" name="spotDetection488ThresholdLineEdit">
+         <widget class="QLineEdit" name="rightSpotDetectionThresholdLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -489,16 +563,16 @@
          </widget>
         </item>
         <item row="3" column="2">
-         <widget class="QLineEdit" name="spotDetection555ThresholdLineEdit">
+         <widget class="QLineEdit" name="middleSpotDetectionThresholdLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QLabel" name="spotDetection647Label">
+         <widget class="QLabel" name="leftSpotDetectionLabel">
           <property name="text">
-           <string>647</string>
+           <string>Left</string>
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
@@ -508,7 +582,7 @@
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer_8">
+       <spacer name="verticalSpacer_5">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -559,10 +633,17 @@
           </property>
          </widget>
         </item>
+        <item row="1" column="2">
+         <widget class="QCheckBox" name="findDoubletsCheckBox">
+          <property name="text">
+           <string>Also Find Doublets</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
-       <spacer name="verticalSpacer">
+       <spacer name="verticalSpacer_6">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
         </property>
@@ -599,57 +680,6 @@
         </item>
         <item row="1" column="2">
          <spacer name="touchingThresholdHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="verticalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>366</width>
-          <height>13</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <layout class="QGridLayout" name="spotProjectionGridLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="spotProjectionSettingsLabel">
-          <property name="text">
-           <string>Spot Projection Settings</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0" alignment="Qt::AlignRight">
-         <widget class="QLabel" name="spotProjectionsSliceLabel">
-          <property name="text">
-           <string>Nucleus Slice for Spot Display:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="spotProjectionSliceLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="2">
-         <spacer name="spotProjectionHorizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>
           </property>
@@ -723,7 +753,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1147</width>
+     <width>1158</width>
      <height>24</height>
     </rect>
    </property>
@@ -737,15 +767,15 @@
   <tabstop>firstSliceLineEdit</tabstop>
   <tabstop>lastSliceLineEdit</tabstop>
   <tabstop>use3DCheckBox</tabstop>
-  <tabstop>sigma647LineEdit</tabstop>
-  <tabstop>sharpen647LineEdit</tabstop>
-  <tabstop>sigma555LineEdit</tabstop>
-  <tabstop>sharpen555LineEdit</tabstop>
-  <tabstop>sigma488LineEdit</tabstop>
-  <tabstop>sharpen488LineEdit</tabstop>
-  <tabstop>spotDetection647ThresholdLineEdit</tabstop>
-  <tabstop>spotDetection555ThresholdLineEdit</tabstop>
-  <tabstop>spotDetection488ThresholdLineEdit</tabstop>
+  <tabstop>leftSigmaLineEdit</tabstop>
+  <tabstop>leftSharpenLineEdit</tabstop>
+  <tabstop>middleSigmaLineEdit</tabstop>
+  <tabstop>middleSharpenLineEdit</tabstop>
+  <tabstop>rightSigmaLineEdit</tabstop>
+  <tabstop>rightSharpenLineEdit</tabstop>
+  <tabstop>leftSpotDetectionThresholdLineEdit</tabstop>
+  <tabstop>middleSpotDetectionThresholdLineEdit</tabstop>
+  <tabstop>rightSpotDetectionThresholdLineEdit</tabstop>
   <tabstop>touchingThresholdLineEdit</tabstop>
   <tabstop>testSettingsPushButton</tabstop>
   <tabstop>runBatchPushButton</tabstop>
