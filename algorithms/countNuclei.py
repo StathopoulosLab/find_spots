@@ -7,6 +7,16 @@ import numpy as np
 from typing import Callable, Dict, List
 from skimage.feature import blob_log
 
+def count_nuclei(image: np.ndarray, thresh: int) -> int:
+    # first, threshold the slice using the same params as for nucleus masking
+    _, thresholdedSlice = cv2.threshold(image, thresh, 255, cv2.THRESH_BINARY)
+    # now find "blobs" in the same way as we do for spot detection, but in the thresholded nucleus slice
+    # This uses a "laplacian of gaussian" operator from SciKit-Image
+    # We're using the default parameters for now
+    coords = blob_log(thresholdedSlice)
+    # finally, just return the number of blobs found
+    return len(coords)
+
 class ProcessStepCountNuclei(ProcessStep):
     """
     Count the number of nuclei in the nucleus channel, on the numbered slice given in the params.
@@ -33,14 +43,8 @@ class ProcessStepCountNuclei(ProcessStep):
         if self._app:
             self._app.processEvents()
         maskImageSlice = maskImage[nucleusSlice]
-        # first, threshold the slice using the same params as for nucleus masking
-        thresholdedSlice = cv2.threshold(maskImageSlice, nucleus_mask_threshold, 255, cv2.THRESH_BINARY)
-        # now find "blobs" in the same way as we do for spot detection, but in the thresholded nucleus slice
-        # This uses a "laplacian of gaussian" operator from SciKit-Image
-        # We're using the default parameters for now
-        coords = blob_log(maskImageSlice)
-        # finally, just return the number of blobs found
-        self._endOutputs.append(len(coords))
+        numNuclei = count_nuclei(maskImageSlice, nucleus_mask_threshold)
+        self._endOutputs.append(numNuclei)
         if self._app:
             self._app.processEvents()
         self._status = ProcessStatus.COMPLETED
