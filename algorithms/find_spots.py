@@ -33,7 +33,7 @@ default_params = {
     "do_denoising": False,
     "sigma": 15,
     "alpha_sharp": 1.3,
-    "do_masking": True,
+    "do_masking": False,
     "nucleus_mask_threshold": 16,
     "spot_detect_threshold": 0.04,
     "find_doublets": True,
@@ -41,7 +41,7 @@ default_params = {
     'touching_threshold': 0.65,
     'use_denoise3d': False,
     'nucleus_slice': 10,
-    'count_nuclei': True,
+    'count_nuclei': False,
     'save_after_denoise': False,
     'save_spots': True,
     'save_spot_image': False
