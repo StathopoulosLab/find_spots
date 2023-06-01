@@ -141,10 +141,12 @@ class FindSpotsTool(QMainWindow):
                        self.ui.leftSigmaLineEdit,
                        self.ui.middleSigmaLineEdit,
                        self.ui.rightSigmaLineEdit,
+                       self.ui.sigmaNucleusLineEdit,
                        self.ui.sharpenLabel,
                        self.ui.leftSharpenLineEdit,
                        self.ui.middleSharpenLineEdit,
                        self.ui.rightSharpenLineEdit,
+                       self.ui.sharpenNucleusLineEdit
                        ]:
             widget.setEnabled(self.ui.denoiseCheckBox.isChecked())
 
