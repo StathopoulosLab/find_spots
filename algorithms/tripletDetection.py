@@ -34,10 +34,10 @@ def read_input(chan0File, chan1File, chan2File):
 def select(chan0File, chan1File, chan2File, lim):
     spots = read_input(chan0File, chan1File, chan2File)
     print(len(spots[0]), len(spots[1]), len(spots[2]))
-    triplets = find_best_triplets(
+    triplets, _, _ = find_best_triplets(
         spots[0], spots[1], spots[2],
         0.065, 0.065, 0.1,
-        1.5
+        1.5, False
     )
     print(str(len(triplets))+" Triplets Detected")
     return triplets
@@ -51,7 +51,22 @@ def write_results(triplets, outputFileName):
                 %(x0,y0,z0,x1,y1,z1,x2,y2,z2))
     f.close()
 
+def write_doublets(doublets, outputFileName):
+    '''Writes doublet spot coordinates to a text file.'''
+    f = open(outputFileName, 'w')
+    f.write(f"# doublets: {len(doublets)}")
+    for doublet in doublets:
+        [[x0,y0,z0],[x1,y1,z1]] = doublet
+        f.write('%-5s %-5s %-5s %-5s %-5s %05s\n' \
+                %(x0,y0,z0,x1,y1,z1))
+    f.close()
+
 def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Union[int, float]:
+    """
+    Find the closest unused spot in otherChanSpots to middleSpot,
+    and return its index if it's closer than maxTripletSize
+    If nothing is that close, return minus the distance squared to the closest unused spot.
+    """
     # find any spots in otherChanSpots that are close enough to spot
     minDistanceSquared = 1000000000.
     candidateSpotIx = []
@@ -80,19 +95,20 @@ def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTriplet
 def find_best_triplets(leftSpots, middleSpots, rightSpots,
                        xScale: float, yScale: float, zScale: float,
                        maxTripletSize: float,
+                       find_doublets: bool,
                        logger: Logger = None,
                        app: QApplication = None,
-                       progressCallback: Callable[[int, str], None] = None) -> List:
+                       progressCallback: Callable[[int, str], None] = None) -> Tuple[List, List, List]:
     if len(leftSpots) == 0 or len(middleSpots) == 0 or len(rightSpots) == 0:
-        return []
+        return ([], [], [])
     points = []
     pointUsed = []
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in leftSpots])
     pointUsed.append([False] * len(points[0]))
     points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in middleSpots])
-    pointUsed.append([False] * len(points[2]))
-    points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in rightSpots])
     pointUsed.append([False] * len(points[1]))
+    points.append([[xScale*x, yScale*y, zScale*z] for [x,y,z] in rightSpots])
+    pointUsed.append([False] * len(points[2]))
 
     if progressCallback:
         progressCallback(0, "FindTriplets")
@@ -100,35 +116,47 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         # let the GUI, if there is one, process pending events
         app.processEvents()
     triplets = []
+    leftDoublets = []
+    rightDoublets = []
 
     for iMiddle, middleSpot in enumerate(points[1]):
-        # get the closest chan0 spot, if any
+        # get the closest left spot, if any
         iLeft = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
-        if iLeft < 0:
-            # nothing close enough, so no triplet is possible for spot0
-            logger.info(f"No left spot for middle[{iMiddle}], closest was {sqrt(-iLeft)}")
-            continue
-
-        # get the closest chan1 spot, if any
+        # get the closest right spot, if any
         iRight = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
-        if iRight < 0:
-            # nothing close enough, so no triplet is possible
-            logger.info(f"No right spot for left[{iLeft}], middle[{iMiddle}], closest was {sqrt(-iRight)}")
-            continue
+        if iLeft >= 0 and iRight >= 0:
+            # found a triplet!
+            logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
+            triplets.append((points[0][iLeft], points[2][iRight], middleSpot))
+            pointUsed[0][iLeft] = True
+            pointUsed[1][iMiddle] = True
+            pointUsed[2][iRight] = True
 
-        # found a triplet!
-        logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
-        triplets.append((points[0][iLeft], points[2][iRight], middleSpot))
-        pointUsed[0][iLeft] = True
-        pointUsed[1][iMiddle] = True
-        pointUsed[2][iRight] = True
+        elif find_doublets and iLeft >= 0:
+            # found a left doublet!
+            logger.info(f"Adding left doublet [{iLeft}, {iMiddle}]")
+            leftDoublets.append((points[0][iLeft], middleSpot))
+            pointUsed[0][iLeft] = True
+            pointUsed[1][iMiddle] = True
+
+        elif iRight >= 0:
+            # found a right doublet!
+            logger.info(f"Adding right doublet [{iMiddle}, {iRight}]")
+            rightDoublets.append((middleSpot, points[2][iRight]))
+            pointUsed[1][iMiddle] = True
+            pointUsed[2][iRight] = True
+
+        else:
+            # nothing close enough, so no triplet is possible
+            logger.info(f"For middle spot [{iMiddle}], closest left spot was {sqrt(-iLeft)}, "
+                        f"closest right spot was {sqrt(-iRight)}")
 
         if progressCallback:
             progressCallback(((iLeft+1) * 100) // len(points[1]), "FindBestTriplets")
         if app:
             # let the GUI, if there is one, process pending events
             app.processEvents()
-    return triplets
+    return (triplets, leftDoublets, rightDoublets)
 
 class ProcessStepFindTriplets(ProcessStep):
     """
@@ -145,11 +173,13 @@ class ProcessStepFindTriplets(ProcessStep):
         assert 'Z' in self._scale
         assert isinstance(self._inputs, list) and len(self._inputs) == 3
         assert 'max_triplet_size' in self._params
+        assert 'find_doublets' in self._params
         self._status = ProcessStatus.RUNNING
         self._stepOutputs = []
         self._endOutputs = []
         max_triplet_size = self._params['max_triplet_size']
-        triplets = find_best_triplets(
+        find_doublets = self._params['find_doublets']
+        triplets, leftDoublets, rightDoublets = find_best_triplets(
             self._inputs[0],
             self._inputs[1],
             self._inputs[2],
@@ -157,11 +187,12 @@ class ProcessStepFindTriplets(ProcessStep):
             self._scale['Y'],
             self._scale['Z'],
             max_triplet_size,
+            find_doublets,
             self._logger,
             self._app,
             progressCallback)
         self._stepOutputs.append(triplets)
-        self._endOutputs.append([])
+        self._endOutputs.extend([leftDoublets, rightDoublets])
         self._status = ProcessStatus.COMPLETED
 
 if __name__ == "__main__":

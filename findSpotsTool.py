@@ -1,17 +1,17 @@
 # findSpotsTool.py
-from qtpy.QtCore import Qt, QObject, QRunnable, QThreadPool, QStringListModel, Signal, Slot
-from qtpy.QtWidgets import QApplication, QDialog, QDialogButtonBox, QFileDialog, QMainWindow, QMessageBox
+from qtpy.QtCore import QStringListModel, Signal, Slot
+from qtpy.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 from findSpotsTool_ui import Ui_MainWindow
-from imageCompareDialog import ImageCompareDialog
 from algorithms.countNuclei import ProcessStepCountNuclei
 from algorithms.denoise import ProcessStepDenoiseConcurrent
 from algorithms.threshold_mask import ProcessStepThresholdMask
-from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent, ProcessStepDetectSpots
-from algorithms.tripletDetection import ProcessStepFindTriplets
+from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent
+from algorithms.tripletDetection import ProcessStepFindTriplets, write_doublets
 from algorithms.touchingAnalysis import ProcessStepAnalyzeTouching, write_output
 from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
-from processing import ProcessStatus, ProcessStep, ProcessStepIterate
+from spots_io.plot_spots import plot_spots_2D, plot_spots_3D
+from processing import ProcessStatus, ProcessStepIterate
 from imageCompareDialog import ProcessStepVisualizeDenoise
 
 from logging import INFO
@@ -21,7 +21,6 @@ import numpy as np
 from os.path import expanduser, splitext
 import sys, platform
 import tifffile as tiff
-import time
 from typing import Dict, List
 
 class FindSpotsTool(QMainWindow):
@@ -97,11 +96,11 @@ class FindSpotsTool(QMainWindow):
         # Masking settings
         self.ui.sharpenNucleusLineEdit.setText(default_alpha_sharp)
         self.ui.maskingCheckBox.clicked.connect(self.changeMaskingEnableState)
-        self.ui.maskingCheckBox.setChecked(bool(get_param('do_masking', params)))
+        self.ui.maskingCheckBox.setChecked(get_param('do_masking', params))
         self.changeMaskingEnableState() # pick up state just set
         default_nucleus_mask_threshold = str(get_param("nucleus_mask_threshold", params))
         self.ui.nucleusMaskingThresholdLineEdit.setText(default_nucleus_mask_threshold)
-        self.ui.countNucleiCheckBox.setChecked(bool(get_param('count_nuclei', params)))
+        self.ui.countNucleiCheckBox.setChecked(get_param('count_nuclei', params))
 
         # Spot detection settings
         default_spot_detect_threshold = str(get_param("spot_detect_threshold", params))
@@ -111,6 +110,7 @@ class FindSpotsTool(QMainWindow):
         self.ui.saveDetectedSpotsCheckBox.setChecked(False)
 
         # Triplet detection settings
+        self.ui.findDoubletsCheckBox.setChecked(get_param("find_doublets", params))
         self.ui.tripletMaxSizeLineEdit.setText(str(get_param("max_triplet_size", params)))
         self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
 
@@ -145,7 +145,6 @@ class FindSpotsTool(QMainWindow):
                        self.ui.leftSharpenLineEdit,
                        self.ui.middleSharpenLineEdit,
                        self.ui.rightSharpenLineEdit,
-                       self.ui.saveDetectedSpotsCheckBox
                        ]:
             widget.setEnabled(self.ui.denoiseCheckBox.isChecked())
 
@@ -222,7 +221,7 @@ class FindSpotsTool(QMainWindow):
             'sigma': int(self.ui.leftSigmaLineEdit.text()),
             'sharpen': float(self.ui.leftSharpenLineEdit.text()),
             'spot_detect_threshold': float(self.ui.leftSpotDetectionThresholdLineEdit.text()),
-            'save_spot_image': bool(self.ui.saveDetectedSpotsCheckBox.isChecked())
+            'save_spot_image': self.ui.saveDetectedSpotsCheckBox.isChecked()
         }
         # params for the middle channel
         middleChannelParams = {
@@ -254,6 +253,7 @@ class FindSpotsTool(QMainWindow):
         }
 
         tripletsParams: Dict = {
+            'find_doublets': self.ui.findDoubletsCheckBox.isChecked(),
             'max_triplet_size': float(self.ui.tripletMaxSizeLineEdit.text())
         }
         touchingParams: Dict = {
@@ -278,26 +278,37 @@ class FindSpotsTool(QMainWindow):
             perChannelParamsList.append(nucleusChannelParams)
 
         processSequence: List = []
-        # save the index of the step in processSequence that detects spots, so that we can find the results in endOutputs later
-        detectSpotsStep: int = 0
-        # also save the index of the process step where we count nuclei, so we can get the result later
+
+        # Save the index of some specific process steps, so that we can get results specific
+        # to that step from endOutputs later
         countNucleiStep: int = 0
+        detectSpotsStep: int = 0
+        tripletDetectionStep: int = 1   # doublets lists
+
+        #
         # Build the sequence of process steps, based on what is selected in the UI and whether we're validating params or not
         if self.ui.denoiseCheckBox.isChecked():
             if validateParams:
                 processSequence.append(ProcessStepIterate(ProcessStepVisualizeDenoise, perChannelParamsList))
             else:
                 processSequence.append(ProcessStepIterate(ProcessStepDenoiseConcurrent, perChannelParamsList))
-            detectSpotsStep += 1
+            # since we're adding a process step before CountNuclei and DetectSpots...
             countNucleiStep += 1
+            detectSpotsStep += 1
+            tripletDetectionStep += 1
 
         if self.ui.countNucleiCheckBox.isChecked():
             processSequence.append(ProcessStepCountNuclei(nucleusChannelParams))
+            # since we're adding a process step before DetectSpots...
             detectSpotsStep += 1
+            tripletDetectionStep += 1
 
         if self.ui.maskingCheckBox.isChecked():
             processSequence.append(ProcessStepThresholdMask(perChannelParamsList[-1]))
+            # since we're adding a process step before DetectSpots...
             detectSpotsStep += 1
+            tripletDetectionStep += 1
+
         processSequence.extend([
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
@@ -319,9 +330,13 @@ class FindSpotsTool(QMainWindow):
         output = stepOutputs[0]
         conformance = endOutputs[-1][0]
         nucleusCount = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else None
+        leftDoublets, rightDoublets = endOutputs[tripletDetectionStep]
 
         outStem, _ = splitext(fileToRun)
         write_output(output, outStem + "_results.txt", nucleusCount)
+        if self.ui.findDoubletsCheckBox.isChecked():
+            write_doublets(leftDoublets, outStem + "_leftDoublets.txt")
+            write_doublets(rightDoublets, outStem + "_rightDoublets.txt")
 
         # construct a new rgb version of the nucleus image volume and specified slice
         spot_projection_slice = int(self.ui.nucleusSliceLineEdit.text())
@@ -341,25 +356,28 @@ class FindSpotsTool(QMainWindow):
             '101': (255,   0,   0),     # blue touching red and red touching green: red
             '111': (255, 255, 255)      # all spots touching: white
             }
-
-        for triplet in output:
-            x = round(triplet[0] / scale['X'])
-            y = round(triplet[1] / scale['Y'])
-            z = round(triplet[2] / scale['Z'])
-            color = colors[triplet[3]]
-            for dx in range(-6,7):
-                if x + dx < 0 or x + dx >= nucleus_3D_rgb.shape[1]:
-                    continue
-                for dy in range(-6, 7):
-                    if y + dy < 0 or y + dy >= nucleus_3D_rgb.shape[2]:
-                        continue
-                    nucleus_2D_rgb[x+dx][y+dy] = color
-                    for dz in range(-1, 2):
-                        if z + dz < 0 or z + dz >= nucleus_3D_rgb.shape[0]:
-                            continue
-                        nucleus_3D_rgb[z+dz][x+dx][y+dy] = color
-        tiff.imwrite(outStem + "_3D_rgb.tiff", nucleus_3D_rgb)
+        scaleTuple = (scale['X'], scale['Y'], scale['Z'])
+        plot_spots_2D(nucleus_2D_rgb, output, scaleTuple, lambda pos: colors[pos[3]])
         tiff.imwrite(outStem + "_2D_rgb.tiff", nucleus_2D_rgb)
+
+        plot_spots_3D(nucleus_3D_rgb, output, scaleTuple, lambda pos: colors[pos[3]])
+        tiff.imwrite(outStem + "_3D_rgb.tiff", nucleus_3D_rgb)
+
+        if self.ui.findDoubletsCheckBox.isChecked():
+            doublet_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
+            # Calculate the left doublet centroids
+            leftDoubletCentroids = [((doublet[0][0] + doublet[1][0])/2.,
+                                     (doublet[0][1] + doublet[1][0])/2.,
+                                     (doublet[0][2] + doublet[1][2])/2.) for doublet in leftDoublets]
+            # Plot the left doublet centroids in red
+            plot_spots_2D(doublet_2D_rgb, leftDoubletCentroids, scaleTuple, lambda pos: (255, 0, 0))
+            # Calculate the right doublet centroids
+            rightDoubletCentroids = [((doublet[0][0] + doublet[1][0])/2.,
+                                      (doublet[0][1] + doublet[1][0])/2.,
+                                      (doublet[0][2] + doublet[1][2])/2.) for doublet in rightDoublets]
+            # Plot the right doublet centroids in blue on the same image as the left doublets
+            plot_spots_2D(doublet_2D_rgb, rightDoubletCentroids, scaleTuple, lambda pos: (0, 0, 255))
+            tiff.imwrite(outStem + "_doublets_rgb.tiff", doublet_2D_rgb)
 
         if self.ui.saveDetectedSpotsCheckBox.isChecked() and len(endOutputs) > detectSpotsStep and endOutputs[detectSpotsStep]:
             spots = endOutputs[detectSpotsStep]
@@ -368,26 +386,14 @@ class FindSpotsTool(QMainWindow):
                 (  0, 255,   0),     # green
                 (  0,   0, 255)      # blue
             ]
+
             spots_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
+
+            spotsScale = (1., 1., 1.)
             for ix, ch in enumerate([cf.channel_647(), cf.channel_555(), cf.channel_488()]):
                 spots_image = gray_colormap(ch, bytes=True)[:,:,:,0:3]
-                color = spotColors[ix]
-                for chanSpot in spots[ix]:
-                    x = round(chanSpot[0])
-                    y = round(chanSpot[1])
-                    z = round(chanSpot[2])
-                    for dx in range(-6,7):
-                        if (
-                            x + dx < 0 or x + dx >= spots_image.shape[1] or
-                            z < 0 or z >= spots_image.shape[0]
-                        ):
-                            continue
-                        for dy in range(-6, 7):
-                            if y + dy < 0 or y + dy >= spots_image.shape[2]:
-                                continue
-                            if dx in (-6, 6) or dy in (-6, 6):   # draw an open rectangle
-                                spots_image[z][x+dx][y+dy] = color
-                                spots_2D_rgb[x+dx][y+dy] = color
+                plot_spots_2D(spots_2D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix])
+                plot_spots_2D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix])
                 tiff.imwrite(outStem + f"_ch{ix}_spots.tiff", spots_image)
             tiff.imwrite(outStem + "_spots_rgb.tiff", spots_2D_rgb)
 
