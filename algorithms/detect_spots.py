@@ -39,7 +39,7 @@ class ProcessStepDetectSpots(ProcessStep):
         if input.dtype != np.uint8:
             input = np.array(input, dtype=np.uint8)
         self._status = ProcessStatus.RUNNING
-        stepOutputs = detect_spots(input, spot_detect_threshold, False, self._logger)
+        stepOutputs = detect_spots(input, spot_detect_threshold, self._logger)
         self._stepOutputs.append(stepOutputs)
         self._logger.info(f"Worker {getpid()}: outputted a list of length {len(self._stepOutputs[0])}")
         if self._params['save_spot_image']:
