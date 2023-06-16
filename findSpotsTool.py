@@ -414,8 +414,8 @@ class FindSpotsTool(QMainWindow):
                     channelItemFromString[self.ui.rightChannelComboBox.currentText()]
                     ]):
                 spots_image = gray_colormap(ch, bytes=True)[:,:,:,0:3]
-                plot_spots_2D(spots_2D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix])
-                plot_spots_3D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix])
+                plot_spots_2D(spots_2D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix], filled=False)
+                plot_spots_3D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix], filled=False)
                 tiff.imwrite(outStem + f"_ch{ix}_spots.tiff", spots_image)
             tiff.imwrite(outStem + "_spots_rgb.tiff", spots_2D_rgb)
 
