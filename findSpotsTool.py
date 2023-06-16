@@ -249,7 +249,7 @@ class FindSpotsTool(QMainWindow):
             'lastSlice': int(self.ui.lastSliceLineEdit.text()),
             'sigma': int(self.ui.sigmaNucleusLineEdit.text()),
             'sharpen': float(self.ui.sharpenNucleusLineEdit.text()),
-            'nucleus_mask_threshold': int(self.ui.nucleusMaskingThresholdLineEdit.text()),
+            'nucleus_mask_threshold': float(self.ui.nucleusMaskingThresholdLineEdit.text()),
             'count_nuclei': bool(self.ui.countNucleiCheckBox.isChecked()),
             'nucleus_slice': int(self.ui.nucleusSliceLineEdit.text())
         }
@@ -270,14 +270,21 @@ class FindSpotsTool(QMainWindow):
         }
 
         # Instantiate the step outputs to be the source images, with matching parameters dicts
-        perChannelParamsList = [leftChannelParams, middleChannelParams, rightChannelParams]
+        perChannelParamsList = [leftChannelParams, middleChannelParams, rightChannelParams, nucleusChannelParams]
         stepOutputs = [channelItemFromString[self.ui.leftChannelComboBox.currentText()],
                        channelItemFromString[self.ui.middleChannelComboBox.currentText()],
-                       channelItemFromString[self.ui.rightChannelComboBox.currentText()]]
+                       channelItemFromString[self.ui.rightChannelComboBox.currentText()],
+                       cf.channel_nucleus()]
 
-        if self.ui.maskingCheckBox.isChecked() or self.ui.countNucleiCheckBox.isChecked():
-            stepOutputs.append(cf.channel_nucleus())
-            perChannelParamsList.append(nucleusChannelParams)
+        # we now provide all four channels as initial step inputs (in stepOutputs), regardless whether or not
+        # masking or nucleus counting is enabled.
+        # To reduce the number of channels before actual spot-finding, the masking process step is always included,
+        # and it does nothing except remove the nucleus channel if it's disabled.
+        # Nucleus counting process step is still only included in the sequence if it's active.
+        # So the section below is commented out, and will be removed in the future.
+        # if self.ui.maskingCheckBox.isChecked() or self.ui.countNucleiCheckBox.isChecked():
+        #     stepOutputs.append(cf.channel_nucleus())
+        #     perChannelParamsList.append(nucleusChannelParams)
 
         processSequence: List = []
 
@@ -305,11 +312,14 @@ class FindSpotsTool(QMainWindow):
             detectSpotsStep += 1
             tripletDetectionStep += 1
 
-        if self.ui.maskingCheckBox.isChecked():
-            processSequence.append(ProcessStepThresholdMask(perChannelParamsList[-1]))
-            # since we're adding a process step before DetectSpots...
-            detectSpotsStep += 1
-            tripletDetectionStep += 1
+        # include the ThresholdMask process step regardless, since it needs to
+        # reduce the number of channels from four to three, but signal
+        # whether or not do actually do masking via the params
+        nucleusChannelParams['do_masking'] = self.ui.maskingCheckBox.isChecked()
+        processSequence.append(ProcessStepThresholdMask(nucleusChannelParams))
+        # since we're adding a process step before DetectSpots...
+        detectSpotsStep += 1
+        tripletDetectionStep += 1
 
         processSequence.extend([
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
@@ -331,11 +341,11 @@ class FindSpotsTool(QMainWindow):
             endOutputs.append(step.endOutputs())
         output = stepOutputs[0]
         conformance = endOutputs[-1][0]
-        nucleusCount = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else None
+        nucleusCoords, nucleusCountImage = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else (None, None)
         leftDoublets, rightDoublets = endOutputs[tripletDetectionStep]
 
         outStem, _ = splitext(fileToRun)
-        write_output(output, outStem + "_results.txt", nucleusCount)
+        write_output(output, outStem + "_results.txt", len(nucleusCoords) if nucleusCoords else None)
         if self.ui.findDoubletsCheckBox.isChecked():
             write_doublets(leftDoublets, outStem + "_leftDoublets.txt")
             write_doublets(rightDoublets, outStem + "_rightDoublets.txt")
@@ -346,6 +356,12 @@ class FindSpotsTool(QMainWindow):
         gray_colormap = cm.get_cmap('gray', 256)
         nucleus_3D_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
         nucleus_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
+
+        # For now, always plot nuclei if we counted them
+        if self.ui.countNucleiCheckBox.isChecked():
+            nuclei_2d_rgb = gray_colormap(nucleusCountImage, bytes=True)[:,:,0:3]
+            plot_spots_2D(nuclei_2d_rgb, nucleusCoords, (1., 1., 1.), lambda pos: [255, 255, 0])
+            tiff.imwrite(outStem + "_nuclei_rgb.tiff", nuclei_2d_rgb)
 
         # Now plot each of the triplets into the image stack, colored by conformation
         colors = {
@@ -392,10 +408,14 @@ class FindSpotsTool(QMainWindow):
             spots_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
 
             spotsScale = (1., 1., 1.)
-            for ix, ch in enumerate([cf.channel_647(), cf.channel_555(), cf.channel_488()]):
+            for ix, ch in enumerate([
+                    channelItemFromString[self.ui.leftChannelComboBox.currentText()],
+                    channelItemFromString[self.ui.middleChannelComboBox.currentText()],
+                    channelItemFromString[self.ui.rightChannelComboBox.currentText()]
+                    ]):
                 spots_image = gray_colormap(ch, bytes=True)[:,:,:,0:3]
                 plot_spots_2D(spots_2D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix])
-                plot_spots_2D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix])
+                plot_spots_3D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix])
                 tiff.imwrite(outStem + f"_ch{ix}_spots.tiff", spots_image)
             tiff.imwrite(outStem + "_spots_rgb.tiff", spots_2D_rgb)
 

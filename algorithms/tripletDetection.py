@@ -5,7 +5,7 @@ import sys
 from logging import Logger
 from math import sqrt
 from processing import ProcessStep, ProcessStatus
-from typing import Callable, Dict, List, Tuple, Union
+from typing import Callable, Dict, List, Tuple
 
 def distanceSquared(point1, point2):
     '''Returns sq of distance between point 1 and point 2 in form [x,y,z]'''
@@ -61,11 +61,12 @@ def write_doublets(doublets, outputFileName):
                 %(x0,y0,z0,x1,y1,z1))
     f.close()
 
-def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Union[int, float]:
+def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Tuple[int, float]:
     """
     Find the closest unused spot in otherChanSpots to middleSpot,
     and return its index if it's closer than maxTripletSize
-    If nothing is that close, return minus the distance squared to the closest unused spot.
+    If nothing is that close, return -1 as the index
+    In all cases, also return the distance squared to the closest unused spot.
     """
     # find any spots in otherChanSpots that are close enough to spot
     minDistanceSquared = 1000000000.
@@ -80,17 +81,17 @@ def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTriplet
             minDistanceSquared = thisDistanceSquared
     if not candidateSpotIx:
         # no spot close enough
-        return -minDistanceSquared
+        return -1, minDistanceSquared
     # find the candidate spot1 that's closest to spot0
     bestIdx = candidateSpotIx[0]
+    bestDist = distanceSquared(middleSpot, otherChanSpots[bestIdx])
     if len(candidateSpotIx) > 1:
-        bestDist = distanceSquared(middleSpot, otherChanSpots[bestIdx])
         for idx in range(1,len(candidateSpotIx)):
             thisDist = distanceSquared(middleSpot, otherChanSpots[idx])
             if thisDist < bestDist:
                 bestDist = thisDist
                 bestIdx = idx
-    return bestIdx
+    return bestIdx, bestDist
 
 def find_best_triplets(leftSpots, middleSpots, rightSpots,
                        xScale: float, yScale: float, zScale: float,
@@ -121,9 +122,9 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
 
     for iMiddle, middleSpot in enumerate(points[1]):
         # get the closest left spot, if any
-        iLeft = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
+        iLeft, leftDist = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
         # get the closest right spot, if any
-        iRight = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
+        iRight, rightDist = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
         if iLeft >= 0 and iRight >= 0:
             # found a triplet!
             logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
@@ -139,7 +140,7 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
             pointUsed[0][iLeft] = True
             pointUsed[1][iMiddle] = True
 
-        elif iRight >= 0:
+        elif find_doublets and iRight >= 0:
             # found a right doublet!
             logger.info(f"Adding right doublet [{iMiddle}, {iRight}]")
             rightDoublets.append((middleSpot, points[2][iRight]))
@@ -148,8 +149,8 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
 
         else:
             # nothing close enough, so no triplet is possible
-            logger.info(f"For middle spot [{iMiddle}], closest left spot was {sqrt(-iLeft)}, "
-                        f"closest right spot was {sqrt(-iRight)}")
+            logger.info(f"For middle spot [{iMiddle}], closest left spot was {sqrt(leftDist)}, "
+                        f"closest right spot was {sqrt(rightDist)}")
 
         if progressCallback:
             progressCallback(((iLeft+1) * 100) // len(points[1]), "FindBestTriplets")

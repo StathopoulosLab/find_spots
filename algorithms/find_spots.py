@@ -34,7 +34,7 @@ default_params = {
     "sigma": 15,
     "alpha_sharp": 1.3,
     "do_masking": False,
-    "nucleus_mask_threshold": 16,
+    "nucleus_mask_threshold": 0.2,
     "spot_detect_threshold": 0.04,
     "find_doublets": True,
     'max_triplet_size': 2.6,

@@ -4,7 +4,35 @@ from qtpy.QtWidgets import QApplication
 import cv2
 from processing import ProcessStatus, ProcessStep
 import numpy as np
-from typing import Callable, Dict, List
+from scipy.ndimage import gaussian_filter, binary_dilation, binary_erosion
+from scipy.ndimage.morphology import binary_fill_holes
+from typing import Callable, Dict
+
+def min_max_normalize(img: np.ndarray) -> np.ndarray:
+    # Normalizing all values between 0 and 1 for easier thresholding
+
+    min_val = np.min(img)
+    max_val = np.max(img)
+    normal_image = (img - min_val) / (max_val - min_val)
+
+    return(normal_image)
+
+def generate_nucleus_mask(image: np.ndarray, thresh: float) -> np.ndarray:
+    # first, normalize the image between 0. and 1.
+    norm_im = min_max_normalize(image)
+    # second, flat-field the image
+    blur_im = gaussian_filter(norm_im, sigma=50)
+    norm_im = norm_im / blur_im
+    norm_im = min_max_normalize(norm_im)
+    # third, threshold to create a binary mask image
+    mask = norm_im > thresh
+    # fourth, fill in gaps using binary dilation
+    dil = binary_dilation(mask, iterations=3)
+    # fifth, fill in the holes
+    fill_mask = binary_fill_holes(dil)
+    # sixth, erode the mask a bit to remove small spots
+    fill_mask = binary_erosion(fill_mask, iterations=4)
+    return fill_mask
 
 class ProcessStepThresholdMask(ProcessStep):
     """
@@ -18,11 +46,18 @@ class ProcessStepThresholdMask(ProcessStep):
 
     def run(self, progressCallback: Callable[[int, str], None] = None):
         assert isinstance(self._inputs, list) and len(self._inputs) > 1
+        self._endOutputs = []
+        assert "do_masking" in self._params
+        do_masking = self._params.get('do_masking')
+        if not do_masking:
+            self._stepOutputs = self._inputs[0:-1]
+            self._endOutputs.append([])
+            self._status = ProcessStatus.COMPLETED
+            return
         assert 'nucleus_mask_threshold' in self._params
         self._status = ProcessStatus.RUNNING
-        nucleus_mask_threshold = self._params.get('nucleus_mask_threshold')
+        nucleus_mask_threshold = float(self._params.get('nucleus_mask_threshold'))
         self._stepOutputs = []
-        self._endOutputs = []
         maskImage = self._inputs[-1]
         if maskImage.dtype != np.uint8:
             maskImage = np.uint8(maskImage)
@@ -47,7 +82,7 @@ class ProcessStepThresholdMask(ProcessStep):
             maskedSlices = []
             thresholdsUsed = []
             for slice, maskImageSlice in zip(slices, maskImageSlices):
-                thresholdUsed, maskSlice = cv2.threshold(maskImageSlice, nucleus_mask_threshold, 255, cv2.THRESH_BINARY)
+                thresholdUsed, maskSlice = generate_nucleus_mask(maskImageSlice, nucleus_mask_threshold)
                 thresholdsUsed.append(thresholdUsed)
                 maskedSlices.append(np.bitwise_and(slice, maskSlice))
             maskedOutput = np.array(maskedSlices, dtype=np.uint8).squeeze()
