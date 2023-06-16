@@ -157,7 +157,9 @@ class ProcessStepConcurrent(ProcessStep):
     def runInner(self, stepClass: ProcessStep, params: Dict, inQ: mp.Queue, outQ: mp.Queue) -> None:
         """
         Pull the inputs off the input queue and call the processStep's run() function
-        Get the outputs and pushd them on the two output queues.
+        Get the outputs and push them on the output queue as a tuple, along with the
+        index from the input queue, so that we can keep the results in the same order
+        as the inputs, even though the parallel processes may finish in a different order.
         """
         try:
             step = stepClass(params)
