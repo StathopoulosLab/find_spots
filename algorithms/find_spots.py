@@ -27,15 +27,24 @@ from matplotlib import cm
 default_params = {
     "first_slice": 0,
     "last_slice": -1,    # -1 indicates last available slice.  -11 would skip the last 10
+    "left_channel": "647",
+    "middle_channel": "488",
+    "right_channel": "555",
+    "do_denoising": False,
     "sigma": 15,
     "alpha_sharp": 1.3,
-    "nucleus_mask_threshold": 16,
-    "spot_detect_threshold": -0.02,
-    'touching_threshold': 0.2,
+    "do_masking": False,
+    "nucleus_mask_threshold": 0.2,
+    "spot_detect_threshold": 0.04,
+    "find_doublets": True,
+    'max_triplet_size': 2.6,
+    'touching_threshold': 0.65,
     'use_denoise3d': False,
-    # 'use_bm4d': True,
+    'nucleus_slice': 10,
+    'count_nuclei': False,
     'save_after_denoise': False,
-    'save_spots': True
+    'save_spots': True,
+    'save_spot_image': False
 }
 
 def get_param(key, params):
@@ -75,16 +84,18 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     alpha_sharp = get_param('alpha_sharp', params)
     spot_detect_thresh = get_param('spot_detect_threshold', params)
     scale = cf.get_scale()
+    max_triplet_size = get_param('max_triplet_size', params)
     touching_threshold = get_param('touching_threshold', params)
     use_denoise3d = get_param('use_denoise3d', params)
     # use_bm4d = get_param('use_bm4d', params)
     save_after_denoise = get_param('save_after_denoise', params)
     save_spots = get_param('save_spots', params)
+    save_spot_image = get_param('save_spot_image', params)
 
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_antibody"
-        save_components(cf.channel_antibody()[first_slice:last_slice], save_name)
+        save_components(cf.channel_nucleus()[first_slice:last_slice], save_name)
 
     denoiser = DenoiseBM4D()
     # if use_bm4d:
@@ -97,9 +108,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     #TODO: make these steps concurrent
     print("Denoising 3'CRM")
     if use_denoise3d:
-        denoised_3CRM = denoiser.denoise3d(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_3CRM = denoiser.denoise3d(cf.channel_647()[first_slice:last_slice], sigma, alpha_sharp)
     else:
-        denoised_3CRM = denoiser.denoise(cf.channel_3CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_3CRM = denoiser.denoise(cf.channel_647()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_3CRM_denoised"
@@ -112,9 +123,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     print("Denoising 5'CRM")
     if use_denoise3d:
-        denoised_5CRM = denoiser.denoise3d(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_5CRM = denoiser.denoise3d(cf.channel_555()[first_slice:last_slice], sigma, alpha_sharp)
     else:
-        denoised_5CRM = denoiser.denoise(cf.channel_5CRM()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_5CRM = denoiser.denoise(cf.channel_555()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_5CRM_denoised"
@@ -127,9 +138,9 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     print("Denoising PPE")
     if use_denoise3d:
-        denoised_PPE = denoiser.denoise3d(cf.channel_PPE()[first_slice:last_slice], sigma)
+        denoised_PPE = denoiser.denoise3d(cf.channel_488()[first_slice:last_slice], sigma)
     else:
-        denoised_PPE = denoiser.denoise(cf.channel_PPE()[first_slice:last_slice], sigma, alpha_sharp)
+        denoised_PPE = denoiser.denoise(cf.channel_488()[first_slice:last_slice], sigma, alpha_sharp)
     if save_after_denoise:
         stem, _ = splitext(inputFile)
         save_name = stem + "_PPE_denoised"
@@ -142,8 +153,8 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     #TODO: end of potentially concurrent block
     print(f"Found {len(spots_3CRM)} 3CRM, {len(spots_5CRM)} 5CRM and {len(spots_PPE)} PPE spots")
-    triplets, max_lim = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, scale['X'], scale['Y'], scale['Z'])
-    print(f"Identified {len(triplets)} triplets with max_lim {max_lim}")
+    triplets = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, scale['X'], scale['Y'], scale['Z'], max_triplet_size)
+    print(f"Identified {len(triplets)} triplets")
     triplets, conformations = ta.analyze_inner(triplets, touching_threshold)
     print(f"analyze_inner identified {len(triplets)} triplets")
 
@@ -152,7 +163,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     # construct a new rgb version of the antibody image volume
     gray_colormap = cm.get_cmap('gray', 256)
-    antibody_rgb = gray_colormap(cf.channel_antibody(), bytes=True)[:,:,:,0:3]
+    antibody_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
 
     # Now plot each of the triplets into the image stack, colored by conformation
     colors = {

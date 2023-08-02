@@ -8,21 +8,21 @@ from os import read
 import sys
 from typing import Callable, Dict, List, Tuple
 
-def distance(point1, point2):
+def distanceSquared(point1, point2):
     '''Returns squared distance between point 1 and point 2 in form [x,y,z]'''
     x1, y1, z1 = point1[0], point1[1], point1[2]
     x2, y2, z2 = point2[0], point2[1], point2[2]
     return (x1-x2)**2 + (y1-y2)**2 + (z1-z2)**2
 
-def classify(blue, red, green, threshold):
+def classify(leftChan, middleChan, rightChan, thresholdSquared):
     '''Classifies given triplet based on distances between 3 point inputs and
     a threshold parameter that gives the cutoff between "near" and "far"'''
     output = [0,0,0]
-    if distance(blue, red) < threshold:
+    if distanceSquared(leftChan, middleChan) < thresholdSquared:
         output[0] = 1
-    if distance(green, blue) < threshold:
+    if distanceSquared(middleChan, rightChan) < thresholdSquared:
         output[1] = 1
-    if distance(red, green) < threshold:
+    if distanceSquared(rightChan, leftChan) < thresholdSquared:
         output[2] = 1
     return ''.join(str(e) for e in output)
 
@@ -38,7 +38,7 @@ def read_file(inputFName):
     return triplets
 
 def analyze_inner(points, thresh, read_file_order: bool = False) -> Tuple[List, Dict]:
-    '''Given input file of triplet (b_x, b_y, b_z, r_x, r_y, r_z, g_x, g_y, g_z)
+    '''Given input file of triplet (r_x, r_y, r_z, g_x, g_y, g_z, b_x, b_y, b_z)
     coordinates with units in physical lengths (not pixel widths) and a
     threshold to determine touching, classifies each triplet into one of 8
     conformations based on which spots are close/touching.'''
@@ -62,13 +62,6 @@ def analyze_inner(points, thresh, read_file_order: bool = False) -> Tuple[List, 
             triplets[2].append(points[i][2])
             triplets[3].append(label)
         points = triplets
-
-    # # Hmmm.  The following don't appear to be used anywhere.
-    # dist_35, dist_3P, dist_5P = [], [], []
-    # for i in range(len(points[0])):
-    #     dist_35.append(distance(points[0][i], points[1][i]))
-    #     dist_3P.append(distance(points[0][i], points[2][i]))
-    #     dist_5P.append(distance(points[1][i], points[2][i]))
 
     return points, conformations
 
@@ -98,11 +91,13 @@ def generate_output(points: List) -> List:
         output.append([xCentr, yCentr, zCentr, label])
     return output
 
-def write_output(output, outputFileName):
+def write_output(output, outputFileName, nucleusCount: int = None):
     '''Given lines of triplets and their conformations, writes the triplet
     centroid and then the conformation number to a text file outputFileName.'''
     outFile = open(outputFileName, 'w')
 
+    if nucleusCount:
+        outFile.write(f'Nucleus count: {nucleusCount}\n')
     for i in range(len(output)):
         outFile.write('%-15s %-15s %-15s %s\n'%(output[i][0], output[i][1], output[i][2], output[i][3]))
     outFile.close()

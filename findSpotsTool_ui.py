@@ -15,16 +15,17 @@ from qtpy.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from qtpy.QtWidgets import (QApplication, QCheckBox, QGridLayout, QHBoxLayout,
-    QLabel, QLineEdit, QListView, QMainWindow,
-    QMenuBar, QProgressBar, QPushButton, QSizePolicy,
-    QSpacerItem, QStatusBar, QVBoxLayout, QWidget)
+from qtpy.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
+    QHBoxLayout, QLabel, QLineEdit, QListView,
+    QMainWindow, QMenuBar, QProgressBar, QPushButton,
+    QSizePolicy, QSpacerItem, QStatusBar, QVBoxLayout,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1147, 734)
+        MainWindow.resize(1158, 867)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.horizontalLayout = QHBoxLayout(self.centralwidget)
@@ -131,36 +132,28 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout = QVBoxLayout()
         self.rightVerticalLayout.setObjectName(u"rightVerticalLayout")
-        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
-
-        self.rightVerticalLayout.addItem(self.verticalSpacer_5)
-
         self.sliceSelectionGridLayout = QGridLayout()
         self.sliceSelectionGridLayout.setObjectName(u"sliceSelectionGridLayout")
-        self.sliceSelectionSettingsLabel = QLabel(self.centralwidget)
-        self.sliceSelectionSettingsLabel.setObjectName(u"sliceSelectionSettingsLabel")
-
-        self.sliceSelectionGridLayout.addWidget(self.sliceSelectionSettingsLabel, 0, 0, 1, 3)
-
         self.lastSliceLineEdit = QLineEdit(self.centralwidget)
         self.lastSliceLineEdit.setObjectName(u"lastSliceLineEdit")
         self.lastSliceLineEdit.setAlignment(Qt.AlignCenter)
 
         self.sliceSelectionGridLayout.addWidget(self.lastSliceLineEdit, 1, 4, 1, 1)
 
-        self.firstSliceLabel = QLabel(self.centralwidget)
-        self.firstSliceLabel.setObjectName(u"firstSliceLabel")
+        self.sliceSelectionSettingsLabel = QLabel(self.centralwidget)
+        self.sliceSelectionSettingsLabel.setObjectName(u"sliceSelectionSettingsLabel")
 
-        self.sliceSelectionGridLayout.addWidget(self.firstSliceLabel, 1, 0, 1, 1)
+        self.sliceSelectionGridLayout.addWidget(self.sliceSelectionSettingsLabel, 0, 0, 1, 3)
 
         self.lastSliceLabel = QLabel(self.centralwidget)
         self.lastSliceLabel.setObjectName(u"lastSliceLabel")
 
         self.sliceSelectionGridLayout.addWidget(self.lastSliceLabel, 1, 3, 1, 1)
 
-        self.betweennSlicesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.firstSliceLabel = QLabel(self.centralwidget)
+        self.firstSliceLabel.setObjectName(u"firstSliceLabel")
 
-        self.sliceSelectionGridLayout.addItem(self.betweennSlicesHorizontalSpacer, 1, 2, 1, 1)
+        self.sliceSelectionGridLayout.addWidget(self.firstSliceLabel, 1, 0, 1, 1)
 
         self.firstSliceLineEdit = QLineEdit(self.centralwidget)
         self.firstSliceLineEdit.setObjectName(u"firstSliceLineEdit")
@@ -172,61 +165,112 @@ class Ui_MainWindow(object):
 
         self.sliceSelectionGridLayout.addItem(self.afterLastSliceHorizontalSpacer, 1, 5, 1, 1)
 
+        self.betweennSlicesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.sliceSelectionGridLayout.addItem(self.betweennSlicesHorizontalSpacer, 1, 2, 1, 1)
+
+        self.nucleusSliceLabel = QLabel(self.centralwidget)
+        self.nucleusSliceLabel.setObjectName(u"nucleusSliceLabel")
+
+        self.sliceSelectionGridLayout.addWidget(self.nucleusSliceLabel, 2, 0, 1, 1)
+
+        self.nucleusSliceLineEdit = QLineEdit(self.centralwidget)
+        self.nucleusSliceLineEdit.setObjectName(u"nucleusSliceLineEdit")
+        self.nucleusSliceLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.sliceSelectionGridLayout.addWidget(self.nucleusSliceLineEdit, 2, 1, 1, 1)
+
 
         self.rightVerticalLayout.addLayout(self.sliceSelectionGridLayout)
 
-        self.verticalSpacer_2 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_1 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.rightVerticalLayout.addItem(self.verticalSpacer_1)
+
+        self.channelsGridLayout = QGridLayout()
+        self.channelsGridLayout.setObjectName(u"channelsGridLayout")
+        self.leftChannelComboBox = QComboBox(self.centralwidget)
+        self.leftChannelComboBox.setObjectName(u"leftChannelComboBox")
+
+        self.channelsGridLayout.addWidget(self.leftChannelComboBox, 3, 0, 1, 1)
+
+        self.channelsLabel = QLabel(self.centralwidget)
+        self.channelsLabel.setObjectName(u"channelsLabel")
+        self.channelsLabel.setAlignment(Qt.AlignLeading|Qt.AlignLeft|Qt.AlignVCenter)
+
+        self.channelsGridLayout.addWidget(self.channelsLabel, 1, 0, 1, 1)
+
+        self.middleChannelLabel = QLabel(self.centralwidget)
+        self.middleChannelLabel.setObjectName(u"middleChannelLabel")
+        self.middleChannelLabel.setAlignment(Qt.AlignCenter)
+
+        self.channelsGridLayout.addWidget(self.middleChannelLabel, 2, 1, 1, 1)
+
+        self.leftChannelLabel = QLabel(self.centralwidget)
+        self.leftChannelLabel.setObjectName(u"leftChannelLabel")
+        self.leftChannelLabel.setAlignment(Qt.AlignCenter)
+
+        self.channelsGridLayout.addWidget(self.leftChannelLabel, 2, 0, 1, 1)
+
+        self.rightChannelLabel = QLabel(self.centralwidget)
+        self.rightChannelLabel.setObjectName(u"rightChannelLabel")
+        self.rightChannelLabel.setAlignment(Qt.AlignCenter)
+
+        self.channelsGridLayout.addWidget(self.rightChannelLabel, 2, 2, 1, 1)
+
+        self.rightChannelComboBox = QComboBox(self.centralwidget)
+        self.rightChannelComboBox.setObjectName(u"rightChannelComboBox")
+
+        self.channelsGridLayout.addWidget(self.rightChannelComboBox, 3, 2, 1, 1)
+
+        self.middleChannelComboBox = QComboBox(self.centralwidget)
+        self.middleChannelComboBox.setObjectName(u"middleChannelComboBox")
+
+        self.channelsGridLayout.addWidget(self.middleChannelComboBox, 3, 1, 1, 1)
+
+
+        self.rightVerticalLayout.addLayout(self.channelsGridLayout)
+
+        self.verticalSpacer_2 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_2)
 
         self.denoiseSettingsGridLayout = QGridLayout()
         self.denoiseSettingsGridLayout.setObjectName(u"denoiseSettingsGridLayout")
-        self.denoisePPELabel = QLabel(self.centralwidget)
-        self.denoisePPELabel.setObjectName(u"denoisePPELabel")
-        self.denoisePPELabel.setAlignment(Qt.AlignCenter)
+        self.rightSigmaLineEdit = QLineEdit(self.centralwidget)
+        self.rightSigmaLineEdit.setObjectName(u"rightSigmaLineEdit")
+        self.rightSigmaLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.denoisePPELabel, 1, 2, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.rightSigmaLineEdit, 3, 3, 1, 1)
 
-        self.sigma5CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sigma5CRMLineEdit.setObjectName(u"sigma5CRMLineEdit")
-        self.sigma5CRMLineEdit.setAlignment(Qt.AlignCenter)
+        self.sharpenNucleusLineEdit = QLineEdit(self.centralwidget)
+        self.sharpenNucleusLineEdit.setObjectName(u"sharpenNucleusLineEdit")
+        self.sharpenNucleusLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sigma5CRMLineEdit, 3, 3, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.sharpenNucleusLineEdit, 4, 4, 1, 1)
 
-        self.use3DCheckBox = QCheckBox(self.centralwidget)
-        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
+        self.saveDetectedSpotsCheckBox = QCheckBox(self.centralwidget)
+        self.saveDetectedSpotsCheckBox.setObjectName(u"saveDetectedSpotsCheckBox")
 
-        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.saveDetectedSpotsCheckBox, 5, 0, 1, 1)
 
-        self.denoise3CRMLabel = QLabel(self.centralwidget)
-        self.denoise3CRMLabel.setObjectName(u"denoise3CRMLabel")
-        self.denoise3CRMLabel.setAlignment(Qt.AlignCenter)
+        self.rightDenoiseLabel = QLabel(self.centralwidget)
+        self.rightDenoiseLabel.setObjectName(u"rightDenoiseLabel")
+        self.rightDenoiseLabel.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.denoise3CRMLabel, 1, 1, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.rightDenoiseLabel, 1, 3, 1, 1)
 
-        self.sharpenLabel = QLabel(self.centralwidget)
-        self.sharpenLabel.setObjectName(u"sharpenLabel")
-        self.sharpenLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+        self.leftSigmaLineEdit = QLineEdit(self.centralwidget)
+        self.leftSigmaLineEdit.setObjectName(u"leftSigmaLineEdit")
+        self.leftSigmaLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sharpenLabel, 4, 0, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.leftSigmaLineEdit, 3, 1, 1, 1)
 
-        self.sharpenPPELineEdit = QLineEdit(self.centralwidget)
-        self.sharpenPPELineEdit.setObjectName(u"sharpenPPELineEdit")
-        self.sharpenPPELineEdit.setAlignment(Qt.AlignCenter)
+        self.rightSharpenLineEdit = QLineEdit(self.centralwidget)
+        self.rightSharpenLineEdit.setObjectName(u"rightSharpenLineEdit")
+        self.rightSharpenLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sharpenPPELineEdit, 4, 2, 1, 1)
-
-        self.sigmaPPELineEdit = QLineEdit(self.centralwidget)
-        self.sigmaPPELineEdit.setObjectName(u"sigmaPPELineEdit")
-        self.sigmaPPELineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaPPELineEdit, 3, 2, 1, 1)
-
-        self.sigma3CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sigma3CRMLineEdit.setObjectName(u"sigma3CRMLineEdit")
-        self.sigma3CRMLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.denoiseSettingsGridLayout.addWidget(self.sigma3CRMLineEdit, 3, 1, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.rightSharpenLineEdit, 4, 3, 1, 1)
 
         self.sigmaLabel = QLabel(self.centralwidget)
         self.sigmaLabel.setObjectName(u"sigmaLabel")
@@ -234,58 +278,80 @@ class Ui_MainWindow(object):
 
         self.denoiseSettingsGridLayout.addWidget(self.sigmaLabel, 3, 0, 1, 1)
 
-        self.sharpen3CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sharpen3CRMLineEdit.setObjectName(u"sharpen3CRMLineEdit")
-        self.sharpen3CRMLineEdit.setAlignment(Qt.AlignCenter)
+        self.denoiseCheckBox = QCheckBox(self.centralwidget)
+        self.denoiseCheckBox.setObjectName(u"denoiseCheckBox")
 
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen3CRMLineEdit, 4, 1, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.denoiseCheckBox, 0, 0, 1, 1)
 
-        self.sharpen5CRMLineEdit = QLineEdit(self.centralwidget)
-        self.sharpen5CRMLineEdit.setObjectName(u"sharpen5CRMLineEdit")
-        self.sharpen5CRMLineEdit.setAlignment(Qt.AlignCenter)
+        self.sharpenLabel = QLabel(self.centralwidget)
+        self.sharpenLabel.setObjectName(u"sharpenLabel")
+        self.sharpenLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sharpen5CRMLineEdit, 4, 3, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.sharpenLabel, 4, 0, 1, 1)
 
-        self.denoiseSettingsLabel = QLabel(self.centralwidget)
-        self.denoiseSettingsLabel.setObjectName(u"denoiseSettingsLabel")
+        self.leftDenoiseLabel = QLabel(self.centralwidget)
+        self.leftDenoiseLabel.setObjectName(u"leftDenoiseLabel")
+        self.leftDenoiseLabel.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.denoiseSettingsLabel, 0, 0, 1, 2)
+        self.denoiseSettingsGridLayout.addWidget(self.leftDenoiseLabel, 1, 1, 1, 1)
 
-        self.denoise5CRMLabel = QLabel(self.centralwidget)
-        self.denoise5CRMLabel.setObjectName(u"denoise5CRMLabel")
-        self.denoise5CRMLabel.setAlignment(Qt.AlignCenter)
+        self.leftSharpenLineEdit = QLineEdit(self.centralwidget)
+        self.leftSharpenLineEdit.setObjectName(u"leftSharpenLineEdit")
+        self.leftSharpenLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.denoise5CRMLabel, 1, 3, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.leftSharpenLineEdit, 4, 1, 1, 1)
 
-        self.denoiseDAPILabel = QLabel(self.centralwidget)
-        self.denoiseDAPILabel.setObjectName(u"denoiseDAPILabel")
-        self.denoiseDAPILabel.setAlignment(Qt.AlignCenter)
+        self.use3DCheckBox = QCheckBox(self.centralwidget)
+        self.use3DCheckBox.setObjectName(u"use3DCheckBox")
 
-        self.denoiseSettingsGridLayout.addWidget(self.denoiseDAPILabel, 1, 4, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.use3DCheckBox, 1, 0, 1, 1)
 
-        self.sigmaDAPILineEdit = QLineEdit(self.centralwidget)
-        self.sigmaDAPILineEdit.setObjectName(u"sigmaDAPILineEdit")
-        self.sigmaDAPILineEdit.setAlignment(Qt.AlignCenter)
+        self.denoiseNucleusLabel = QLabel(self.centralwidget)
+        self.denoiseNucleusLabel.setObjectName(u"denoiseNucleusLabel")
+        self.denoiseNucleusLabel.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sigmaDAPILineEdit, 3, 4, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.denoiseNucleusLabel, 1, 4, 1, 1)
 
-        self.sharpenDAPILineEdit = QLineEdit(self.centralwidget)
-        self.sharpenDAPILineEdit.setObjectName(u"sharpenDAPILineEdit")
-        self.sharpenDAPILineEdit.setAlignment(Qt.AlignCenter)
+        self.middleSigmaLineEdit = QLineEdit(self.centralwidget)
+        self.middleSigmaLineEdit.setObjectName(u"middleSigmaLineEdit")
+        self.middleSigmaLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.denoiseSettingsGridLayout.addWidget(self.sharpenDAPILineEdit, 4, 4, 1, 1)
+        self.denoiseSettingsGridLayout.addWidget(self.middleSigmaLineEdit, 3, 2, 1, 1)
+
+        self.middleDenoiseLabel = QLabel(self.centralwidget)
+        self.middleDenoiseLabel.setObjectName(u"middleDenoiseLabel")
+        self.middleDenoiseLabel.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.middleDenoiseLabel, 1, 2, 1, 1)
+
+        self.middleSharpenLineEdit = QLineEdit(self.centralwidget)
+        self.middleSharpenLineEdit.setObjectName(u"middleSharpenLineEdit")
+        self.middleSharpenLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.middleSharpenLineEdit, 4, 2, 1, 1)
+
+        self.sigmaNucleusLineEdit = QLineEdit(self.centralwidget)
+        self.sigmaNucleusLineEdit.setObjectName(u"sigmaNucleusLineEdit")
+        self.sigmaNucleusLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.denoiseSettingsGridLayout.addWidget(self.sigmaNucleusLineEdit, 3, 4, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
 
-        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.rightVerticalLayout.addItem(self.verticalSpacer_6)
+        self.rightVerticalLayout.addItem(self.verticalSpacer_3)
 
         self.nucleusMaskingGridLayout = QGridLayout()
         self.nucleusMaskingGridLayout.setObjectName(u"nucleusMaskingGridLayout")
+        self.nucleusMaskingHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.nucleusMaskingGridLayout.addItem(self.nucleusMaskingHorizontalSpacer, 1, 2, 1, 1)
+
         self.nucleusMaskingThresholdLineEdit = QLineEdit(self.centralwidget)
         self.nucleusMaskingThresholdLineEdit.setObjectName(u"nucleusMaskingThresholdLineEdit")
+        self.nucleusMaskingThresholdLineEdit.setAlignment(Qt.AlignCenter)
 
         self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingThresholdLineEdit, 1, 1, 1, 1)
 
@@ -295,76 +361,112 @@ class Ui_MainWindow(object):
 
         self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingThresholdLabel, 1, 0, 1, 1)
 
-        self.nucleusMaskingLabel = QLabel(self.centralwidget)
-        self.nucleusMaskingLabel.setObjectName(u"nucleusMaskingLabel")
+        self.maskingCheckBox = QCheckBox(self.centralwidget)
+        self.maskingCheckBox.setObjectName(u"maskingCheckBox")
 
-        self.nucleusMaskingGridLayout.addWidget(self.nucleusMaskingLabel, 0, 0, 1, 1)
+        self.nucleusMaskingGridLayout.addWidget(self.maskingCheckBox, 0, 0, 1, 1)
 
-        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.countNucleiCheckBox = QCheckBox(self.centralwidget)
+        self.countNucleiCheckBox.setObjectName(u"countNucleiCheckBox")
 
-        self.nucleusMaskingGridLayout.addItem(self.horizontalSpacer, 1, 2, 1, 1)
+        self.nucleusMaskingGridLayout.addWidget(self.countNucleiCheckBox, 0, 1, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.nucleusMaskingGridLayout)
 
-        self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_4 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.rightVerticalLayout.addItem(self.verticalSpacer_3)
+        self.rightVerticalLayout.addItem(self.verticalSpacer_4)
 
         self.spotDetectionGridLayout = QGridLayout()
         self.spotDetectionGridLayout.setObjectName(u"spotDetectionGridLayout")
-        self.spotDetection5CRMLabel = QLabel(self.centralwidget)
-        self.spotDetection5CRMLabel.setObjectName(u"spotDetection5CRMLabel")
-        self.spotDetection5CRMLabel.setAlignment(Qt.AlignCenter)
+        self.rightSpotDetectionLabel = QLabel(self.centralwidget)
+        self.rightSpotDetectionLabel.setObjectName(u"rightSpotDetectionLabel")
+        self.rightSpotDetectionLabel.setAlignment(Qt.AlignCenter)
 
-        self.spotDetectionGridLayout.addWidget(self.spotDetection5CRMLabel, 2, 3, 1, 1)
+        self.spotDetectionGridLayout.addWidget(self.rightSpotDetectionLabel, 2, 3, 1, 1)
 
-        self.spotDetectionPPELabel = QLabel(self.centralwidget)
-        self.spotDetectionPPELabel.setObjectName(u"spotDetectionPPELabel")
-        self.spotDetectionPPELabel.setAlignment(Qt.AlignCenter)
+        self.leftSpotDetectionThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.leftSpotDetectionThresholdLineEdit.setObjectName(u"leftSpotDetectionThresholdLineEdit")
+        self.leftSpotDetectionThresholdLineEdit.setAlignment(Qt.AlignCenter)
 
-        self.spotDetectionGridLayout.addWidget(self.spotDetectionPPELabel, 2, 2, 1, 1)
+        self.spotDetectionGridLayout.addWidget(self.leftSpotDetectionThresholdLineEdit, 3, 1, 1, 1)
+
+        self.middleSpotDetection555Label = QLabel(self.centralwidget)
+        self.middleSpotDetection555Label.setObjectName(u"middleSpotDetection555Label")
+        self.middleSpotDetection555Label.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.middleSpotDetection555Label, 2, 2, 1, 1)
+
+        self.rightSpotDetectionThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.rightSpotDetectionThresholdLineEdit.setObjectName(u"rightSpotDetectionThresholdLineEdit")
+        self.rightSpotDetectionThresholdLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.rightSpotDetectionThresholdLineEdit, 3, 3, 1, 1)
 
         self.spotDetectionSettingsLabel = QLabel(self.centralwidget)
         self.spotDetectionSettingsLabel.setObjectName(u"spotDetectionSettingsLabel")
 
         self.spotDetectionGridLayout.addWidget(self.spotDetectionSettingsLabel, 0, 0, 1, 2)
 
-        self.spotDetectionPPEThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.spotDetectionPPEThresholdLineEdit.setObjectName(u"spotDetectionPPEThresholdLineEdit")
-        self.spotDetectionPPEThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetectionPPEThresholdLineEdit, 3, 2, 1, 1)
-
-        self.spotDetection3CRMLabel = QLabel(self.centralwidget)
-        self.spotDetection3CRMLabel.setObjectName(u"spotDetection3CRMLabel")
-        self.spotDetection3CRMLabel.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetection3CRMLabel, 2, 1, 1, 1)
-
-        self.spotDetection3CRMThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.spotDetection3CRMThresholdLineEdit.setObjectName(u"spotDetection3CRMThresholdLineEdit")
-        self.spotDetection3CRMThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetection3CRMThresholdLineEdit, 3, 1, 1, 1)
-
-        self.spotDetection5CRMThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.spotDetection5CRMThresholdLineEdit.setObjectName(u"spotDetection5CRMThresholdLineEdit")
-        self.spotDetection5CRMThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.spotDetectionGridLayout.addWidget(self.spotDetection5CRMThresholdLineEdit, 3, 3, 1, 1)
-
         self.spotDetectionThresholdLabel = QLabel(self.centralwidget)
         self.spotDetectionThresholdLabel.setObjectName(u"spotDetectionThresholdLabel")
 
         self.spotDetectionGridLayout.addWidget(self.spotDetectionThresholdLabel, 3, 0, 1, 1)
 
+        self.middleSpotDetectionThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.middleSpotDetectionThresholdLineEdit.setObjectName(u"middleSpotDetectionThresholdLineEdit")
+        self.middleSpotDetectionThresholdLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.middleSpotDetectionThresholdLineEdit, 3, 2, 1, 1)
+
+        self.leftSpotDetectionLabel = QLabel(self.centralwidget)
+        self.leftSpotDetectionLabel.setObjectName(u"leftSpotDetectionLabel")
+        self.leftSpotDetectionLabel.setAlignment(Qt.AlignCenter)
+
+        self.spotDetectionGridLayout.addWidget(self.leftSpotDetectionLabel, 2, 1, 1, 1)
+
 
         self.rightVerticalLayout.addLayout(self.spotDetectionGridLayout)
 
-        self.verticalSpacer = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_5 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.rightVerticalLayout.addItem(self.verticalSpacer)
+        self.rightVerticalLayout.addItem(self.verticalSpacer_5)
+
+        self.tripletSettingsGridLayout = QGridLayout()
+        self.tripletSettingsGridLayout.setObjectName(u"tripletSettingsGridLayout")
+        self.tripletMaxSizeHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+
+        self.tripletSettingsGridLayout.addItem(self.tripletMaxSizeHorizontalSpacer, 2, 2, 1, 1)
+
+        self.tripletMaxSizeLabel = QLabel(self.centralwidget)
+        self.tripletMaxSizeLabel.setObjectName(u"tripletMaxSizeLabel")
+        self.tripletMaxSizeLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLabel, 2, 0, 1, 1)
+
+        self.tripletMaxSizeLineEdit = QLineEdit(self.centralwidget)
+        self.tripletMaxSizeLineEdit.setObjectName(u"tripletMaxSizeLineEdit")
+        self.tripletMaxSizeLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLineEdit, 2, 1, 1, 1)
+
+        self.tripletSettingsLabelabel = QLabel(self.centralwidget)
+        self.tripletSettingsLabelabel.setObjectName(u"tripletSettingsLabelabel")
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletSettingsLabelabel, 1, 0, 1, 2)
+
+        self.findDoubletsCheckBox = QCheckBox(self.centralwidget)
+        self.findDoubletsCheckBox.setObjectName(u"findDoubletsCheckBox")
+
+        self.tripletSettingsGridLayout.addWidget(self.findDoubletsCheckBox, 1, 2, 1, 1)
+
+
+        self.rightVerticalLayout.addLayout(self.tripletSettingsGridLayout)
+
+        self.verticalSpacer_6 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+
+        self.rightVerticalLayout.addItem(self.verticalSpacer_6)
 
         self.touchingSettingsGridLayout = QGridLayout()
         self.touchingSettingsGridLayout.setObjectName(u"touchingSettingsGridLayout")
@@ -379,10 +481,10 @@ class Ui_MainWindow(object):
 
         self.touchingSettingsGridLayout.addWidget(self.touchingSettingsLabel, 0, 0, 1, 2)
 
-        self.ltouchingThresholdLabel = QLabel(self.centralwidget)
-        self.ltouchingThresholdLabel.setObjectName(u"ltouchingThresholdLabel")
+        self.touchingThresholdLabel = QLabel(self.centralwidget)
+        self.touchingThresholdLabel.setObjectName(u"touchingThresholdLabel")
 
-        self.touchingSettingsGridLayout.addWidget(self.ltouchingThresholdLabel, 1, 0, 1, 1)
+        self.touchingSettingsGridLayout.addWidget(self.touchingThresholdLabel, 1, 0, 1, 1)
 
         self.touchingThresholdHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
 
@@ -391,9 +493,9 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.touchingSettingsGridLayout)
 
-        self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_7 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
 
-        self.rightVerticalLayout.addItem(self.verticalSpacer_4)
+        self.rightVerticalLayout.addItem(self.verticalSpacer_7)
 
         self.controlButtonHorizontalLayout = QHBoxLayout()
         self.controlButtonHorizontalLayout.setObjectName(u"controlButtonHorizontalLayout")
@@ -427,7 +529,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1147, 24))
+        self.menubar.setGeometry(QRect(0, 0, 1158, 24))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -437,16 +539,16 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.completedFilesListView, self.firstSliceLineEdit)
         QWidget.setTabOrder(self.firstSliceLineEdit, self.lastSliceLineEdit)
         QWidget.setTabOrder(self.lastSliceLineEdit, self.use3DCheckBox)
-        QWidget.setTabOrder(self.use3DCheckBox, self.sigma3CRMLineEdit)
-        QWidget.setTabOrder(self.sigma3CRMLineEdit, self.sharpen3CRMLineEdit)
-        QWidget.setTabOrder(self.sharpen3CRMLineEdit, self.sigmaPPELineEdit)
-        QWidget.setTabOrder(self.sigmaPPELineEdit, self.sharpenPPELineEdit)
-        QWidget.setTabOrder(self.sharpenPPELineEdit, self.sigma5CRMLineEdit)
-        QWidget.setTabOrder(self.sigma5CRMLineEdit, self.sharpen5CRMLineEdit)
-        QWidget.setTabOrder(self.sharpen5CRMLineEdit, self.spotDetection3CRMThresholdLineEdit)
-        QWidget.setTabOrder(self.spotDetection3CRMThresholdLineEdit, self.spotDetectionPPEThresholdLineEdit)
-        QWidget.setTabOrder(self.spotDetectionPPEThresholdLineEdit, self.spotDetection5CRMThresholdLineEdit)
-        QWidget.setTabOrder(self.spotDetection5CRMThresholdLineEdit, self.touchingThresholdLineEdit)
+        QWidget.setTabOrder(self.use3DCheckBox, self.leftSigmaLineEdit)
+        QWidget.setTabOrder(self.leftSigmaLineEdit, self.leftSharpenLineEdit)
+        QWidget.setTabOrder(self.leftSharpenLineEdit, self.middleSigmaLineEdit)
+        QWidget.setTabOrder(self.middleSigmaLineEdit, self.middleSharpenLineEdit)
+        QWidget.setTabOrder(self.middleSharpenLineEdit, self.rightSigmaLineEdit)
+        QWidget.setTabOrder(self.rightSigmaLineEdit, self.rightSharpenLineEdit)
+        QWidget.setTabOrder(self.rightSharpenLineEdit, self.leftSpotDetectionThresholdLineEdit)
+        QWidget.setTabOrder(self.leftSpotDetectionThresholdLineEdit, self.middleSpotDetectionThresholdLineEdit)
+        QWidget.setTabOrder(self.middleSpotDetectionThresholdLineEdit, self.rightSpotDetectionThresholdLineEdit)
+        QWidget.setTabOrder(self.rightSpotDetectionThresholdLineEdit, self.touchingThresholdLineEdit)
         QWidget.setTabOrder(self.touchingThresholdLineEdit, self.testSettingsPushButton)
         QWidget.setTabOrder(self.testSettingsPushButton, self.runBatchPushButton)
         QWidget.setTabOrder(self.runBatchPushButton, self.quitPushButton)
@@ -468,25 +570,35 @@ class Ui_MainWindow(object):
         self.completedFilesLabel.setText(QCoreApplication.translate("MainWindow", u"Completed Files:", None))
         self.clearCompletedFilesPushButton.setText(QCoreApplication.translate("MainWindow", u"Clear", None))
         self.sliceSelectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Slice Selection Settings", None))
-        self.firstSliceLabel.setText(QCoreApplication.translate("MainWindow", u"First Slice:", None))
         self.lastSliceLabel.setText(QCoreApplication.translate("MainWindow", u"Last Slice:", None))
-        self.denoisePPELabel.setText(QCoreApplication.translate("MainWindow", u"PPE", None))
-        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
-        self.denoise3CRMLabel.setText(QCoreApplication.translate("MainWindow", u"3'CRM", None))
-        self.sharpenLabel.setText(QCoreApplication.translate("MainWindow", u"Sharpening:", None))
+        self.firstSliceLabel.setText(QCoreApplication.translate("MainWindow", u"First Slice:", None))
+        self.nucleusSliceLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Slice:", None))
+        self.channelsLabel.setText(QCoreApplication.translate("MainWindow", u"Channel Settings", None))
+        self.middleChannelLabel.setText(QCoreApplication.translate("MainWindow", u"Middle", None))
+        self.leftChannelLabel.setText(QCoreApplication.translate("MainWindow", u"Left", None))
+        self.rightChannelLabel.setText(QCoreApplication.translate("MainWindow", u"Right", None))
+        self.saveDetectedSpotsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Save spot image", None))
+        self.rightDenoiseLabel.setText(QCoreApplication.translate("MainWindow", u"Right", None))
         self.sigmaLabel.setText(QCoreApplication.translate("MainWindow", u"Sigma:", None))
-        self.denoiseSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Denoising Settings", None))
-        self.denoise5CRMLabel.setText(QCoreApplication.translate("MainWindow", u"5'CRM", None))
-        self.denoiseDAPILabel.setText(QCoreApplication.translate("MainWindow", u"DAPI", None))
+        self.denoiseCheckBox.setText(QCoreApplication.translate("MainWindow", u"Do Denoising", None))
+        self.sharpenLabel.setText(QCoreApplication.translate("MainWindow", u"Sharpening:", None))
+        self.leftDenoiseLabel.setText(QCoreApplication.translate("MainWindow", u"Left", None))
+        self.use3DCheckBox.setText(QCoreApplication.translate("MainWindow", u"Use 3D Denoising", None))
+        self.denoiseNucleusLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus", None))
+        self.middleDenoiseLabel.setText(QCoreApplication.translate("MainWindow", u"Middle", None))
         self.nucleusMaskingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Masking Threshold: ", None))
-        self.nucleusMaskingLabel.setText(QCoreApplication.translate("MainWindow", u"Nucleus Masking Settings", None))
-        self.spotDetection5CRMLabel.setText(QCoreApplication.translate("MainWindow", u"5'CRM", None))
-        self.spotDetectionPPELabel.setText(QCoreApplication.translate("MainWindow", u"PPE", None))
+        self.maskingCheckBox.setText(QCoreApplication.translate("MainWindow", u"Do Masking", None))
+        self.countNucleiCheckBox.setText(QCoreApplication.translate("MainWindow", u"Count Nuclei", None))
+        self.rightSpotDetectionLabel.setText(QCoreApplication.translate("MainWindow", u"Right", None))
+        self.middleSpotDetection555Label.setText(QCoreApplication.translate("MainWindow", u"Middle", None))
         self.spotDetectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Spot Detection Settings", None))
-        self.spotDetection3CRMLabel.setText(QCoreApplication.translate("MainWindow", u"3'CRM", None))
         self.spotDetectionThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
+        self.leftSpotDetectionLabel.setText(QCoreApplication.translate("MainWindow", u"Left", None))
+        self.tripletMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Max Size: ", None))
+        self.tripletSettingsLabelabel.setText(QCoreApplication.translate("MainWindow", u"Triplet Detection Settings", None))
+        self.findDoubletsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Also Find Doublets", None))
         self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Touching Settings", None))
-        self.ltouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
+        self.touchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
         self.testSettingsPushButton.setText(QCoreApplication.translate("MainWindow", u"Test Settings", None))
         self.runBatchPushButton.setText(QCoreApplication.translate("MainWindow", u"Run Batch", None))
         self.quitPushButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))
