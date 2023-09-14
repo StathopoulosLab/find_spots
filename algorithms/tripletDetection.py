@@ -193,7 +193,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._app,
             progressCallback)
         self._stepOutputs.append(triplets)
-        self._endOutputs.extend([leftDoublets, rightDoublets])
+        self._endOutputs.extend([leftDoublets, rightDoublets, triplets])
         self._status = ProcessStatus.COMPLETED
 
 if __name__ == "__main__":
