@@ -4,7 +4,7 @@ import numpy as np
 import tifffile as tiff
 from typing import Callable, List, Tuple, Union
 
-def plot_spots_2D(image: np.ndarray, positions: list, scale: Union[Tuple, List], colorLambda: Callable) -> None:
+def plot_spots_2D(image: np.ndarray, positions: list, scale: Union[Tuple, List], colorLambda: Callable, filled: bool = True) -> None:
     """
     colorLambda should return a color given the position
     """
@@ -19,9 +19,10 @@ def plot_spots_2D(image: np.ndarray, positions: list, scale: Union[Tuple, List],
             for dy in range(-6, 7):
                 if y + dy < 0 or y + dy >= image.shape[1]:
                     continue
-                image[x+dx][y+dy] = color
+                if filled or abs(dx) == 6 or abs(dy) == 6:
+                    image[x+dx][y+dy] = color
 
-def plot_spots_3D(image: np.ndarray, positions: list, scale: Union[Tuple, List], colorLambda: Callable) -> None:
+def plot_spots_3D(image: np.ndarray, positions: list, scale: Union[Tuple, List], colorLambda: Callable, filled: bool = True) -> None:
     """
     colorLambda should return a color given the position
     """
@@ -39,5 +40,6 @@ def plot_spots_3D(image: np.ndarray, positions: list, scale: Union[Tuple, List],
                 for dz in range(-1, 2):
                     if z + dz < 0 or z + dz >= image.shape[0]:
                         continue
-                    image[z+dz][x+dx][y+dy] = color
+                    if filled or abs(dx) == 6 or abs(dy) == 6:
+                        image[z+dz][x+dx][y+dy] = color
 
