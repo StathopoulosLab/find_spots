@@ -6,7 +6,7 @@ from algorithms.countNuclei import ProcessStepCountNuclei
 from algorithms.denoise import ProcessStepDenoiseConcurrent
 from algorithms.threshold_mask import ProcessStepThresholdMask
 from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent
-from algorithms.tripletDetection import ProcessStepFindTriplets, write_doublets
+from algorithms.tripletDetection import ProcessStepFindTriplets, write_doublets, distanceSquared
 from algorithms.touchingAnalysis import ProcessStepAnalyzeTouching, write_output
 from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
@@ -15,6 +15,7 @@ from processing import ProcessStatus, ProcessStepIterate
 from imageCompareDialog import ProcessStepVisualizeDenoise
 
 from logging import INFO
+from math import sqrt
 from matplotlib import cm
 import multiprocessing as mp
 import numpy as np
@@ -182,6 +183,15 @@ class FindSpotsTool(QMainWindow):
         while len(self.pendingFilesModel.stringList()) > 0:
             self.processNextFile(False)
 
+    def write_distances(self, triplets, outName):
+        with open(outName, "w") as f:
+            f.write("X,Y,Z,leftDist,rightDist\n")
+            for triplet in triplets:
+                leftDist = sqrt(distanceSquared(triplet[0], triplet[2]))
+                rightDist = sqrt(distanceSquared(triplet[1], triplet[2]))
+                f.write(f"{triplet[2][0]},{triplet[2][1]},{triplet[2][2]}," +
+                        f"{leftDist},{rightDist}\n")
+
     def processNextFile(self, validateParams: bool) -> None:
         # There may be a file currently being processed, where the user
         # rejected the params for one of the process steps.  We need to
@@ -342,9 +352,10 @@ class FindSpotsTool(QMainWindow):
         output = stepOutputs[0]
         conformance = endOutputs[-1][0]
         nucleusCoords, nucleusCountImage = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else (None, None)
-        leftDoublets, rightDoublets = endOutputs[tripletDetectionStep]
+        leftDoublets, rightDoublets, triplets = endOutputs[tripletDetectionStep]
 
         outStem, _ = splitext(fileToRun)
+        self.write_distances(triplets, outStem + "_distances.csv")
         write_output(output, outStem + "_results.txt", len(nucleusCoords) if nucleusCoords else None)
         if self.ui.findDoubletsCheckBox.isChecked():
             write_doublets(leftDoublets, outStem + "_leftDoublets.txt")
