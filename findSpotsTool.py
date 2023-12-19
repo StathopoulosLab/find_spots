@@ -189,7 +189,7 @@ class FindSpotsTool(QMainWindow):
             for triplet in triplets:
                 leftDist = sqrt(distanceSquared(triplet[0], triplet[2]))
                 rightDist = sqrt(distanceSquared(triplet[1], triplet[2]))
-                leftRightDist = sqrt(distanceSquared(triplets[0], triplets[1]))
+                leftRightDist = sqrt(distanceSquared(triplet[0], triplet[1]))
                 f.write(f"{triplet[2][0]},{triplet[2][1]},{triplet[2][2]}," +
                         f"{leftDist},{rightDist},{leftRightDist}\n")
 
