@@ -272,30 +272,33 @@ class FindSpotsTool(QMainWindow):
         touchingParams: Dict = {
             'touching_threshold': float(self.ui.touchingThresholdLineEdit.text())
         }
-        # stepOutputs = [cf.channel_647(), cf.channel_555(), cf.channel_488(), cf.channel_nucleus()]
+
+        # map the string to the CZI file channel
         channelItemFromString: dict = {
-            # map the string to the CZI file channel
             '647': cf.channel_647(),
             '555': cf.channel_555(),
             '488': cf.channel_488()
         }
 
         # Instantiate the step outputs to be the source images, with matching parameters dicts
+        # Note: stepOutputs is the output of a given step that is used as the input to the next step.
+        #       The first processing step, like all the later ones, gets its input from the stepOutputs
+        #       of the previous step, so the initial input data is put in stepOutputs.
+        # Note: endOutputs is used by each step to provide step-specific additional outputs.
+        #       A list element is appended to endOutputs for each processing step.  If a step doesn't
+        #       need to output anything besides stepOutputs, an empty list is appended.
+
+        # We provide all four channels as initial step inputs (in stepOutputs), regardless whether or not
+        # masking or nucleus counting is enabled.
+        # To reduce the number of channels before actual spot-finding, the masking process step is
+        # always included, and it does nothing except remove the nucleus channel if it's disabled.
+        # Nucleus counting process step is still included in the sequence if it's active.
+
         perChannelParamsList = [leftChannelParams, middleChannelParams, rightChannelParams, nucleusChannelParams]
         stepOutputs = [channelItemFromString[self.ui.leftChannelComboBox.currentText()],
                        channelItemFromString[self.ui.middleChannelComboBox.currentText()],
                        channelItemFromString[self.ui.rightChannelComboBox.currentText()],
                        cf.channel_nucleus()]
-
-        # we now provide all four channels as initial step inputs (in stepOutputs), regardless whether or not
-        # masking or nucleus counting is enabled.
-        # To reduce the number of channels before actual spot-finding, the masking process step is always included,
-        # and it does nothing except remove the nucleus channel if it's disabled.
-        # Nucleus counting process step is still only included in the sequence if it's active.
-        # So the section below is commented out, and will be removed in the future.
-        # if self.ui.maskingCheckBox.isChecked() or self.ui.countNucleiCheckBox.isChecked():
-        #     stepOutputs.append(cf.channel_nucleus())
-        #     perChannelParamsList.append(nucleusChannelParams)
 
         processSequence: List = []
 
@@ -323,15 +326,16 @@ class FindSpotsTool(QMainWindow):
             detectSpotsStep += 1
             tripletDetectionStep += 1
 
-        # include the ThresholdMask process step regardless, since it needs to
+        # Include the ThresholdMask process step regardless, since it needs to
         # reduce the number of channels from four to three, but signal
-        # whether or not do actually do masking via the params
+        # whether or not to actually do masking via the params
         nucleusChannelParams['do_masking'] = self.ui.maskingCheckBox.isChecked()
         processSequence.append(ProcessStepThresholdMask(nucleusChannelParams))
         # since we're adding a process step before DetectSpots...
         detectSpotsStep += 1
         tripletDetectionStep += 1
 
+        # Add the rest of the process steps that require no conditional processing
         processSequence.extend([
                 ProcessStepDetectSpotsConcurrent(perChannelParamsList),
                 ProcessStepFindTriplets(scale, tripletsParams),
@@ -468,5 +472,5 @@ if __name__ == "__main__":
     qr.moveCenter(tool.screen_center)
     tool.move(qr.topLeft())
     tool.show()
-    # Run the main Qt loop
+    # Run the main Qt event loop, exiting the app when the event loop exits
     sys.exit(app.exec_())
