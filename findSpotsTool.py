@@ -184,13 +184,17 @@ class FindSpotsTool(QMainWindow):
             self.processNextFile(False)
 
     def write_distances(self, triplets, outName):
+        """
+        Write out the distances
+        Order inside the triplet is {left, middle, right}
+        """
         with open(outName, "w") as f:
             f.write("X,Y,Z,leftDist,rightDist,leftRightDist\n")
             for triplet in triplets:
-                leftDist = sqrt(distanceSquared(triplet[0], triplet[2]))
+                leftDist = sqrt(distanceSquared(triplet[0], triplet[1]))
                 rightDist = sqrt(distanceSquared(triplet[1], triplet[2]))
-                leftRightDist = sqrt(distanceSquared(triplet[0], triplet[1]))
-                f.write(f"{triplet[2][0]},{triplet[2][1]},{triplet[2][2]}," +
+                leftRightDist = sqrt(distanceSquared(triplet[0], triplet[2]))
+                f.write(f"{triplet[1][0]},{triplet[1][1]},{triplet[1][2]}," +
                         f"{leftDist},{rightDist},{leftRightDist}\n")
 
     def processNextFile(self, validateParams: bool) -> None:
