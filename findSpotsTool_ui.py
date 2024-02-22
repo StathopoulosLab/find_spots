@@ -470,25 +470,49 @@ class Ui_MainWindow(object):
 
         self.touchingSettingsGridLayout = QGridLayout()
         self.touchingSettingsGridLayout.setObjectName(u"touchingSettingsGridLayout")
-        self.touchingThresholdLineEdit = QLineEdit(self.centralwidget)
-        self.touchingThresholdLineEdit.setObjectName(u"touchingThresholdLineEdit")
-        self.touchingThresholdLineEdit.setAlignment(Qt.AlignCenter)
-
-        self.touchingSettingsGridLayout.addWidget(self.touchingThresholdLineEdit, 1, 1, 1, 1)
-
         self.touchingSettingsLabel = QLabel(self.centralwidget)
         self.touchingSettingsLabel.setObjectName(u"touchingSettingsLabel")
 
         self.touchingSettingsGridLayout.addWidget(self.touchingSettingsLabel, 0, 0, 1, 2)
 
+        self.xTouchingThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.xTouchingThresholdLineEdit.setObjectName(u"xTouchingThresholdLineEdit")
+        self.xTouchingThresholdLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.touchingSettingsGridLayout.addWidget(self.xTouchingThresholdLineEdit, 2, 1, 1, 1)
+
+        self.xTouchingThresholdLabel = QLabel(self.centralwidget)
+        self.xTouchingThresholdLabel.setObjectName(u"xTouchingThresholdLabel")
+        self.xTouchingThresholdLabel.setAlignment(Qt.AlignCenter)
+
+        self.touchingSettingsGridLayout.addWidget(self.xTouchingThresholdLabel, 1, 1, 1, 1)
+
+        self.zTouchingThresholdLabel = QLabel(self.centralwidget)
+        self.zTouchingThresholdLabel.setObjectName(u"zTouchingThresholdLabel")
+        self.zTouchingThresholdLabel.setAlignment(Qt.AlignCenter)
+
+        self.touchingSettingsGridLayout.addWidget(self.zTouchingThresholdLabel, 1, 3, 1, 1)
+
         self.touchingThresholdLabel = QLabel(self.centralwidget)
         self.touchingThresholdLabel.setObjectName(u"touchingThresholdLabel")
 
-        self.touchingSettingsGridLayout.addWidget(self.touchingThresholdLabel, 1, 0, 1, 1)
+        self.touchingSettingsGridLayout.addWidget(self.touchingThresholdLabel, 2, 0, 1, 1)
 
-        self.touchingThresholdHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.yTouchingThresholdLabel = QLabel(self.centralwidget)
+        self.yTouchingThresholdLabel.setObjectName(u"yTouchingThresholdLabel")
+        self.yTouchingThresholdLabel.setAlignment(Qt.AlignCenter)
 
-        self.touchingSettingsGridLayout.addItem(self.touchingThresholdHorizontalSpacer, 1, 2, 1, 1)
+        self.touchingSettingsGridLayout.addWidget(self.yTouchingThresholdLabel, 1, 2, 1, 1)
+
+        self.yTouchingThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.yTouchingThresholdLineEdit.setObjectName(u"yTouchingThresholdLineEdit")
+
+        self.touchingSettingsGridLayout.addWidget(self.yTouchingThresholdLineEdit, 2, 2, 1, 1)
+
+        self.zTouchingThresholdLineEdit = QLineEdit(self.centralwidget)
+        self.zTouchingThresholdLineEdit.setObjectName(u"zTouchingThresholdLineEdit")
+
+        self.touchingSettingsGridLayout.addWidget(self.zTouchingThresholdLineEdit, 2, 3, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.touchingSettingsGridLayout)
@@ -548,8 +572,8 @@ class Ui_MainWindow(object):
         QWidget.setTabOrder(self.rightSharpenLineEdit, self.leftSpotDetectionThresholdLineEdit)
         QWidget.setTabOrder(self.leftSpotDetectionThresholdLineEdit, self.middleSpotDetectionThresholdLineEdit)
         QWidget.setTabOrder(self.middleSpotDetectionThresholdLineEdit, self.rightSpotDetectionThresholdLineEdit)
-        QWidget.setTabOrder(self.rightSpotDetectionThresholdLineEdit, self.touchingThresholdLineEdit)
-        QWidget.setTabOrder(self.touchingThresholdLineEdit, self.testSettingsPushButton)
+        QWidget.setTabOrder(self.rightSpotDetectionThresholdLineEdit, self.xTouchingThresholdLineEdit)
+        QWidget.setTabOrder(self.xTouchingThresholdLineEdit, self.testSettingsPushButton)
         QWidget.setTabOrder(self.testSettingsPushButton, self.runBatchPushButton)
         QWidget.setTabOrder(self.runBatchPushButton, self.quitPushButton)
         QWidget.setTabOrder(self.quitPushButton, self.clearCompletedFilesPushButton)
@@ -598,7 +622,10 @@ class Ui_MainWindow(object):
         self.tripletSettingsLabelabel.setText(QCoreApplication.translate("MainWindow", u"Triplet Detection Settings", None))
         self.findDoubletsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Also Find Doublets", None))
         self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Touching Settings", None))
+        self.xTouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"X", None))
+        self.zTouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Z", None))
         self.touchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
+        self.yTouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Y", None))
         self.testSettingsPushButton.setText(QCoreApplication.translate("MainWindow", u"Test Settings", None))
         self.runBatchPushButton.setText(QCoreApplication.translate("MainWindow", u"Run Batch", None))
         self.quitPushButton.setText(QCoreApplication.translate("MainWindow", u"Quit", None))

@@ -657,13 +657,6 @@
       </item>
       <item>
        <layout class="QGridLayout" name="touchingSettingsGridLayout">
-        <item row="1" column="1">
-         <widget class="QLineEdit" name="touchingThresholdLineEdit">
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="touchingSettingsLabel">
           <property name="text">
@@ -671,7 +664,34 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="0">
+        <item row="2" column="1">
+         <widget class="QLineEdit" name="xTouchingThresholdLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="xTouchingThresholdLabel">
+          <property name="text">
+           <string>X</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="zTouchingThresholdLabel">
+          <property name="text">
+           <string>Z</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
          <widget class="QLabel" name="touchingThresholdLabel">
           <property name="text">
            <string>Threshold:</string>
@@ -679,17 +699,20 @@
          </widget>
         </item>
         <item row="1" column="2">
-         <spacer name="touchingThresholdHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="yTouchingThresholdLabel">
+          <property name="text">
+           <string>Y</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-         </spacer>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QLineEdit" name="yTouchingThresholdLineEdit"/>
+        </item>
+        <item row="2" column="3">
+         <widget class="QLineEdit" name="zTouchingThresholdLineEdit"/>
         </item>
        </layout>
       </item>
@@ -776,7 +799,7 @@
   <tabstop>leftSpotDetectionThresholdLineEdit</tabstop>
   <tabstop>middleSpotDetectionThresholdLineEdit</tabstop>
   <tabstop>rightSpotDetectionThresholdLineEdit</tabstop>
-  <tabstop>touchingThresholdLineEdit</tabstop>
+  <tabstop>xTouchingThresholdLineEdit</tabstop>
   <tabstop>testSettingsPushButton</tabstop>
   <tabstop>runBatchPushButton</tabstop>
   <tabstop>quitPushButton</tabstop>
