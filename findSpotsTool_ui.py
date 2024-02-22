@@ -506,11 +506,13 @@ class Ui_MainWindow(object):
 
         self.yTouchingThresholdLineEdit = QLineEdit(self.centralwidget)
         self.yTouchingThresholdLineEdit.setObjectName(u"yTouchingThresholdLineEdit")
+        self.yTouchingThresholdLineEdit.setAlignment(Qt.AlignCenter)
 
         self.touchingSettingsGridLayout.addWidget(self.yTouchingThresholdLineEdit, 2, 2, 1, 1)
 
         self.zTouchingThresholdLineEdit = QLineEdit(self.centralwidget)
         self.zTouchingThresholdLineEdit.setObjectName(u"zTouchingThresholdLineEdit")
+        self.zTouchingThresholdLineEdit.setAlignment(Qt.AlignCenter)
 
         self.touchingSettingsGridLayout.addWidget(self.zTouchingThresholdLineEdit, 2, 3, 1, 1)
 
