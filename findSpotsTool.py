@@ -113,7 +113,9 @@ class FindSpotsTool(QMainWindow):
         # Triplet detection settings
         self.ui.findDoubletsCheckBox.setChecked(get_param("find_doublets", params))
         self.ui.tripletMaxSizeLineEdit.setText(str(get_param("max_triplet_size", params)))
-        self.ui.touchingThresholdLineEdit.setText(str(get_param("touching_threshold", params)))
+        self.ui.xTouchingThresholdLineEdit.setText(str(get_param("touching_threshold_x", params)))
+        self.ui.yTouchingThresholdLineEdit.setText(str(get_param("touching_threshold_y", params)))
+        self.ui.zTouchingThresholdLineEdit.setText(str(get_param("touching_threshold_z", params)))
 
         # connect various widgets to actions
         self.ui.addFilesButton.clicked.connect(self.addFiles)
@@ -273,8 +275,13 @@ class FindSpotsTool(QMainWindow):
             'find_doublets': self.ui.findDoubletsCheckBox.isChecked(),
             'max_triplet_size': float(self.ui.tripletMaxSizeLineEdit.text())
         }
+        touchingThresholdList = [
+            float(self.ui.xTouchingThresholdLineEdit.text()),
+            float(self.ui.yTouchingThresholdLineEdit.text()),
+            float(self.ui.zTouchingThresholdLineEdit.text())
+        ]
         touchingParams: Dict = {
-            'touching_threshold': float(self.ui.touchingThresholdLineEdit.text())
+            'touching_threshold': touchingThresholdList
         }
 
         # map the string to the CZI file channel
