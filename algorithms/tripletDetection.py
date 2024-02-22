@@ -128,7 +128,7 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         if iLeft >= 0 and iRight >= 0:
             # found a triplet!
             logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
-            triplets.append((points[0][iLeft], points[2][iRight], middleSpot))
+            triplets.append((points[0][iLeft], middleSpot, points[2][iRight]))
             pointUsed[0][iLeft] = True
             pointUsed[1][iMiddle] = True
             pointUsed[2][iRight] = True
@@ -193,7 +193,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._app,
             progressCallback)
         self._stepOutputs.append(triplets)
-        self._endOutputs.extend([leftDoublets, rightDoublets])
+        self._endOutputs.extend([leftDoublets, rightDoublets, triplets])
         self._status = ProcessStatus.COMPLETED
 
 if __name__ == "__main__":
