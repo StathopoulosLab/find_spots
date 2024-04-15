@@ -35,7 +35,7 @@ class ConfocalFile(object):
         assert imageInfo['PixelType'] == 'Gray8' or imageInfo['PixelType'] == 'Gray16'
         assert imageInfo['ComponentBitCount'] == 8 or imageInfo['ComponentBitCount'] == 16
         assert imageInfo['SizeT'] == 1
-        assert imageInfo['SizeB'] == 1
+        #assert imageInfo['SizeB'] == 1
         assert imageInfo['SizeH'] == 1
         self._sizeX = imageInfo['SizeX']
         self._sizeY = imageInfo['SizeY']
