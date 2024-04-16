@@ -27,8 +27,8 @@ from matplotlib import cm
 default_params = {
     "first_slice": 0,
     "last_slice": -1,    # -1 indicates last available slice.  -11 would skip the last 10
-    "left_channel": "647",
-    "middle_channel": "488",
+    "left_channel": "488",
+    "middle_channel": "647",
     "right_channel": "555",
     "do_denoising": False,
     "sigma": 15,
@@ -37,7 +37,7 @@ default_params = {
     "nucleus_mask_threshold": 0.2,
     "spot_detect_threshold": 0.04,
     "find_doublets": True,
-    'max_triplet_size': 2.6,
+    'max_triplet_size': 1.5,
     'touching_threshold_x': 0.14,
     'touching_threshold_y': 0.14,
     'touching_threshold_z': 0.53,

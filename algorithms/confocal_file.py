@@ -10,7 +10,7 @@ Results:
     TODO: describe results
 """
 
-from czifile import CziFile, imread
+from czifile import CziFile
 
 class ConfocalFile(object):
     """
