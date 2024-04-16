@@ -36,7 +36,7 @@ default_params = {
     "do_masking": False,
     "nucleus_mask_threshold": 0.2,
     "spot_detect_threshold": 0.04,
-    "find_doublets": True,
+    "find_doublets": False,
     'max_triplet_size': 1.5,
     'touching_threshold_x': 0.14,
     'touching_threshold_y': 0.14,
