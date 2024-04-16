@@ -34,18 +34,17 @@ class ConfocalFile(object):
             self._scale[dist['Id']] = dist['Value'] * 1.0e06    # convert from meters to uM
         assert imageInfo['PixelType'] == 'Gray8' or imageInfo['PixelType'] == 'Gray16'
         assert imageInfo['ComponentBitCount'] == 8 or imageInfo['ComponentBitCount'] == 16
-        assert imageInfo['SizeT'] == 1
-        #assert imageInfo['SizeB'] == 1
         assert imageInfo['SizeH'] == 1
         self._sizeX = imageInfo['SizeX']
         self._sizeY = imageInfo['SizeY']
         self._sizeZ = imageInfo['SizeZ']
         self._channels = imageInfo['SizeC']
-        image = imread(filepath)
-        self._647 = image[0, 0, 0, self.CHANNEL_647, :, :, :, 0]
-        self._555 = image[0, 0, 0, self.CHANNEL_555, :, :, :, 0]
-        self._488 = image[0, 0, 0, self.CHANNEL_488, :, :, :, 0]
-        self._nucleus = image[0, 0, 0, self.CHANNEL_NUCLEUS, :, :, :, 0]
+        image = czi.asarray().squeeze()
+        assert len(image.shape) == 4
+        self._647 = image[self.CHANNEL_647, :, :, :]
+        self._555 = image[self.CHANNEL_555, :, :, :]
+        self._488 = image[self.CHANNEL_488, :, :, :]
+        self._nucleus = image[self.CHANNEL_NUCLEUS, :, :, :]
 
     def channel_647(self):
         return self._647
