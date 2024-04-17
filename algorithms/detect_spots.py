@@ -36,8 +36,12 @@ class ProcessStepDetectSpots(ProcessStep):
             self._logger.info(f"Worker {getpid()}: unwrapping ndarray from list")
             input = input[0]
         assert(isinstance(input, np.ndarray))
-        if input.dtype != np.uint8:
-            input = np.array(input, dtype=np.uint8)
+        # do minmax normalization
+        input = input.astype(np.float32)
+        mymin = input.min()
+        mymax = input.max()
+        self._logger.info(f"Worker {getpid()}: mymin is {mymin}, mymax is {mymax}")
+        # input = (input - mymin) / (mymax - mymin)
         self._status = ProcessStatus.RUNNING
         stepOutputs = detect_spots(input, spot_detect_threshold, self._logger)
         self._stepOutputs.append(stepOutputs)
