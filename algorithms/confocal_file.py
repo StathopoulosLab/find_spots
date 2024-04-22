@@ -11,6 +11,7 @@ Results:
 """
 
 from czifile import CziFile
+import numpy as np
 
 class ConfocalFile(object):
     """
@@ -23,6 +24,12 @@ class ConfocalFile(object):
     CHANNEL_NUCLEUS = 3
 
     def __init__(self, filepath: str):
+        def to8bit(img):
+            asfloat = img.astype(np.float32)
+            mymin = np.min(asfloat)
+            mymax = np.max(asfloat)
+            return ((asfloat - mymin) / (mymax - mymin) * 255.).astype(np.uint8)
+        
         _path = filepath
         czi = CziFile(filepath)
         meta = czi.metadata(raw=False)
@@ -45,6 +52,11 @@ class ConfocalFile(object):
         self._555 = image[self.CHANNEL_555, :, :, :]
         self._488 = image[self.CHANNEL_488, :, :, :]
         self._nucleus = image[self.CHANNEL_NUCLEUS, :, :, :]
+        if imageInfo['ComponentBitCount'] == 16:
+            self._647 = to8bit(self._647)
+            self._555 = to8bit(self._555)
+            self._488 = to8bit(self._488)
+            self._nucleus = to8bit(self._nucleus)
 
     def channel_647(self):
         return self._647
