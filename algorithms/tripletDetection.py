@@ -126,7 +126,7 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         iLeft, leftDist = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
         # get the closest right spot, if any
         iRight, rightDist = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
-        if iLeft >= 0 and iRight >= 0 and distanceSquared(iLeft, iRight) < maxTripletLRSize * maxTripletLRSize:
+        if iLeft >= 0 and iRight >= 0 and distanceSquared(points[0][iLeft], points[2][iRight]) < maxTripletLRSize * maxTripletLRSize:
             # found a potential triplet!
             logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
             triplets.append((points[0][iLeft], middleSpot, points[2][iRight]))
