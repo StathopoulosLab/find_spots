@@ -595,21 +595,18 @@
        </spacer>
       </item>
       <item>
-       <layout class="QGridLayout" name="tripletSettingsGridLayout" rowstretch="0,0,0" columnstretch="0,0,0">
-        <item row="2" column="2">
-         <spacer name="tripletMaxSizeHorizontalSpacer">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+       <layout class="QGridLayout" name="tripletSettingsGridLayout" rowstretch="0,0,0,0" columnstretch="0,0,0,0">
+        <item row="2" column="1">
+         <widget class="QLabel" name="tripletLMMRMaxSizeLabel">
+          <property name="text">
+           <string>Left-Middle / Middle Right</string>
           </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
-         </spacer>
+         </widget>
         </item>
-        <item row="2" column="0">
+        <item row="3" column="0">
          <widget class="QLabel" name="tripletMaxSizeLabel">
           <property name="text">
            <string>Max Size: </string>
@@ -619,8 +616,18 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="1">
-         <widget class="QLineEdit" name="tripletMaxSizeLineEdit">
+        <item row="2" column="3">
+         <widget class="QLabel" name="tripletLRMaxSizeLabel">
+          <property name="text">
+           <string>Left-Right</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLineEdit" name="tripletLMMRMaxSizeLineEdit">
           <property name="alignment">
            <set>Qt::AlignCenter</set>
           </property>
@@ -633,10 +640,17 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="1" column="3">
          <widget class="QCheckBox" name="findDoubletsCheckBox">
           <property name="text">
            <string>Also Find Doublets</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QLineEdit" name="tripletLRMaxSizeLineEdit">
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>

@@ -38,6 +38,7 @@ default_params = {
     "spot_detect_threshold": 0.04,
     "find_doublets": False,
     'max_triplet_size': 1.5,
+    'max_triplet_LR_size': 1.5,
     'touching_threshold_x': 0.14,
     'touching_threshold_y': 0.14,
     'touching_threshold_z': 0.53,
@@ -87,6 +88,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
     spot_detect_thresh = get_param('spot_detect_threshold', params)
     scale = cf.get_scale()
     max_triplet_size = get_param('max_triplet_size', params)
+    max_triplet_LR_size = get_param('max_triplet_LR_size', params)
     touching_threshold = get_param('touching_threshold', params)
     use_denoise3d = get_param('use_denoise3d', params)
     # use_bm4d = get_param('use_bm4d', params)
@@ -155,7 +157,7 @@ def find_spots(image_file: str, out_name: str, params_yaml_file: str = None):
 
     #TODO: end of potentially concurrent block
     print(f"Found {len(spots_3CRM)} 3CRM, {len(spots_5CRM)} 5CRM and {len(spots_PPE)} PPE spots")
-    triplets = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, scale['X'], scale['Y'], scale['Z'], max_triplet_size)
+    triplets = td.find_best_triplets(spots_3CRM, spots_5CRM, spots_PPE, scale['X'], scale['Y'], scale['Z'], max_triplet_size, max_triplet_LR_size)
     print(f"Identified {len(triplets)} triplets")
     triplets, conformations = ta.analyze_inner(triplets, touching_threshold)
     print(f"analyze_inner identified {len(triplets)} triplets")
