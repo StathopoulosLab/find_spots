@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'findSpotsTool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.2.2
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -435,21 +435,29 @@ class Ui_MainWindow(object):
 
         self.tripletSettingsGridLayout = QGridLayout()
         self.tripletSettingsGridLayout.setObjectName(u"tripletSettingsGridLayout")
-        self.tripletMaxSizeHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.tripletLMMRMaxSizeLabel = QLabel(self.centralwidget)
+        self.tripletLMMRMaxSizeLabel.setObjectName(u"tripletLMMRMaxSizeLabel")
+        self.tripletLMMRMaxSizeLabel.setAlignment(Qt.AlignCenter)
 
-        self.tripletSettingsGridLayout.addItem(self.tripletMaxSizeHorizontalSpacer, 2, 2, 1, 1)
+        self.tripletSettingsGridLayout.addWidget(self.tripletLMMRMaxSizeLabel, 2, 1, 1, 1)
 
         self.tripletMaxSizeLabel = QLabel(self.centralwidget)
         self.tripletMaxSizeLabel.setObjectName(u"tripletMaxSizeLabel")
         self.tripletMaxSizeLabel.setAlignment(Qt.AlignRight|Qt.AlignTrailing|Qt.AlignVCenter)
 
-        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLabel, 2, 0, 1, 1)
+        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLabel, 3, 0, 1, 1)
 
-        self.tripletMaxSizeLineEdit = QLineEdit(self.centralwidget)
-        self.tripletMaxSizeLineEdit.setObjectName(u"tripletMaxSizeLineEdit")
-        self.tripletMaxSizeLineEdit.setAlignment(Qt.AlignCenter)
+        self.tripletLRMaxSizeLabel = QLabel(self.centralwidget)
+        self.tripletLRMaxSizeLabel.setObjectName(u"tripletLRMaxSizeLabel")
+        self.tripletLRMaxSizeLabel.setAlignment(Qt.AlignCenter)
 
-        self.tripletSettingsGridLayout.addWidget(self.tripletMaxSizeLineEdit, 2, 1, 1, 1)
+        self.tripletSettingsGridLayout.addWidget(self.tripletLRMaxSizeLabel, 2, 3, 1, 1)
+
+        self.tripletLMMRMaxSizeLineEdit = QLineEdit(self.centralwidget)
+        self.tripletLMMRMaxSizeLineEdit.setObjectName(u"tripletLMMRMaxSizeLineEdit")
+        self.tripletLMMRMaxSizeLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletLMMRMaxSizeLineEdit, 3, 1, 1, 1)
 
         self.tripletSettingsLabelabel = QLabel(self.centralwidget)
         self.tripletSettingsLabelabel.setObjectName(u"tripletSettingsLabelabel")
@@ -459,7 +467,13 @@ class Ui_MainWindow(object):
         self.findDoubletsCheckBox = QCheckBox(self.centralwidget)
         self.findDoubletsCheckBox.setObjectName(u"findDoubletsCheckBox")
 
-        self.tripletSettingsGridLayout.addWidget(self.findDoubletsCheckBox, 1, 2, 1, 1)
+        self.tripletSettingsGridLayout.addWidget(self.findDoubletsCheckBox, 1, 3, 1, 1)
+
+        self.tripletLRMaxSizeLineEdit = QLineEdit(self.centralwidget)
+        self.tripletLRMaxSizeLineEdit.setObjectName(u"tripletLRMaxSizeLineEdit")
+        self.tripletLRMaxSizeLineEdit.setAlignment(Qt.AlignCenter)
+
+        self.tripletSettingsGridLayout.addWidget(self.tripletLRMaxSizeLineEdit, 3, 3, 1, 1)
 
 
         self.rightVerticalLayout.addLayout(self.tripletSettingsGridLayout)
@@ -620,7 +634,9 @@ class Ui_MainWindow(object):
         self.spotDetectionSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Spot Detection Settings", None))
         self.spotDetectionThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
         self.leftSpotDetectionLabel.setText(QCoreApplication.translate("MainWindow", u"Left", None))
+        self.tripletLMMRMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Left-Middle / Middle Right", None))
         self.tripletMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Max Size: ", None))
+        self.tripletLRMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Left-Right", None))
         self.tripletSettingsLabelabel.setText(QCoreApplication.translate("MainWindow", u"Triplet Detection Settings", None))
         self.findDoubletsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Also Find Doublets", None))
         self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Touching Settings", None))

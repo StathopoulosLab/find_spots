@@ -41,7 +41,7 @@ class ProcessStepDetectSpots(ProcessStep):
         mymin = input.min()
         mymax = input.max()
         self._logger.info(f"Worker {getpid()}: mymin is {mymin}, mymax is {mymax}")
-        # input = (input - mymin) / (mymax - mymin)
+        input = (input - mymin) / (mymax - mymin)
         self._status = ProcessStatus.RUNNING
         stepOutputs = detect_spots(input, spot_detect_threshold, self._logger)
         self._stepOutputs.append(stepOutputs)

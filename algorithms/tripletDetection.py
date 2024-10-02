@@ -37,7 +37,7 @@ def select(chan0File, chan1File, chan2File, lim):
     triplets, _, _ = find_best_triplets(
         spots[0], spots[1], spots[2],
         0.065, 0.065, 0.1,
-        1.5, False
+        1.5, 1.5, False
     )
     print(str(len(triplets))+" Triplets Detected")
     return triplets
@@ -96,6 +96,7 @@ def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTriplet
 def find_best_triplets(leftSpots, middleSpots, rightSpots,
                        xScale: float, yScale: float, zScale: float,
                        maxTripletSize: float,
+                       maxTripletLRSize: float,
                        find_doublets: bool,
                        logger: Logger = None,
                        app: QApplication = None,
@@ -125,8 +126,8 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         iLeft, leftDist = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
         # get the closest right spot, if any
         iRight, rightDist = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
-        if iLeft >= 0 and iRight >= 0:
-            # found a triplet!
+        if iLeft >= 0 and iRight >= 0 and distanceSquared(points[0][iLeft], points[2][iRight]) < maxTripletLRSize * maxTripletLRSize:
+            # found a potential triplet!
             logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
             triplets.append((points[0][iLeft], middleSpot, points[2][iRight]))
             pointUsed[0][iLeft] = True
@@ -174,11 +175,13 @@ class ProcessStepFindTriplets(ProcessStep):
         assert 'Z' in self._scale
         assert isinstance(self._inputs, list) and len(self._inputs) == 3
         assert 'max_triplet_size' in self._params
+        assert 'max_triplet_LR_size' in self._params
         assert 'find_doublets' in self._params
         self._status = ProcessStatus.RUNNING
         self._stepOutputs = []
         self._endOutputs = []
         max_triplet_size = self._params['max_triplet_size']
+        max_triplet_LR_size = self._params['max_triplet_LR_size']
         find_doublets = self._params['find_doublets']
         triplets, leftDoublets, rightDoublets = find_best_triplets(
             self._inputs[0],
@@ -188,6 +191,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._scale['Y'],
             self._scale['Z'],
             max_triplet_size,
+            max_triplet_LR_size,
             find_doublets,
             self._logger,
             self._app,
