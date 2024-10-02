@@ -19,6 +19,7 @@ from math import sqrt
 from matplotlib import cm
 import multiprocessing as mp
 import numpy as np
+from math import nan
 from os.path import expanduser, splitext
 import sys, platform
 import tifffile as tiff
@@ -186,19 +187,39 @@ class FindSpotsTool(QMainWindow):
         while len(self.pendingFilesModel.stringList()) > 0:
             self.processNextFile(False)
 
-    def write_distances(self, triplets, outName):
+    def write_distances(self, triplets, leftDoublets, rightDoublets, leftRigthDoublets, outName):
         """
-        Write out the distances
+        Write out the distances and the coordinates
         Order inside the triplet is {left, middle, right}
         """
         with open(outName, "w") as f:
-            f.write("X,Y,Z,leftDist,rightDist,leftRightDist\n")
+            f.write("Xleft,Yleft,Zleft,Xmiddle,Ymiddle,Zmiddle,Xright,Yright,Zright,leftDist,rightDist,leftRightDist\n")
             for triplet in triplets:
                 leftDist = sqrt(distanceSquared(triplet[0], triplet[1]))
                 rightDist = sqrt(distanceSquared(triplet[1], triplet[2]))
                 leftRightDist = sqrt(distanceSquared(triplet[0], triplet[2]))
-                f.write(f"{triplet[1][0]},{triplet[1][1]},{triplet[1][2]}," +
+                f.write(f"{triplet[0][0]},{triplet[0][1]},{triplet[0][2]}," +
+                        f"{triplet[1][0]},{triplet[1][1]},{triplet[1][2]}," +
+                        f"{triplet[2][0]},{triplet[2][1]},{triplet[2][2]}," +
                         f"{leftDist},{rightDist},{leftRightDist}\n")
+            for leftDoublet in leftDoublets:
+                leftDist = sqrt(distanceSquared(leftDoublet[0], leftDoublet[1]))
+                f.write(f"{leftDoublet[0][0]},{leftDoublet[0][1]},{leftDoublet[0][2]}," +
+                        f"{leftDoublet[1][0]},{leftDoublet[1][1]},{leftDoublet[1][2]}," +
+                        f"{nan},{nan},{nan}," +
+                        f"{leftDist},{nan},{nan}\n")
+            for rightDoublet in rightDoublets:
+                rightDist = sqrt(distanceSquared(rightDoublet[0], rightDoublet[1]))
+                f.write(f"{nan},{nan},{nan}," +
+                        f"{rightDoublet[0][0]},{rightDoublet[0][1]},{rightDoublet[0][2]}," +
+                        f"{rightDoublet[1][0]},{rightDoublet[1][1]},{rightDoublet[1][2]}," +
+                        f"{nan},{rightDist},{nan}\n")
+            for leftRightDoublet in leftRigthDoublets:
+                leftRightDist = sqrt(distanceSquared(leftRightDoublet[0], leftRightDoublet[1]))
+                f.write(f"{leftRightDoublet[0][0]},{leftRightDoublet[0][1]},{leftRightDoublet[0][2]}," +
+                        f"{nan},{nan},{nan}," +
+                        f"{leftRightDoublet[1][0]},{leftRightDoublet[1][1]},{leftRightDoublet[1][2]}," +
+                        f"{nan},{nan},{leftRightDist}\n")
 
     def processNextFile(self, validateParams: bool) -> None:
         # There may be a file currently being processed, where the user
@@ -370,14 +391,11 @@ class FindSpotsTool(QMainWindow):
         output = stepOutputs[0]
         conformance = endOutputs[-1][0]
         nucleusCoords, nucleusCountImage = endOutputs[countNucleiStep] if self.ui.countNucleiCheckBox.isChecked() else (None, None)
-        leftDoublets, rightDoublets, triplets = endOutputs[tripletDetectionStep]
+        triplets, leftDoublets, rightDoublets, leftRightDoublets = endOutputs[tripletDetectionStep]
 
         outStem, _ = splitext(fileToRun)
-        self.write_distances(triplets, outStem + "_distances.csv")
+        self.write_distances(triplets, leftDoublets, rightDoublets, leftRightDoublets, outStem + "_distances.csv")
         write_output(output, outStem + "_results.txt", len(nucleusCoords) if nucleusCoords else None)
-        if self.ui.findDoubletsCheckBox.isChecked():
-            write_doublets(leftDoublets, outStem + "_leftDoublets.txt")
-            write_doublets(rightDoublets, outStem + "_rightDoublets.txt")
 
         # construct a new rgb version of the nucleus image volume and specified slice
         spot_projection_slice = int(self.ui.nucleusSliceLineEdit.text())
@@ -435,6 +453,7 @@ class FindSpotsTool(QMainWindow):
             ]
 
             spots_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
+            spots_3D_rgb = gray_colormap(ch, bytes=True)[:,:,:,0:3]
 
             spotsScale = (1., 1., 1.)
             for ix, ch in enumerate([
@@ -444,8 +463,10 @@ class FindSpotsTool(QMainWindow):
                     ]):
                 spots_image = gray_colormap(ch, bytes=True)[:,:,:,0:3]
                 plot_spots_2D(spots_2D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix], filled=False)
+                plot_spots_3D(spots_3D_rgb, spots[ix], spotsScale, lambda pos: spotColors[ix], filled=False)
                 plot_spots_3D(spots_image, spots[ix], spotsScale, lambda pos: spotColors[ix], filled=False)
                 tiff.imwrite(outStem + f"_ch{ix}_spots.tiff", spots_image)
+            tiff.imwrite(outStem + "_spots_3D_rgb.tiff", spots_3D_rgb)
             tiff.imwrite(outStem + "_spots_rgb.tiff", spots_2D_rgb)
 
         completedFilesList = self.completedFilesModel.stringList()

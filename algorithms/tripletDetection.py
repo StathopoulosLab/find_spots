@@ -51,16 +51,6 @@ def write_results(triplets, outputFileName):
                 %(x0,y0,z0,x1,y1,z1,x2,y2,z2))
     f.close()
 
-def write_doublets(doublets, outputFileName):
-    '''Writes doublet spot coordinates to a text file.'''
-    f = open(outputFileName, 'w')
-    f.write(f"# doublets: {len(doublets)}")
-    for doublet in doublets:
-        [[x0,y0,z0],[x1,y1,z1]] = doublet
-        f.write('%-5s %-5s %-5s %-5s %-5s %05s\n' \
-                %(x0,y0,z0,x1,y1,z1))
-    f.close()
-
 def find_triplet_spot(middleSpot, otherChanSpots, otherChanPointUsed, maxTripletSize) -> Tuple[int, float]:
     """
     Find the closest unused spot in otherChanSpots to middleSpot,
@@ -120,6 +110,7 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
     triplets = []
     leftDoublets = []
     rightDoublets = []
+    leftRightDoublets = []
 
     for iMiddle, middleSpot in enumerate(points[1]):
         # get the closest left spot, if any
@@ -158,7 +149,29 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         if app:
             # let the GUI, if there is one, process pending events
             app.processEvents()
-    return (triplets, leftDoublets, rightDoublets)
+    
+    if find_doublets:
+        # also try to find left-right doublets (because Nina wants that!)
+        for iLeft, leftSpot in enumerate(points[0]):
+            if pointUsed[0][iLeft]: # don't reuse already used leftSpots
+                continue
+            # get the closest right spot to this left spot that hasn't already been used, if any
+            iRight, rightDist = find_triplet_spot(leftSpot, points[2], pointUsed[2], maxTripletLRSize)
+            if find_doublets and iRight >= 0:
+                # found a left-right doublet!
+                logger.info(f"Adding left-right doublet [{iLeft}, {iRight}]")
+                leftRightDoublets.append((leftSpot, points[2][iRight]))
+                pointUsed[1][iLeft] = True
+                pointUsed[2][iRight] = True
+
+            else:
+                # nothing close enough, so no triplet is possible
+                logger.info(f"For middle spot [{iMiddle}], closest left spot was {sqrt(leftDist)}, "
+                            f"closest right spot was {sqrt(rightDist)}")
+
+        
+
+    return (triplets, leftDoublets, rightDoublets, leftRightDoublets)
 
 class ProcessStepFindTriplets(ProcessStep):
     """
@@ -183,7 +196,7 @@ class ProcessStepFindTriplets(ProcessStep):
         max_triplet_size = self._params['max_triplet_size']
         max_triplet_LR_size = self._params['max_triplet_LR_size']
         find_doublets = self._params['find_doublets']
-        triplets, leftDoublets, rightDoublets = find_best_triplets(
+        triplets, leftDoublets, rightDoublets, leftRightDoublets = find_best_triplets(
             self._inputs[0],
             self._inputs[1],
             self._inputs[2],
@@ -197,7 +210,7 @@ class ProcessStepFindTriplets(ProcessStep):
             self._app,
             progressCallback)
         self._stepOutputs.append(triplets)
-        self._endOutputs.extend([leftDoublets, rightDoublets, triplets])
+        self._endOutputs.extend([triplets, leftDoublets, rightDoublets, leftRightDoublets])
         self._status = ProcessStatus.COMPLETED
 
 if __name__ == "__main__":
