@@ -6,7 +6,7 @@ from algorithms.countNuclei import ProcessStepCountNuclei
 from algorithms.denoise import ProcessStepDenoiseConcurrent
 from algorithms.threshold_mask import ProcessStepThresholdMask
 from algorithms.detect_spots import ProcessStepDetectSpotsConcurrent
-from algorithms.tripletDetection import ProcessStepFindTriplets, write_doublets, distanceSquared
+from algorithms.tripletDetection import ProcessStepFindTriplets, distanceSquared
 from algorithms.touchingAnalysis import ProcessStepAnalyzeTouching, write_output
 from algorithms.find_spots import get_param
 from algorithms.confocal_file import ConfocalFile
@@ -453,7 +453,7 @@ class FindSpotsTool(QMainWindow):
             ]
 
             spots_2D_rgb = gray_colormap(cf.channel_nucleus()[spot_projection_slice], bytes=True)[:,:,0:3]
-            spots_3D_rgb = gray_colormap(ch, bytes=True)[:,:,:,0:3]
+            spots_3D_rgb = gray_colormap(cf.channel_nucleus(), bytes=True)[:,:,:,0:3]
 
             spotsScale = (1., 1., 1.)
             for ix, ch in enumerate([
