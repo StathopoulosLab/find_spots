@@ -117,6 +117,14 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
         iLeft, leftDist = find_triplet_spot(middleSpot, points[0], pointUsed[0], maxTripletSize)
         # get the closest right spot, if any
         iRight, rightDist = find_triplet_spot(middleSpot, points[2], pointUsed[2], maxTripletSize)
+        # Expand pointUsed[0], [1],[2] to accomodate Left, Middle, Right spot
+        if iLeft >=0 and len(pointUsed[0]) <= iLeft:
+            pointUsed[0].extend([False] * (iLeft - len(pointUsed[0]) + 1))
+        if iMiddle >=0 and len(pointUsed[1]) <= iMiddle:
+            pointUsed[1].extend([False] * (iMiddle - len(pointUsed[1]) + 1))
+        if iRight >=0 and len(pointUsed[2]) <= iRight:
+            pointUsed[2].extend([False] * (iRight - len(pointUsed[2])+1))
+        
         if iLeft >= 0 and iRight >= 0 and distanceSquared(points[0][iLeft], points[2][iRight]) < maxTripletLRSize * maxTripletLRSize:
             # found a potential triplet!
             logger.info(f"Adding triplet [{iLeft}, {iMiddle}, {iRight}]")
@@ -161,7 +169,7 @@ def find_best_triplets(leftSpots, middleSpots, rightSpots,
                 # found a left-right doublet!
                 logger.info(f"Adding left-right doublet [{iLeft}, {iRight}]")
                 leftRightDoublets.append((leftSpot, points[2][iRight]))
-                pointUsed[1][iLeft] = True
+                pointUsed[0][iLeft] = True
                 pointUsed[2][iRight] = True
 
             else:
