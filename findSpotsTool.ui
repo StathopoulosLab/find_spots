@@ -674,7 +674,7 @@
         <item row="0" column="0" colspan="2">
          <widget class="QLabel" name="touchingSettingsLabel">
           <property name="text">
-           <string>Touching Settings</string>
+           <string>Resolution Limit</string>
           </property>
          </widget>
         </item>
@@ -799,7 +799,7 @@
      <x>0</x>
      <y>0</y>
      <width>1158</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
   </widget>

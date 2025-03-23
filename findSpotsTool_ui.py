@@ -3,19 +3,19 @@
 ################################################################################
 ## Form generated from reading UI file 'findSpotsTool.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.5.2
+## Created by: Qt User Interface Compiler version 6.6.3
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
 
-from qtpy.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
+from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
     QMetaObject, QObject, QPoint, QRect,
     QSize, QTime, QUrl, Qt)
-from qtpy.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
+from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from qtpy.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
+from PySide6.QtWidgets import (QApplication, QCheckBox, QComboBox, QGridLayout,
     QHBoxLayout, QLabel, QLineEdit, QListView,
     QMainWindow, QMenuBar, QProgressBar, QPushButton,
     QSizePolicy, QSpacerItem, QStatusBar, QVBoxLayout,
@@ -39,7 +39,7 @@ class Ui_MainWindow(object):
 
         self.pendingFilesHorizontalLayout.addWidget(self.pendingFilesLabel)
 
-        self.addFilesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.addFilesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.pendingFilesHorizontalLayout.addItem(self.addFilesHorizontalSpacer)
 
@@ -110,7 +110,7 @@ class Ui_MainWindow(object):
 
         self.completedFilesHorizontalLayout.addWidget(self.completedFilesLabel)
 
-        self.completedFilesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.completedFilesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.completedFilesHorizontalLayout.addItem(self.completedFilesHorizontalSpacer)
 
@@ -161,11 +161,11 @@ class Ui_MainWindow(object):
 
         self.sliceSelectionGridLayout.addWidget(self.firstSliceLineEdit, 1, 1, 1, 1)
 
-        self.afterLastSliceHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.afterLastSliceHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.sliceSelectionGridLayout.addItem(self.afterLastSliceHorizontalSpacer, 1, 5, 1, 1)
 
-        self.betweennSlicesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.betweennSlicesHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.sliceSelectionGridLayout.addItem(self.betweennSlicesHorizontalSpacer, 1, 2, 1, 1)
 
@@ -183,7 +183,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.sliceSelectionGridLayout)
 
-        self.verticalSpacer_1 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_1 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_1)
 
@@ -231,7 +231,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.channelsGridLayout)
 
-        self.verticalSpacer_2 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_2 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_2)
 
@@ -339,13 +339,13 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.denoiseSettingsGridLayout)
 
-        self.verticalSpacer_3 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_3 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_3)
 
         self.nucleusMaskingGridLayout = QGridLayout()
         self.nucleusMaskingGridLayout.setObjectName(u"nucleusMaskingGridLayout")
-        self.nucleusMaskingHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.nucleusMaskingHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.nucleusMaskingGridLayout.addItem(self.nucleusMaskingHorizontalSpacer, 1, 2, 1, 1)
 
@@ -374,7 +374,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.nucleusMaskingGridLayout)
 
-        self.verticalSpacer_4 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_4 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_4)
 
@@ -429,7 +429,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.spotDetectionGridLayout)
 
-        self.verticalSpacer_5 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_5 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_5)
 
@@ -478,7 +478,7 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.tripletSettingsGridLayout)
 
-        self.verticalSpacer_6 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_6 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_6)
 
@@ -533,13 +533,13 @@ class Ui_MainWindow(object):
 
         self.rightVerticalLayout.addLayout(self.touchingSettingsGridLayout)
 
-        self.verticalSpacer_7 = QSpacerItem(366, 13, QSizePolicy.Minimum, QSizePolicy.Expanding)
+        self.verticalSpacer_7 = QSpacerItem(366, 13, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.rightVerticalLayout.addItem(self.verticalSpacer_7)
 
         self.controlButtonHorizontalLayout = QHBoxLayout()
         self.controlButtonHorizontalLayout.setObjectName(u"controlButtonHorizontalLayout")
-        self.controlButtonsHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        self.controlButtonsHorizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
         self.controlButtonHorizontalLayout.addItem(self.controlButtonsHorizontalSpacer)
 
@@ -569,7 +569,7 @@ class Ui_MainWindow(object):
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1158, 24))
+        self.menubar.setGeometry(QRect(0, 0, 1158, 21))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -639,7 +639,7 @@ class Ui_MainWindow(object):
         self.tripletLRMaxSizeLabel.setText(QCoreApplication.translate("MainWindow", u"Left-Right", None))
         self.tripletSettingsLabelabel.setText(QCoreApplication.translate("MainWindow", u"Triplet Detection Settings", None))
         self.findDoubletsCheckBox.setText(QCoreApplication.translate("MainWindow", u"Also Find Doublets", None))
-        self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Touching Settings", None))
+        self.touchingSettingsLabel.setText(QCoreApplication.translate("MainWindow", u"Resolution Limit", None))
         self.xTouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"X", None))
         self.zTouchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Z", None))
         self.touchingThresholdLabel.setText(QCoreApplication.translate("MainWindow", u"Threshold:", None))
