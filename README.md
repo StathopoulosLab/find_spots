@@ -27,12 +27,15 @@ The main analyses including PDF construction, contour plots constructions are in
 
 Desired analysis such as PDF generation, heatmap comparisons or contour plots generations are shown in the code and highlighted throughout the paper. The structure of the _distances.csv files are below: 
 
-<img width="922" height="37" alt="Screenshot 2025-08-04 at 2 52 32 PM" src="https://github.com/user-attachments/assets/05ac9d7d-f23c-477b-aa8f-d831df1f162e" />
+<img width="776" height="47" alt="Screenshot 2025-08-04 at 2 57 50 PM" src="https://github.com/user-attachments/assets/34f527f4-8aa6-405e-9715-5c52e5afc429" />
+
 
 The provided code will take the Xleft, Yleft, Zleft and 3 positional information of the other 2 dots (dependent on which channel you set as left, middle and right on the GUI) and subjected this to the resolution limit threshold so any recorded distances that is less than the resolution limit will be converted to 0nm. Please alter this line in the Final_code_github if utilizing a different microscope with different resolution limit: 
 
 res_squared = [0.12**2, 0.12**2, 0.35**2]
+
 0.12 is the x-y resolution limit 
+
 0.35 is the z resolution limit
 
 The code will then proceed comparisons for individual distances PDF first before combining them into a 3D contour for positional information comparison. 
