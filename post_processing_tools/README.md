@@ -16,3 +16,6 @@ For any questions about either post-processing or find spots, please direct it t
 
 BATCH PROCESS: 
 Code that allows overlay of measured spots (from csv) on top of produced TIFF images both from the find_spots tool pipeline.  
+Use the following output to create the overlay: 
+1. _distances.csv
+2. _spots_rgb.tiff
