@@ -21,6 +21,6 @@ Use the following output to create the overlay:
 2. _spots_rgb.tiff
 
 TWIST COMPARISON: 
-Code that allows D-V comparisons between twist and non-twist regions. 
+Code (Twi vs no twi) that allows D-V comparisons between twist and non-twist regions. 
 - Follow instructions similar to FINAL code using .csv outputs. 
 
