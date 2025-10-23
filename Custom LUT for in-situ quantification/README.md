@@ -24,6 +24,7 @@ The following visualization GUI will popped up for visual inspection of segmente
 <img width="1188" height="744" alt="Screenshot 2025-10-23 at 12 00 06 PM" src="https://github.com/user-attachments/assets/c0a1763f-93e6-47d3-89ff-9b7b8aa56f9e" />
 
 Once image is quantified, thresholds can be change to appropriately measure the RNA structure of interests: 
+
 for i = 1:44
 
 data(i).T_bg_avg = 0.03;
