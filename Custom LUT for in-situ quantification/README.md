@@ -21,7 +21,7 @@ Toggle display mask to see the segmented region
 
 The following visualization GUI will popped up for visual inspection of segmented. 
 
-<img width="1188" height="744" alt="Screenshot 2025-10-23 at 12 00 06 PM" src="https://github.com/user-attachments/assets/2fe6c5d3-df88-4601-8742-c14e4c8f0911" />
+<img width="1188" height="744" alt="Screenshot 2025-10-23 at 12 00 06 PM" src="https://github.com/user-attachments/assets/c0a1763f-93e6-47d3-89ff-9b7b8aa56f9e" />
 
 Once image is quantified, thresholds can be change to appropriately measure the RNA structure of interests: 
 for i = 1:44
