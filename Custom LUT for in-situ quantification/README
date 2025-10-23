@@ -9,8 +9,6 @@ display_mask_3D(im_{name}, data_{name});
 Toggle display mask to see the segmented region
 
 
-
-
 The following visualization GUI will popped up for visual inspection of segmented. 
 
 Once image is quantified, thresholds can be change to appropriately measure the RNA structure of interests: 
