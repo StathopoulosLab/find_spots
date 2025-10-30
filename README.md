@@ -36,6 +36,10 @@ res_squared = [0.12**2, 0.12**2, 0.35**2]
 
 0.12 is the x-y resolution limit 
 
+## License
+
+This project is licensed under the MIT License — see the [LICENSE](./LICENSE) file for details.
+
 0.35 is the z resolution limit
 
 The code will then proceed comparisons for individual distances PDF first before combining them into a 3D contour for positional information comparison. 
