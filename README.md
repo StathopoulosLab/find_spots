@@ -1,9 +1,37 @@
-# find_spots
+# System requirements: 
+Github 2.37.1 or greater
+Python 3.13.5 or greater
+
+# Installation: 
+git clone https://github.com/StathopoulosLab/find_spots
+
 The initial detection and find spots pipeline to detect and calculate distances between three spots of three different colors is stored in the algorithms folder. The pipeline is built upon a GUI and once cloned and download the pipeline to a destination repository run the following command to open up the GUI: 
 
 python3 findSpotsTool.py 
 
 If your environment lack any python packages, follow the instructions in the terminal to download the packages for the GUI. Once all packages are loaded and available, GUI will pop up for usage. 
+
+Examples download commands to have all the dependencies: 
+1. pip install qtpy
+2. conda install -c conda-forge pyside6 qtpy
+3. python -m pip install opencv-python
+4. python -m pip install scikit-image
+5. python -m pip install matplotlib
+6. python -m pip install czifile
+7. python -m pip install pyyaml
+8. python -m pip install qimage2ndarray
+   
+
+Run python3 findSpotsTool.py for instructions to install the above dependencies/modules. 
+
+To access the sample image file you need Git LFS. In order to get that run the following commands: 
+1. conda install -c conda-forge git-lfs
+2. git lfs install
+
+Runtime on local machine: Likely will crash, not recommended. Might take overnight if you have a strong machine. 
+Runtime on HPC or multiple cores machine: 4 cores 21 minutes 25 seconds. 
+
+# Usage/ Demo 
 
 GUI is currently formatted below: 
 
