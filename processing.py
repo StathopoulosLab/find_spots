@@ -317,7 +317,7 @@ class ProcessStepIterate(ProcessStep):
         self._stepOutputs = []
         self._endOutputs = []
         self._stepsCompleted = 0
-        statuses: List(ProcessStatus) = [ProcessStatus.QUEUED] * len(self._inputs)
+        statuses: List[ProcessStatus] = [ProcessStatus.QUEUED] * len(self._inputs)
         for i, input in enumerate(self._inputs):
             step = self._stepClass(self._paramsList[i])
             step.setApp(self._app)
