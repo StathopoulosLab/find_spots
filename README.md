@@ -3,6 +3,10 @@ Github 2.37.1 or greater
 
 Python 3.11 or less
 
+Does not require GPU
+
+Software uses 13 GB of memory, recommended for laptop with memory of >20GB or above.  
+
 # Installation: 
 git clone https://github.com/StathopoulosLab/find_spots
 
@@ -29,10 +33,12 @@ To access the sample image file you need Git LFS. In order to get that run the f
 1. conda install -c conda-forge git-lfs
 2. git lfs install
 3. git pull
+ 
 
-Runtime on local machine: Likely will crash, not recommended. Might take overnight if you have a strong machine. 
+Runtime 32 cores machine using 4 cores with an AMD implementation of Intel instruction run time is 21 minutes 25 seconds. 
 
-Runtime on HPC or multiple cores machine: 4 cores 21 minutes 25 seconds. 
+Runtime on 12 cores machine using 3 cores with an Apple Silicon M4, 24 GB memory run time is <30 minutes. 
+
 
 # Usage/ Demo 
 
