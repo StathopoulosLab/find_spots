@@ -11,9 +11,12 @@ For the example data, 15-16 GB of memory, recommended for laptop with memory of 
 git clone https://github.com/StathopoulosLab/find_spots
 pip install -r requirements.txt
 
+Installation should take <10 minutes
+
 The initial detection and find spots pipeline to detect and calculate distances between three spots of three different colors is stored in the algorithms folder. The pipeline is built upon a GUI and once cloned and download the pipeline to a destination repository run the following command to open up the GUI: 
 
 python3 findSpotsTool.py 
+
 
 
 Run python3 findSpotsTool.py for instructions to install the above dependencies/modules. 
