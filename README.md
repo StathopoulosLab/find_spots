@@ -30,6 +30,7 @@ To access the sample image file you need Git LFS. In order to get that run the f
 3. git pull
 
 Runtime on local machine: Likely will crash, not recommended. Might take overnight if you have a strong machine. 
+
 Runtime on HPC or multiple cores machine: 4 cores 21 minutes 25 seconds. 
 
 # Usage/ Demo 
