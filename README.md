@@ -9,23 +9,12 @@ For the example data, 15-16 GB of memory, recommended for laptop with memory of 
 
 # Installation: 
 git clone https://github.com/StathopoulosLab/find_spots
+pip install -r requirements.txt
 
 The initial detection and find spots pipeline to detect and calculate distances between three spots of three different colors is stored in the algorithms folder. The pipeline is built upon a GUI and once cloned and download the pipeline to a destination repository run the following command to open up the GUI: 
 
 python3 findSpotsTool.py 
 
-If your environment lack any python packages, follow the instructions in the terminal to download the packages for the GUI. Once all packages are loaded and available, GUI will pop up for usage. 
-
-Examples download commands to have all the dependencies: 
-1. pip install qtpy
-2. conda install -c conda-forge pyside6 qtpy
-3. python -m pip install opencv-python
-4. python -m pip install scikit-image
-5. python -m pip install matplotlib
-6. python -m pip install czifile
-7. python -m pip install pyyaml
-8. python -m pip install qimage2ndarray
-   
 
 Run python3 findSpotsTool.py for instructions to install the above dependencies/modules. 
 
@@ -35,9 +24,9 @@ To access the sample image file you need Git LFS. In order to get that run the f
 3. git pull
  
 
-Runtime 32 cores machine using 4 cores with an AMD implementation of Intel instruction run time is 21 minutes 25 seconds. 
-
-Runtime on 12 cores machine using 3 cores with an Apple Silicon M4, 24 GB memory run time is <30 minutes. 
+On Linux machine running Ubuntu 22.04.5 LTS on AMD EPYC 7542 CPU (32 cores) with 128 GB memory using 4 cores, run time is 21 minutes 25 seconds. 
+On MacBookPro running MacOS Sequoia on Apple Silicon M4 Pro (12 cores) with 24 GB memory using 4  cores, run time is <30 minutes. 
+The software should also run on Windows with similar machine capabilities, but this configuration has not been tested.
 
 
 # Usage/ Demo 
