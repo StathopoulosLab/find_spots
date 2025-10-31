@@ -28,7 +28,9 @@ To access the sample image file you need Git LFS. In order to get that run the f
  
 
 On Linux machine running Ubuntu 22.04.5 LTS on AMD EPYC 7542 CPU (32 cores) with 128 GB memory using 4 cores, run time is 21 minutes 25 seconds. 
+
 On MacBookPro running MacOS Sequoia on Apple Silicon M4 Pro (12 cores) with 24 GB memory using 4  cores, run time is <30 minutes. 
+
 The software should also run on Windows with similar machine capabilities, but this configuration has not been tested.
 
 
