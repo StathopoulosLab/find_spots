@@ -35,15 +35,18 @@ default_params = {
     "alpha_sharp": 1.3,
     "do_masking": False,
     "nucleus_mask_threshold": 0.2,
-    "spot_detect_threshold": 0.04,
-    "find_doublets": False,
-    'max_triplet_size': 1.5,
-    'max_triplet_LR_size': 1.5,
-    'touching_threshold_x': 0.14,
-    'touching_threshold_y': 0.14,
-    'touching_threshold_z': 0.53,
+    "spot_detect_threshold": 0.04,  # used only by find_spots.py (command line tool)
+    "spot_detect_threshold_left": 0.08,     # used by findSpotsTool.py (GUI tool)
+    "spot_detect_threshold_middle": 0.03,   # used by findSpotsTool.py (GUI tool)
+    "spot_detect_threshold_right": 0.02,    # used by findSpotsTool.py (GUI tool)
+    "find_doublets": True,
+    'max_triplet_size': 2.0,
+    'max_triplet_LR_size': 2.0,
+    'touching_threshold_x': 0.12,
+    'touching_threshold_y': 0.12,
+    'touching_threshold_z': 0.35,
     'use_denoise3d': False,
-    'nucleus_slice': 10,
+    'nucleus_slice': 2,
     'count_nuclei': False,
     'save_after_denoise': False,
     'save_spots': True,

@@ -1,5 +1,5 @@
 # findSpotsTool.py
-from qtpy.QtCore import QStringListModel, Signal, Slot
+from qtpy.QtCore import QStringListModel, Signal, Slot, QThreadPool
 from qtpy.QtWidgets import QApplication, QFileDialog, QMainWindow, QMessageBox
 from findSpotsTool_ui import Ui_MainWindow
 from algorithms.countNuclei import ProcessStepCountNuclei
@@ -24,6 +24,7 @@ from os.path import expanduser, splitext
 import sys, platform
 import tifffile as tiff
 from typing import Dict, List
+from worker import Worker
 
 class FindSpotsTool(QMainWindow):
 
@@ -38,6 +39,8 @@ class FindSpotsTool(QMainWindow):
 
         self._app = app
         self._logger = None
+        self.threadPool = QThreadPool()
+
 
         # set up the main window UI
         self.ui = Ui_MainWindow()
@@ -105,10 +108,9 @@ class FindSpotsTool(QMainWindow):
         self.ui.countNucleiCheckBox.setChecked(get_param('count_nuclei', params))
 
         # Spot detection settings
-        default_spot_detect_threshold = str(get_param("spot_detect_threshold", params))
-        self.ui.leftSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.middleSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
-        self.ui.rightSpotDetectionThresholdLineEdit.setText(default_spot_detect_threshold)
+        self.ui.leftSpotDetectionThresholdLineEdit.setText(str(get_param("spot_detect_threshold_left", params)))
+        self.ui.middleSpotDetectionThresholdLineEdit.setText(str(get_param("spot_detect_threshold_middle", params)))
+        self.ui.rightSpotDetectionThresholdLineEdit.setText(str(get_param("spot_detect_threshold_right", params)))
         self.ui.saveDetectedSpotsCheckBox.setChecked(False)
 
         # Triplet detection settings
@@ -124,7 +126,7 @@ class FindSpotsTool(QMainWindow):
         self.ui.clearCompletedFilesPushButton.clicked.connect(self.clearCompletedFiles)
         self.ui.quitPushButton.clicked.connect(self.quit)
         self.ui.testSettingsPushButton.clicked.connect(self.testSettings)
-        self.ui.runBatchPushButton.clicked.connect(self.runBatch)
+        self.ui.runBatchPushButton.clicked.connect(self.toggleRunBatch)
 
         # connect other signals
         self.noteProgressChanged.connect(self.progressChanged)
@@ -182,9 +184,51 @@ class FindSpotsTool(QMainWindow):
     def testSettings(self, checked: bool = False):
         return self.processNextFile(True)
 
+    def updateRunBatchButtonText(self, direction: str):
+        if direction == "run":
+            self.ui.runBatchPushButton.setText("Run Batch")
+        elif direction == "kill":
+            self.ui.runBatchPushButton.setText("Kill Batch")
+        elif direction == "stopping":
+            self.ui.runBatchPushButton.setText("Stopping Batch...")
+        else:
+            raise RuntimeError(f'Expected "run", "stopping" or "kill", got {direction}')
+
     @Slot(bool)
-    def runBatch(self, checked: bool = False):
-        while len(self.pendingFilesModel.stringList()) > 0:
+    def toggleRunBatch(self, checked: bool = False):
+        buttonText = self.ui.runBatchPushButton.text()
+        if buttonText == "Run Batch":
+            self.updateRunBatchButtonText("kill")
+            self.runBatch()
+        elif buttonText == "Kill Batch":
+            if self.workerRunning:
+                self.updateRunBatchButtonText("stopping")
+            else:
+                self.updateRunBatchButtonText("run")
+            self.killBatch()
+        elif buttonText == "Stopping Batch...":
+            # do nothing, we're already stopping
+            pass
+        else:
+            raise RuntimeError(f"Start/Stop pushbutton text is unexpected: {buttonText}")
+
+    def killBatch(self):
+        self.keepRunning = False
+
+    def runBatch(self):
+        self.keepRunning = True
+        self.workerRunning = True
+        self.stopBatchProcessing = False
+        batchWorker = Worker(self.runBatchJobs)
+        batchWorker.signals.finished.connect(self.resetRunBatchButtonText)
+        self.threadPool.start(batchWorker)
+
+    def resetRunBatchButtonText(self):
+        self.workerRunning = False
+        self.updateRunBatchButtonText("run")
+
+    def runBatchJobs(self):
+        while self.keepRunning and len(self.pendingFilesModel.stringList()) > 0:
             self.processNextFile(False)
 
     def write_distances(self, triplets, leftDoublets, rightDoublets, leftRigthDoublets, outName):
