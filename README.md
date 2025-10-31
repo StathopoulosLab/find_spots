@@ -5,7 +5,7 @@ Python 3.11 or less
 
 Does not require GPU
 
-Software uses 13 GB of memory, recommended for laptop with memory of >20GB or above.  
+Software uses 15-16 GB of memory, recommended for laptop with memory of >20GB or above.  
 
 # Installation: 
 git clone https://github.com/StathopoulosLab/find_spots
