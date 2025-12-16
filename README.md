@@ -1,3 +1,5 @@
+DOI: 10.5281/zenodo.17945872
+
 # System requirements: 
 Github 2.37.1 or greater
 
