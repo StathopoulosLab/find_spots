@@ -1,3 +1,5 @@
+DOI: https://doi.org/10.5281/zenodo.17945872
+
 # System requirements: 
 Github 2.37.1 or greater
 
@@ -11,21 +13,24 @@ For the example data, 15-16 GB of memory, recommended for laptop with memory of 
 git clone https://github.com/StathopoulosLab/find_spots
 pip install -r requirements.txt
 
+Installation should take <10 minutes
+
 The initial detection and find spots pipeline to detect and calculate distances between three spots of three different colors is stored in the algorithms folder. The pipeline is built upon a GUI and once cloned and download the pipeline to a destination repository run the following command to open up the GUI: 
 
 python3 findSpotsTool.py 
 
+## Sample files and Demo
 
-Run python3 findSpotsTool.py for instructions to install the above dependencies/modules. 
-
-To access the sample image file you need Git LFS. In order to get that run the following commands: 
-1. conda install -c conda-forge git-lfs
-2. git lfs install
-3. git pull
- 
+Demo files storage : https://doi.org/10.22002/3jvmr-1b914
+The folder contains the following sets of files for each of the 4 developmental stages and 2 phenotypes WT and deltaPPE: 
+1. Original .czi file to load 
+2. csv files example output of the find_spots program
+3. html example output of the batch process program
 
 On Linux machine running Ubuntu 22.04.5 LTS on AMD EPYC 7542 CPU (32 cores) with 128 GB memory using 4 cores, run time is 21 minutes 25 seconds. 
+
 On MacBookPro running MacOS Sequoia on Apple Silicon M4 Pro (12 cores) with 24 GB memory using 4  cores, run time is <30 minutes. 
+
 The software should also run on Windows with similar machine capabilities, but this configuration has not been tested.
 
 
@@ -33,20 +38,36 @@ The software should also run on Windows with similar machine capabilities, but t
 
 GUI is currently formatted below: 
 
-<img width="1161" height="802" alt="Screenshot 2025-08-04 at 2 20 59 PM" src="https://github.com/user-attachments/assets/5bc57a09-e608-4d37-b0f0-2f12ea7a6a3b" />
+<img width="1108" height="844" alt="Screenshot 2025-10-31 at 6 38 40 PM" src="https://github.com/user-attachments/assets/90e895c8-b824-4c39-8805-ea0958e056ee" />
+
 
 Spot detection settings and Resolution Limit should be altered based on chosen microscope of choice. Maximum distance threshold should be determined based on your organism of interest based on Supplemental Figure 1. However, we recommend 2um if you are working with Drosophila embryos at early development, similar to the system chosen for this study. 
 
-We recommend checking "Save spot image" to verify your spot detection threshold and "Also Find Doublets" similar desired analysis as this study. 
-Sample image stack is included in Sample Image folder containing the original Zen file, the individual spot detection for each channel, the CSV distance files for post-processing analysis data structure. The spots_rgb file are useful for batch_process pipeline of overlaying the detected and measured CSV files against detected spots and nuclear lamin channel. When running through the program, there are other outputs produced such as .txt files for triplets, leftDoublets.txt, rightDoublets.txt, doublets_rgb.tiff, 2D_rgb.tiff, 3D_rgb.tiff that we had previously used for troubleshooting purposes but later disregard for final analyses. You may find those helpful for your data interpretation. However the main files you need to move forward into post-processing tools are: 
+We recommend checking "Save spot image" to verify your spot detection threshold and "Also Find Doublets" similar desired analysis as this study. The following files are going to be outputted from the program given the above instructions: 
+
+1. _2D_rgb.tiff
+2. _3D_rgb.tiff
+3. _ch0_spots.tiff
+4. _ch1_spots.tiff
+5. _distances.csv
+6. _doublets_rgb.tiff
+7. _leftDoublets.txt
+8. _results.txt
+9. _rightDoublets.txt
+10. _spots_rgb.tiff
+
+
+Example czi images and examples outputs are included in above demo folder. The spots_rgb file are useful for batch_process pipeline of overlaying the detected and measured CSV files against detected spots and nuclear lamin channel. There are other outputs produced such as .txt files for triplets, leftDoublets.txt, rightDoublets.txt, doublets_rgb.tiff, 2D_rgb.tiff, 3D_rgb.tiff that we had previously used for troubleshooting purposes but later disregard for final analyses. You may find those helpful for your data interpretation. However the main files you need to move forward into post-processing tools are: 
 
 1. _distances.csv
 2. _spots_rgb.tiff
 3. ch0_spots.tiff
 4. ch1_spots.tiff
 5. ch2_spots.tiff
+
    
 In order to verify all dots are within the lamin channel, we utilize the post_processing_tools batch_process.ipynb. For an image, place the _spots_rgb.tiff and _distances.csv in the same directory, then run the following line to generate the overlay html file to do verification:
+
 python3 batch_process.py --directory "your created directory".
 
 The main analyses including PDF construction, contour plots constructions are in post_processing_tools Final_code_github.ipynb. In order to have the correct python environment, we find it most helpful to use this setup created by Dr. Justin Bois at Caltech since it has many built in Bokeh Features. Bokeh are widely used in the graphical generation of this pipeline. You can access and download the bootcamp.yml environment here: https://justinbois.github.io/bootcamp/2023/lessons/l00_configuring_your_computer.html#
