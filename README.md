@@ -70,7 +70,7 @@ In order to verify all dots are within the lamin channel, we utilize the post_pr
 
 python3 batch_process.py --directory "your created directory".
 
-The main analyses including PDF construction, contour plots constructions are in post_processing_tools Final_code_github.ipynb. In order to have the correct python environment, we find it most helpful to use this setup created by Dr. Justin Bois at Caltech since it has many built in Bokeh Features. Bokeh are widely used in the graphical generation of this pipeline. You can access and download the bootcamp.yml environment here: https://justinbois.github.io/bootcamp/2023/lessons/l00_configuring_your_computer.html#
+The main analyses including PDF construction, contour plots constructions are in post_processing_tools Final_code_github.ipynb. The updated post_processing_ver2 break the paper into Figures and the guides you through regenerating every single figure in our paper accordingly. In order to have the correct python environment, we find it most helpful to use this setup created by Dr. Justin Bois at Caltech since it has many built in Bokeh Features. Bokeh are widely used in the graphical generation of this pipeline. You can access and download the bootcamp.yml environment here: https://justinbois.github.io/bootcamp/2023/lessons/l00_configuring_your_computer.html#
 
 Desired analysis such as PDF generation, heatmap comparisons or contour plots generations are shown and outlined in the Final_code_github.ipynb and highlighted throughout the paper. The structure of the _distances.csv files are below: 
 
@@ -90,3 +90,8 @@ This project is licensed under the MIT License — see the [LICENSE](./LICENSE) 
 0.35 is the z resolution limit
 
 The code will then proceed comparisons for individual distances PDF first before combining them into a 3D contour for positional information comparison. 
+
+## Cite
+If you use our code to generate plots and or visualization please use the following reference for citation purposes:
+Le, M.T., McGehee, J., Dunipace, L. et al. Inferring chromatin architecture at a single locus through probabilistic in situ DNA localization. Nat Commun 17, 1752 (2026). https://doi.org/10.1038/s41467-026-68460-x
+
